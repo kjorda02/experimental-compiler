@@ -1,0 +1,52 @@
+package experimental_compiler;
+import java_cup.runtime.*;
+import java.util.HashMap;
+
+parser code {:
+    private HashMap<String, Integer> symbolTable = new HashMap<>();
+    
+    public void report_error(String message, Object info) {
+        System.err.println("Error: " + message);
+    }
+:}
+
+/* Terminals (tokens from lexer) */
+terminal PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, SEMI, ASSIGN, PRINT;
+terminal Integer NUMBER;
+terminal String ID;
+
+/* Non-terminals */
+non terminal prog;
+non terminal stmt;
+non terminal Integer expr;
+
+/* Precedences */
+precedence left PLUS, MINUS;
+precedence left TIMES, DIVIDE;
+
+/* Grammar rules */
+prog ::= stmt prog
+       | stmt
+       ;
+
+stmt ::= ID:i ASSIGN expr:e SEMI
+         {: parser.symbolTable.put(i, e); :}
+       | PRINT expr:e SEMI
+         {: System.out.println(e); :}
+       ;
+
+expr ::= expr:e1 PLUS expr:e2
+         {: RESULT = e1 + e2; :}
+       | expr:e1 MINUS expr:e2
+         {: RESULT = e1 - e2; :}
+       | expr:e1 TIMES expr:e2
+         {: RESULT = e1 * e2; :}
+       | expr:e1 DIVIDE expr:e2
+         {: RESULT = e1 / e2; :}
+       | LPAREN expr:e RPAREN
+         {: RESULT = e; :}
+       | NUMBER:n
+         {: RESULT = n; :}
+       | ID:i
+         {: RESULT = parser.symbolTable.get(i); :}
+       ;
