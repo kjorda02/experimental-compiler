@@ -8,32 +8,54 @@ package experimental_compiler;
 /** CUP generated interface containing symbol constants. */
 public interface sym {
   /* terminals */
-  public static final int MINUS = 3;
-  public static final int DIVIDE = 5;
-  public static final int NUMBER = 11;
-  public static final int SEMI = 8;
-  public static final int EOF = 0;
+  public static final int EXIT = 10;
+  public static final int GEQ = 17;
+  public static final int AND = 11;
+  public static final int LT = 14;
+  public static final int NEG = 3;
   public static final int PLUS = 2;
-  public static final int ID = 12;
-  public static final int ASSIGN = 9;
-  public static final int error = 1;
-  public static final int PRINT = 10;
+  public static final int OR = 12;
   public static final int RPAREN = 7;
-  public static final int TIMES = 4;
+  public static final int SEMI = 8;
+  public static final int NOT = 13;
   public static final int LPAREN = 6;
+  public static final int GT = 15;
+  public static final int ID = 23;
+  public static final int ASS = 9;
+  public static final int RBRAC = 20;
+  public static final int INTLIT = 21;
+  public static final int EOF = 0;
+  public static final int MULT = 4;
+  public static final int DIV = 5;
+  public static final int error = 1;
+  public static final int EQ = 18;
+  public static final int LEQ = 16;
+  public static final int NEQ = 19;
+  public static final int BOOLLIT = 22;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "PLUS",
-  "MINUS",
-  "TIMES",
-  "DIVIDE",
+  "NEG",
+  "MULT",
+  "DIV",
   "LPAREN",
   "RPAREN",
   "SEMI",
-  "ASSIGN",
-  "PRINT",
-  "NUMBER",
+  "ASS",
+  "EXIT",
+  "AND",
+  "OR",
+  "NOT",
+  "LT",
+  "GT",
+  "LEQ",
+  "GEQ",
+  "EQ",
+  "NEQ",
+  "RBRAC",
+  "INTLIT",
+  "BOOLLIT",
   "ID"
   };
 }

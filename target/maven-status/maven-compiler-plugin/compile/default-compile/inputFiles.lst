@@ -1,4 +1,8 @@
-/home/kjorda/NetBeansProjects/experimental-compiler/target/generated-sources/cup/experimental_compiler/Parser.java
-/home/kjorda/NetBeansProjects/experimental-compiler/src/main/java/experimental_compiler/Main.java
-/home/kjorda/NetBeansProjects/experimental-compiler/target/generated-sources/jflex/experimental_compiler/Lexer.java
-/home/kjorda/NetBeansProjects/experimental-compiler/target/generated-sources/cup/experimental_compiler/sym.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/src/main/java/sintactico/node.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/src/main/java/experimental_compiler/Main.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/src/main/java/sintactico/num_node.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/target/generated-sources/cup/experimental_compiler/Parser.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/src/main/java/experimental_compiler/symbolTable.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/target/generated-sources/jflex/experimental_compiler/Lexer.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/src/main/java/sintactico/bool_node.java
+/home/kjorda/Documents/UNI/compiladores2/experimental-compiler/target/generated-sources/cup/experimental_compiler/sym.java

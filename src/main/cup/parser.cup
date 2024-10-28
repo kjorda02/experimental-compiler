@@ -3,7 +3,8 @@ import java_cup.runtime.*;
 import java.util.HashMap;
 
 parser code {:
-    private HashMap<String, Integer> symbolTable = new HashMap<>();
+
+    private HashMap<String, Integer> table = new HashMap<>();
     
     public void report_error(String message, Object info) {
         System.err.println("Error: " + message);
@@ -11,42 +12,112 @@ parser code {:
 :}
 
 /* Terminals (tokens from lexer) */
-terminal PLUS, MINUS, TIMES, DIVIDE, LPAREN, RPAREN, SEMI, ASSIGN, PRINT;
-terminal Integer NUMBER;
+terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
+terminal AND, OR, NOT;
+terminal LT, GT, LEQ, GEQ, EQ, NEQ;
+terminal LBRAC RBRAC;
+terminal Integer INTLIT;
+terminal Boolean BOOLLIT;
 terminal String ID;
 
 /* Non-terminals */
 non terminal prog;
 non terminal stmt;
-non terminal Integer expr;
+non terminal val expr;
+non terminal Boolean comp;
+non terminal Integer num_expr;
+non terminal Boolean bool_expr;
 
 /* Precedences */
-precedence left PLUS, MINUS;
-precedence left TIMES, DIVIDE;
+precedence left EQ, NEQ;
+
+precedence left OR;
+precedence left AND;
+precedence left NOT;
+
+precedence left PLUS, NEG;
+precedence left MULT;
+precedence left DIV;
+precedence left LT, GT, LEQ, GEQ;
+
+start with prog;
 
 /* Grammar rules */
-prog ::= stmt prog
-       | stmt
-       ;
+prog ::= stmt SEMI | stmt SEMI prog;
 
-stmt ::= ID:i ASSIGN expr:e SEMI
-         {: parser.symbolTable.put(i, e); :}
-       | PRINT expr:e SEMI
+stmt ::= ID:i ASS num_expr:e
+         {: parser.table.put(i, e); :}
+       
+       | num_expr:e
          {: System.out.println(e); :}
+
+       | bool_expr:e
+         {: System.out.println(e); :}
+
+       | EXIT
+         {: done_parsing(); :}
        ;
 
-expr ::= expr:e1 PLUS expr:e2
-         {: RESULT = e1 + e2; :}
-       | expr:e1 MINUS expr:e2
-         {: RESULT = e1 - e2; :}
-       | expr:e1 TIMES expr:e2
-         {: RESULT = e1 * e2; :}
-       | expr:e1 DIVIDE expr:e2
-         {: RESULT = e1 / e2; :}
-       | LPAREN expr:e RPAREN
-         {: RESULT = e; :}
-       | NUMBER:n
+
+num_expr ::= INTLIT:n
          {: RESULT = n; :}
-       | ID:i
-         {: RESULT = parser.symbolTable.get(i); :}
+
+       | num_expr:e1 PLUS num_expr:e2
+         {: RESULT = e1 + e2; :}
+
+       | num_expr:e1 NEG num_expr:e2
+         {: RESULT = e1 - e2; :}
+
+       | num_expr:e1 DIV num_expr:e2
+         {: RESULT = e1 / e2; :}
+
+       | num_expr:e1 MULT num_expr:e2
+         {: RESULT = e1 * e2; :}
+
+       | LPAREN num_expr:e RPAREN
+         {: RESULT = e; :}
+
+       | NEG num_expr:n
+         {: RESULT = -n; :}
+       ;
+
+bool_expr ::= bool_expr:e1 EQ bool_expr:e2
+         {: RESULT = e1 == e2; :}
+
+       | bool_expr:e1 NEQ bool_expr:e2
+         {: RESULT = e1 != e2; :}
+
+       | num_expr:e1 EQ num_expr:e2
+         {: RESULT = e1 == e2; :}
+
+       | num_expr:e1 NEQ num_expr:e2
+         {: RESULT = e1 != e2; :}
+
+       | num_expr:e1 LT num_expr:e2
+         {: RESULT = (e1<e2); :}
+
+       | num_expr:e1 GT num_expr:e2
+         {: RESULT = (e1>e2); :}
+
+       | num_expr:e1 LEQ num_expr:e2
+         {: RESULT = (e1<=e2); :}
+
+       | num_expr:e1 GEQ num_expr:e2
+         {: RESULT = (e1>=e2); :}
+       ;
+
+bool_expr ::= BOOLLIT:l
+         {: RESULT = l; :}
+
+       | NOT bool_expr:e
+         {: RESULT = !e; :}
+       
+       | bool_expr:e1 AND bool_expr:e2
+         {: RESULT = e1 && e2; :}
+
+       | bool_expr:e1 OR bool_expr:e2
+         {: RESULT = e1 || e2; :}
+
+       | LPAREN bool_expr:v RPAREN
+         {: RESULT = v; :}
        ;
