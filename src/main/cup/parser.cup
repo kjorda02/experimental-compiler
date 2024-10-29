@@ -1,21 +1,20 @@
 package experimental_compiler;
+import java_cup.runtime.ComplexSymbolFactory.*;
 import java_cup.runtime.*;
 import java.util.HashMap;
+import sintactico.*;
+import datos.OP;
+
 
 parser code {:
-
-    private HashMap<String, Integer> table = new HashMap<>();
     
-    public void report_error(String message, Object info) {
-        System.err.println("Error: " + message);
-    }
 :}
 
 /* Terminals (tokens from lexer) */
 terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
-terminal LBRAC RBRAC;
+terminal LBRAC, RBRAC;
 terminal Integer INTLIT;
 terminal Boolean BOOLLIT;
 terminal String ID;
@@ -23,101 +22,121 @@ terminal String ID;
 /* Non-terminals */
 non terminal prog;
 non terminal stmt;
-non terminal val expr;
-non terminal Boolean comp;
-non terminal Integer num_expr;
-non terminal Boolean bool_expr;
+non terminal expr_node expr;
+non terminal expr_node literal;
+non terminal call;
+non terminal arr_access;
+non terminal var_access_node access;
+non terminal expr_node atom_expr;
+non terminal unaryOp_node unary_expr;
+non terminal binaryOp_node binary_expr;
+non terminal assign_node assign ;
 
 /* Precedences */
-precedence left EQ, NEQ;
-
 precedence left OR;
 precedence left AND;
 precedence left NOT;
 
+precedence left EQ, NEQ;
+
+precedence left LT, GT, LEQ, GEQ;
+
 precedence left PLUS, NEG;
 precedence left MULT;
 precedence left DIV;
-precedence left LT, GT, LEQ, GEQ;
 
 start with prog;
 
 /* Grammar rules */
 prog ::= stmt SEMI | stmt SEMI prog;
 
-stmt ::= ID:i ASS num_expr:e
-         {: parser.table.put(i, e); :}
-       
-       | num_expr:e
-         {: System.out.println(e); :}
-
-       | bool_expr:e
-         {: System.out.println(e); :}
+stmt ::= expr:e
+         {:
+            e.gest();
+            System.out.println(e.toString()); 
+            System.out.print("> ");
+        :}
 
        | EXIT
          {: done_parsing(); :}
        ;
 
+assign  ::= access:i ASS expr:e
+         {: RESULT = new assign_node(i,e); :}
+         ;
 
-num_expr ::= INTLIT:n
-         {: RESULT = n; :}
+literal ::= INTLIT:i
+         {: RESULT = new expr_node(i); :}
+       | BOOLLIT:b
+         {: RESULT = new expr_node(b); :}
+       ;
+call    ::= ID LPAREN RPAREN ;
+arr_access  ::= ID LBRAC expr RBRAC ;
+access      ::= ID:i
+         {: RESULT = new var_access_node(i); :}
+       ;
 
-       | num_expr:e1 PLUS num_expr:e2
-         {: RESULT = e1 + e2; :}
-
-       | num_expr:e1 NEG num_expr:e2
-         {: RESULT = e1 - e2; :}
-
-       | num_expr:e1 DIV num_expr:e2
-         {: RESULT = e1 / e2; :}
-
-       | num_expr:e1 MULT num_expr:e2
-         {: RESULT = e1 * e2; :}
-
-       | LPAREN num_expr:e RPAREN
+atom_expr  ::= literal:e
          {: RESULT = e; :}
-
-       | NEG num_expr:n
-         {: RESULT = -n; :}
+       | LPAREN expr:e RPAREN
+         {: RESULT = e; :}
+       | access:a
+         {: RESULT = new expr_node(a); :}
+       | call
+       | arr_access
        ;
 
-bool_expr ::= bool_expr:e1 EQ bool_expr:e2
-         {: RESULT = e1 == e2; :}
-
-       | bool_expr:e1 NEQ bool_expr:e2
-         {: RESULT = e1 != e2; :}
-
-       | num_expr:e1 EQ num_expr:e2
-         {: RESULT = e1 == e2; :}
-
-       | num_expr:e1 NEQ num_expr:e2
-         {: RESULT = e1 != e2; :}
-
-       | num_expr:e1 LT num_expr:e2
-         {: RESULT = (e1<e2); :}
-
-       | num_expr:e1 GT num_expr:e2
-         {: RESULT = (e1>e2); :}
-
-       | num_expr:e1 LEQ num_expr:e2
-         {: RESULT = (e1<=e2); :}
-
-       | num_expr:e1 GEQ num_expr:e2
-         {: RESULT = (e1>=e2); :}
+unary_expr ::= atom_expr:e
+         {: RESULT = new unaryOp_node(e); :}
+       | NOT atom_expr:e
+         {: RESULT = new unaryOp_node(OP.NOT, e); :}
+       | NEG atom_expr:e
+         {: RESULT = new unaryOp_node(OP.NEG, e); :}
        ;
 
-bool_expr ::= BOOLLIT:l
-         {: RESULT = l; :}
+binary_expr  ::= unary_expr:e
+        {: RESULT = new binaryOp_node(e); :}
 
-       | NOT bool_expr:e
-         {: RESULT = !e; :}
+       | unary_expr:e1 DIV binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.DIV, e1, e2); :}
+
+       | unary_expr:e1 MULT binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.TIMES, e1, e2); :}
        
-       | bool_expr:e1 AND bool_expr:e2
-         {: RESULT = e1 && e2; :}
+       | unary_expr:e1 PLUS binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.PLUS, e1, e2); :}
 
-       | bool_expr:e1 OR bool_expr:e2
-         {: RESULT = e1 || e2; :}
+       | unary_expr:e1 NEG binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.NEG, e1, e2); :}
 
-       | LPAREN bool_expr:v RPAREN
-         {: RESULT = v; :}
+       | unary_expr:e1 LT binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.LT, e1, e2); :}
+
+       | unary_expr:e1 GT binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.GT, e1, e2); :}
+
+       | unary_expr:e1 LEQ binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.LEQ, e1, e2); :}
+
+       | unary_expr:e1 GEQ binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.GEQ, e1, e2); :}
+
+       | unary_expr:e1 EQ binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.EQ, e1, e2); :}
+
+       | unary_expr:e1 NEQ binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.NEQ, e1, e2); :}
+
+       | unary_expr:e1 AND binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.AND, e1, e2); :}
+
+       | unary_expr:e1 OR binary_expr:e2
+         {: RESULT = new binaryOp_node(OP.OR, e1, e2); :}
        ;
+
+expr       ::= binary_expr:e 
+         {: RESULT = new expr_node(e); :}
+       | assign:e
+         {: RESULT = new expr_node(e); :}
+    ;
+

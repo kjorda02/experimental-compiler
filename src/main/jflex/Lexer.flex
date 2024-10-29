@@ -1,6 +1,7 @@
 package experimental_compiler;
 import java_cup.runtime.*;
 
+
 %%
 %class Lexer
 %unicode
@@ -39,6 +40,11 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 ")"           { return symbol(sym.RPAREN); }
 ";"           { return symbol(sym.SEMI); }
 
+
+"["           { return symbol(sym.LBRAC); }
+"]"           { return symbol(sym.RBRAC); }
+
+
 "!"           { return symbol(sym.NOT); }
 "&&"           { return symbol(sym.AND); }
 "||"           { return symbol(sym.OR); }
@@ -56,7 +62,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 
 
 {whitespace}   { }
-{newl}         { System.out.print("> "); }
+{newl}         { return symbol(sym.SEMI); }
 
 [^]            { throw new Error("Illegal character <" + yytext() + ">"); }
 
