@@ -1,7 +1,7 @@
 package sintactico;
 import datos.OP;
 import datos.Type;
-import datos.val;
+import datos.desc;
 import experimental_compiler.Main;
 
 /**
@@ -26,23 +26,23 @@ public class unaryOp_node extends node {
     
     public void gest() {
         child.gest();
-        val val = child.value;
+        desc val = child.value;
         
         switch(op) {
             case NOT:
                 if (val.type != Type.BOOL) 
                     Main.report_error("Operator '!' cannot be aplied to non-boolean type", this);
                 else
-                    value = new val(!((boolean) val.val), val.type);
+                    value = new desc(!((boolean) val.val), val.type);
                 break;
             case NEG:
                 if (val.type != Type.INT)
                     Main.report_error("Operator '-' cannot be aplied to non-numeric type", this);
                 else
-                    value = new val(-((int) val.val), val.type);
+                    value = new desc(-((int) val.val), val.type);
                 break;
             default:
-                value = new val(val.val, val.type);
+                value = new desc(val.val, val.type);
         }
     }
 }

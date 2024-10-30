@@ -23,6 +23,6 @@ public class assign_node extends node {
             return;
         }
         value = expr.value;
-        symbolTable.add(var.identifier, new val(expr.value.val, expr.value.type));
+        symbolTable.add(var.identifier, new desc(expr.value.val, expr.value.type));
     }
 }

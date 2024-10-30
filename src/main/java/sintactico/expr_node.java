@@ -1,5 +1,5 @@
 package sintactico;
-import datos.val;
+import datos.desc;
 import datos.Type;
 
 /**
@@ -11,12 +11,12 @@ public class expr_node extends node {
 
     // Integer literal
     public expr_node(int i) {
-        super("atomic expression", new val(i, Type.INT));
+        super("atomic expression", new desc(i, Type.INT));
     }
     
     // Boolean literal
     public expr_node(boolean b) {
-       super("atomic expression", new val(b, Type.BOOL));
+       super("atomic expression", new desc(b, Type.BOOL));
     }
     
     // Var access node, function call, array access, ( expr )

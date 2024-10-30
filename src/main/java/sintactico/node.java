@@ -1,6 +1,7 @@
 package sintactico;
 
-import datos.val;
+import datos.*;
+import datos.desc.*;
 import java_cup.runtime.ComplexSymbolFactory;
 
 /**
@@ -10,9 +11,13 @@ import java_cup.runtime.ComplexSymbolFactory;
 public class node extends ComplexSymbolFactory.ComplexSymbol {
     private static int id = 0;
     protected boolean empty;
-    public val value;
+    public desc value;
     
-    public node(String name, val val) {
+    int resultVar = -1; // Points to the position of the variable where 
+                        // the result value is stored in the variable table
+    typeDesc type;
+    
+    public node(String name, desc val) {
         super(name, id++);
         value = val;
         this.empty = false;

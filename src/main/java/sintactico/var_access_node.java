@@ -1,5 +1,5 @@
 package sintactico;
-import datos.val;
+import datos.desc;
 import datos.Type;
 import datos.symbolTable;
 

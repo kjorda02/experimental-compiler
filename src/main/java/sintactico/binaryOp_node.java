@@ -1,7 +1,7 @@
 package sintactico;
 import datos.OP;
 import datos.Type;
-import datos.val;
+import datos.desc;
 import experimental_compiler.Main;
 
 /**
@@ -33,8 +33,8 @@ public class binaryOp_node extends node {
             return;
         }
         rightChild.gest();
-        val val1 = leftChild.value;
-        val val2 = rightChild.value;
+        desc val1 = leftChild.value;
+        desc val2 = rightChild.value;
         
         switch (op) {
             case PLUS:
@@ -64,7 +64,7 @@ public class binaryOp_node extends node {
                     Main.report_error("Invalid type \""+val2.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     break;
                 }
-                value = new val(logicOp(op, (boolean) val1.val, (boolean) val2.val), Type.BOOL);
+                value = new desc(logicOp(op, (boolean) val1.val, (boolean) val2.val), Type.BOOL);
             case EQ:
             case NEQ:
                 if (val1.type != val2.type) {
@@ -77,19 +77,19 @@ public class binaryOp_node extends node {
             case NEG:
             case TIMES:
             case DIV:
-                value = new val(arithmeticOp(op, (int) val1.val, (int) val2.val), Type.INT);
+                value = new desc(arithmeticOp(op, (int) val1.val, (int) val2.val), Type.INT);
                 break;
             case LT:
             case GT:
             case LEQ:
             case GEQ:
-                value = new val(relationalOp(op, (int) val1.val, (int) val2.val), Type.BOOL);
+                value = new desc(relationalOp(op, (int) val1.val, (int) val2.val), Type.BOOL);
                 break;
             case EQ:
-                value = new val(val1.val == val2.val, Type.BOOL);
+                value = new desc(val1.val == val2.val, Type.BOOL);
                 break;
             case NEQ:
-                value = new val(val1.val != val2.val, Type.BOOL);
+                value = new desc(val1.val != val2.val, Type.BOOL);
         }
         
     }
