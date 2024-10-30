@@ -2,6 +2,7 @@ datos/codigoIntermedio$Operacion.class
 experimental_compiler/Main.class
 datos/codigoIntermedio.class
 datos/codigoIntermedio$codigo3dirs.class
+datos/symbolTable$entry.class
 sintactico/unaryOp_node.class
 datos/val.class
 datos/val$1.class
@@ -9,6 +10,7 @@ sintactico/assign_node.class
 sintactico/stmt_node.class
 sintactico/var_access_node.class
 datos/OP.class
+datos/symbolTable$restore_entry.class
 experimental_compiler/Parser.class
 sintactico/expr_node.class
 datos/symbolTable.class

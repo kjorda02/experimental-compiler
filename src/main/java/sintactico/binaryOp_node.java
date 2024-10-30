@@ -56,7 +56,6 @@ public class binaryOp_node extends node {
                 break;
             case AND:
             case OR:
-                value = new val(logicOp(op, (boolean) val1.val, (boolean) val2.val), Type.BOOL);
                 if (val1.type != Type.BOOL) {
                     Main.report_error("Invalid type \""+val1.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     break;
@@ -65,6 +64,7 @@ public class binaryOp_node extends node {
                     Main.report_error("Invalid type \""+val2.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     break;
                 }
+                value = new val(logicOp(op, (boolean) val1.val, (boolean) val2.val), Type.BOOL);
             case EQ:
             case NEQ:
                 if (val1.type != val2.type) {
