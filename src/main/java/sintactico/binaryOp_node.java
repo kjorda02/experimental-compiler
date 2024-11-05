@@ -1,7 +1,7 @@
 package sintactico;
-import datos.OP;
-import datos.Type;
-import datos.desc;
+import datos.*;
+import static datos.OP.AND;
+import static datos.OP.OR;
 import experimental_compiler.Main;
 
 /**
@@ -14,28 +14,36 @@ public class binaryOp_node extends node {
     OP op;
     
     public binaryOp_node(OP operator, unaryOp_node n1, binaryOp_node n2) {
-        super("BinaryOp", null);
+        super("BinaryOp");
         leftChild = n1;
         rightChild = n2;
         op = operator;
     }
     
     public binaryOp_node(unaryOp_node n) {
-        super("BinaryOp", null);
+        super("BinaryOp");
         leftChild = n;
         op = OP.NONE;
     }
     
     public void gest() {
         leftChild.gest();
-        if (op == OP.NONE) {
+        type = leftChild.type;
+        if (op == OP.NONE) { // binary_expr -> unary_expr
+            var = leftChild.var;
             value = leftChild.value;
             return;
         }
         rightChild.gest();
-        desc val1 = leftChild.value;
-        desc val2 = rightChild.value;
         
+        if (leftChild.dataType != null && rightChild.dataType != null) {
+            if (!leftChild.dataType.equals(rightChild.dataType)) {
+                Main.report_error("Differing types for binary operation: \""+leftChild.dataType+"\" and \""+rightChild.dataType+"\"", value);
+            }
+        }
+        
+        // Type checking
+        empty = true;
         switch (op) {
             case PLUS:
             case NEG:
@@ -45,94 +53,92 @@ public class binaryOp_node extends node {
             case GT:
             case LEQ:
             case GEQ:
-                if (val1.type != Type.INT) {
-                    Main.report_error("Invalid type \""+val1.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
+                if (leftChild.type.basicType != basicType.INT) {
+                    Main.report_error("Invalid type \""+leftChild.type.basicType.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
-                if (val2.type != Type.INT) {
-                    Main.report_error("Invalid type \""+val2.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
+                if (rightChild.type.basicType != basicType.INT) {
+                    Main.report_error("Invalid type \""+rightChild.type.basicType.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
                 break;
             case AND:
             case OR:
-                if (val1.type != Type.BOOL) {
-                    Main.report_error("Invalid type \""+val1.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
-                    break;
+                if (leftChild.type.basicType != basicType.BOOL) {
+                    Main.report_error("Invalid type \""+leftChild.type.basicType.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
+                    return;
                 }
-                if (val2.type != Type.BOOL) {
-                    Main.report_error("Invalid type \""+val2.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
-                    break;
+                if (rightChild.type.basicType != basicType.BOOL) {
+                    Main.report_error("Invalid type \""+rightChild.type.basicType.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
+                    return;
                 }
-                value = new desc(logicOp(op, (boolean) val1.val, (boolean) val2.val), Type.BOOL);
+                break;
             case EQ:
             case NEQ:
-                if (val1.type != val2.type) {
-                    Main.report_error("Cannot compare expressions of differing types \""+val1.type.toString()+"\" and \""+val2.type.toString()+"\"", value);
+                if (leftChild.type.basicType != rightChild.type.basicType) {
+                    Main.report_error("Cannot compare expressions of differing types \""+leftChild.type.basicType.toString()+"\" and \""+rightChild.type.basicType.toString()+"\"", value);
+                    return;
                 }
         }
+        empty = false;
         
+        int t = varTable.newvar(0, false);
         switch(op){
             case PLUS:
+                cod.genera(cod.op.ADD, leftChild.var, rightChild.var, t);
+                break;
             case NEG:
+                cod.genera(cod.op.SUB, leftChild.var, rightChild.var, t);
+                break;
             case TIMES:
+                cod.genera(cod.op.PROD, leftChild.var, rightChild.var, t);
+                break;
             case DIV:
-                value = new desc(arithmeticOp(op, (int) val1.val, (int) val2.val), Type.INT);
+                cod.genera(cod.op.DIV, leftChild.var, rightChild.var, t);
+                break;
+            case AND:
+                cod.genera(cod.op.AND, leftChild.var, rightChild.var, t);
+                break;
+            case OR:
+                cod.genera(cod.op.OR, leftChild.var, rightChild.var, t);
                 break;
             case LT:
+                gest_rel(cod.op.IFLT, t);
+                break;
             case GT:
+                gest_rel(cod.op.IFGT, t);
+                break;
             case LEQ:
+                gest_rel(cod.op.IFLE, t);
+                break;
             case GEQ:
-                value = new desc(relationalOp(op, (int) val1.val, (int) val2.val), Type.BOOL);
+                gest_rel(cod.op.IFGE, t);
                 break;
             case EQ:
-                value = new desc(val1.val == val2.val, Type.BOOL);
+                gest_rel(cod.op.IFEQ, t);
                 break;
             case NEQ:
-                value = new desc(val1.val != val2.val, Type.BOOL);
+                gest_rel(cod.op.IFNE, t);
+                break;
         }
+        var = t;
+    }
+    
+    private void gest_rel(cod.op op, int t) {
+        int tag1 = cod.newTag();
+        int tag2 = cod.newTag();
+        
+        cod.genera(op, leftChild.var, rightChild.var, 0); // if leftchild ⊕ rightchild goto tag1
+        cod.replaceWithTag(2, tag1);
+        
+        cod.genera(cod.op.COPYLIT, 0, 0, t); // t = 0
+        
+        cod.genera(cod.op.GOTO, 0, 0, 0); // GOTO tag2
+        cod.replaceWithTag(2, tag2);
+        
+        cod.setTag(tag1); // tag1 : skip
+        cod.genera(cod.op.COPYLIT, -1, 0, t); // t = -1
+        cod.setTag(tag2); // tag2 : skip
         
     }
-    
-    private int arithmeticOp(OP op, int a, int b) {
-        switch(op) {
-            case PLUS:
-                return a+b;
-            case NEG:
-                return a-b;
-            case TIMES:
-                return a*b;
-            case DIV:
-                return a/b;
-        }
-        (new Exception("UNEXPECTED ARITHMETIC OPERATOR")).printStackTrace();
-        return 0;
-    }
-    
-    private boolean relationalOp(OP op, int a, int b) {
-        switch(op) {
-            case LT:
-                return a<b;
-            case GT:
-                return a>b;
-            case LEQ:
-                return a<=b;
-            case GEQ:
-                return a>=b;
-        }
-        (new Exception("UNEXPECTED RELATIONAL OPERATOR")).printStackTrace();
-        return false;
-    }
-    
-    private boolean logicOp(OP op, boolean a, boolean b) {
-        switch(op) {
-            case AND:
-                return a && b;
-            case OR:
-                return a || b;
-        }
-        (new Exception("UNEXPECTED LOGICAL OPERATOR")).printStackTrace();
-        return false;
-    }
-    
 }

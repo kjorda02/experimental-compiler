@@ -13,27 +13,16 @@ public class desc { // (d)
         FUNC,
         TYPE
     }
-    
-    public enum basicType {
-        INT,
-        BOOL,
-        VOID
-    }
-    
-    public class typeDesc {
-        //String name; // Identifier/name of the type (e.g. "int", "bool")
-        basicType basicType;
-        int bytes;
-    }
+
     
     static int varIdCount = 0;
     static int funcIdCount = 0;
     
-    idType type; // (td) Identifier type (e.g. variable, constant, function name, struct field, etc)
-    String dataType; // (idt) Only used for variables, constants, struct fields, function arguments, etc
-    int tableIdx; // (nv/np) Position in the variable or function table (depending on type)
-    long val; // (v) Value for constants (if idType == CONST)
-    typeDesc typeDesc; // (dt) Used if idType == TYPE.
+    public idType type; // (td) Identifier type (e.g. variable, constant, function name, struct field, etc)
+    public String dataType; // (idt) Only used for variables, constants, struct fields, function arguments, etc
+    public int tableIdx; // (nv/np) Position in the variable or function table (depending on type)
+    public long val; // (v) Value for constants (if idType == CONST)
+    public typeDesc typeDesc; // (dt) Used if idType == TYPE.
 
     // Variable or function parameter descriptor
     public desc(idType idt, String datat) {

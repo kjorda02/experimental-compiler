@@ -1,48 +1,61 @@
 package sintactico;
-import datos.OP;
-import datos.Type;
-import datos.desc;
 import experimental_compiler.Main;
+import datos.*;
+import datos.desc.*;
+import datos.cod.*;
 
 /**
  *
  * @author kjorda
  */
 public class unaryOp_node extends node {
-    private OP op;
+    private OP oper;
     expr_node child;
     
     public unaryOp_node(expr_node expr) {
-        super("unary operator", null);
-        op = OP.NONE;
+        super("unary operator");
+        oper = OP.NONE;
         child = expr;
     }
     
     public unaryOp_node(OP operator, expr_node expr) {
-        super("unary operator", null);
+        super("unary operator");
         child = expr;
-        op = operator;
+        oper = operator;
     }
     
     public void gest() {
         child.gest();
-        desc val = child.value;
+        type = child.type;
+        dataType = child.dataType;
         
-        switch(op) {
+        if (oper == oper.NONE) {
+            var = child.var;
+            return;
+        }
+        
+        // We cannot store the result of the operation in the same variable, since that variable
+        int t = varTable.newvar(0, false); // Could correspond to an actual variable
+        empty = true;
+        switch(oper) {
             case NOT:
-                if (val.type != Type.BOOL) 
+                if (child.type.basicType != basicType.BOOL) {
                     Main.report_error("Operator '!' cannot be aplied to non-boolean type", this);
-                else
-                    value = new desc(!((boolean) val.val), val.type);
+                    return;
+                }
+                    
+                cod.genera(op.NOT, child.var, 0, t);
                 break;
             case NEG:
-                if (val.type != Type.INT)
+                if (child.type.basicType != basicType.INT) {
                     Main.report_error("Operator '-' cannot be aplied to non-numeric type", this);
-                else
-                    value = new desc(-((int) val.val), val.type);
+                    return;
+                }
+                
+                cod.genera(op.NEG, child.var, 0, t);
                 break;
-            default:
-                value = new desc(val.val, val.type);
         }
+        empty = false;
+        var = t;
     }
 }

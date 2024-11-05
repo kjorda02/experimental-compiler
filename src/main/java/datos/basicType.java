@@ -4,7 +4,8 @@ package datos;
  *
  * @author kjorda
  */
-public enum Type {
+public enum basicType {
         INT,
-        BOOL
+        BOOL,
+        VOID
 }

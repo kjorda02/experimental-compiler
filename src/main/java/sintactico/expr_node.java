@@ -1,42 +1,33 @@
 package sintactico;
-import datos.desc;
-import datos.Type;
+
+import datos.*;
+import datos.cod.*;
+import datos.desc.*;
 
 /**
  *
  * @author kjorda
  */
-public class expr_node extends node {
+public class expr_node extends node { // Array indices and literals are only allowed here!
     private node n;
-
-    // Integer literal
-    public expr_node(int i) {
-        super("atomic expression", new desc(i, Type.INT));
-    }
     
-    // Boolean literal
-    public expr_node(boolean b) {
-       super("atomic expression", new desc(b, Type.BOOL));
-    }
-    
-    // Var access node, function call, array access, ( expr )
     public expr_node(node node) {
-       super("atomic expression", null);
+       super("atomic expression");
        n = node;
     }
     
-    public void gest() {
-        if (n != null) {
-            n.gest();
-            value = n.value;
-        }
-    }
+    // Function call?
     
-    @Override
-    public String toString() {
-        if (value == null)
-            return "NULL";
-        else
-            return value.toString();
+    public void gest() {
+        n.gest(); // E -> R
+        if (n.displ == null) {
+            var = n.var;
+        } else {
+            int t = varTable.newvar(0, false);
+            cod.genera(cod.op.IDX_VAL, n.var, n.displ, t);
+            var = t;
+        }
+        type = n.type;
+        dataType = n.dataType;
     }
 }

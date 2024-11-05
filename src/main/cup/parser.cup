@@ -21,9 +21,9 @@ terminal String ID;
 
 /* Non-terminals */
 non terminal prog;
-non terminal stmt;
+non terminal stmt_node stmt;
 non terminal expr_node expr;
-non terminal expr_node literal;
+non terminal literal_expr_node literal;
 non terminal call;
 non terminal arr_access;
 non terminal var_access_node access;
@@ -48,13 +48,15 @@ precedence left DIV;
 start with prog;
 
 /* Grammar rules */
-prog ::= stmt SEMI | stmt SEMI prog;
+prog ::= stmt:s SEMI
+         {: s.gest(); :}
+       | stmt:s SEMI prog
+         {: s.gest(); :}
+       ;
 
 stmt ::= expr:e
          {:
-            e.gest();
-            System.out.println(e.toString()); 
-            System.out.print("> ");
+            RESULT = new stmt_node(e);
         :}
 
        | EXIT
@@ -66,9 +68,9 @@ assign  ::= access:i ASS expr:e
          ;
 
 literal ::= INTLIT:i
-         {: RESULT = new expr_node(i); :}
+         {: RESULT = new literal_expr_node(i); :}
        | BOOLLIT:b
-         {: RESULT = new expr_node(b); :}
+         {: RESULT = new literal_expr_node(b); :}
        ;
 call    ::= ID LPAREN RPAREN ;
 arr_access  ::= ID LBRAC expr RBRAC ;
@@ -77,7 +79,7 @@ access      ::= ID:i
        ;
 
 atom_expr  ::= literal:e
-         {: RESULT = e; :}
+         {: RESULT = new expr_node(e); :}
        | LPAREN expr:e RPAREN
          {: RESULT = e; :}
        | access:a
