@@ -38,9 +38,10 @@ public class unaryOp_node extends expr_node {
         // We cannot store the result of the operation in the same variable, since that variable
         int t = varTable.newvar(0, false); // Could correspond to an actual variable
         empty = true;
+        basicType btype = ((complexType.primitive) type).btype;
         switch(oper) {
             case NOT:
-                if (child.type != basicType.BOOL) {
+                if (btype != basicType.BOOL) {
                     Main.report_error("Operator '!' cannot be aplied to non-boolean type", this);
                     return;
                 }
@@ -48,7 +49,7 @@ public class unaryOp_node extends expr_node {
                 cod.genera(op.NOT, child.varNum, 0, t);
                 break;
             case NEG:
-                if (child.type != basicType.INT) {
+                if (btype != basicType.INT) {
                     Main.report_error("Operator '-' cannot be aplied to non-numeric type", this);
                     return;
                 }

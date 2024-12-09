@@ -21,8 +21,8 @@ public abstract class desc { // (d)
     }
     
     public class constant extends desc {
-        long value; // (v)
-        basicType type;
+        public long value; // (v)
+        public basicType type;
         
         public constant(basicType b, long v) {
             type = b;

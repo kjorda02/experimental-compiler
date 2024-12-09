@@ -23,23 +23,11 @@ public class assign_node extends node {
         ref.gest();
         expr.gest();
         
-        empty = true;
-        
-        
-        if (( (complexType.primitive) ref.type).btype != expr.type) {
+        if (ref.type.equals(expr.type)) {
             Main.report_error("Cannot convert type \""+expr.type.toString()+"\" to \""+ref.type.toString()+"\" in assignation.", this);
+            empty = true;
             return;
         }
-        
-        // What happens with assignation of complex types (no operators)?
-        // Will take care of later
-//        if (expr.dataType != null) {
-//            if (!ref.dataType.equals(expr.dataType)) {
-//                Main.report_error("Cannot convert type \""+expr.dataType+"\" to \""+ref.dataType+"\" in assignation.", this);
-//                return;
-//            }
-//        }
-//        empty = false;
         
         cod.genera(cod.op.COPY, expr.varNum, 0, ref.varNum);
     }

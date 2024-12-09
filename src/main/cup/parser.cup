@@ -87,7 +87,7 @@ atom_expr  ::= literal:e
         | LPAREN expr:e RPAREN
             {: RESULT = e; :}
         | ref:r
-            {: RESULT = new expr_node(r.varNum); :}
+            {: RESULT = new expr_node(r); :}
        ;
 
 unary_expr ::= atom_expr:e

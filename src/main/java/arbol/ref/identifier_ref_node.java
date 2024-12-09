@@ -10,11 +10,13 @@ import experimental_compiler.Main;
  * @author kjorda
  */
 public class identifier_ref_node extends ref_node {
+    public Long value; // For constants, we'll just pretend it doesn't exist until we reduce to EXPR
     String identifier;
     
     public identifier_ref_node(String id) {
-        super("variable");
+        super("variable/constant");
         identifier = id;
+        value = null;
     }
     
     public void gest() {
@@ -23,6 +25,11 @@ public class identifier_ref_node extends ref_node {
             desc.variable vard = ((desc.variable) d);
             varNum = vard.varNum;
             type = vard.type;
+        }
+        else if (d instanceof desc.constant) {
+            desc.constant constd = ((desc.constant) d);
+            value = constd.value;
+            type = new complexType.primitive(null, constd.type);
         }
         else {
             Main.report_error("\""+identifier+"\" is not a variable or constant.", this);

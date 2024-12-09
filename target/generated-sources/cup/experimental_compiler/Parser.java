@@ -408,7 +408,7 @@ class CUP$Parser$actions {
 		int rleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int rright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		ref_node r = (ref_node)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new expr_node(r.varNum); 
+		 RESULT = new expr_node(r); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("atom_expr",4, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;

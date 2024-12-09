@@ -37,14 +37,18 @@ public class binaryOp_node extends expr_node {
         }
         rightChild.gest();
         
-        // Not allowing operations with complex types, or operator overloading for now...
-//        if (leftChild.dataType != null && rightChild.dataType != null) {
-//            if (!leftChild.dataType.equals(rightChild.dataType)) {
-//                Main.report_error("Differing types for binary operation: \""+leftChild.dataType+"\" and \""+rightChild.dataType+"\"", value);
-//            }
-//        }
+        // Not allowing operator overloading for now
+        if (!(leftChild.type instanceof complexType.primitive)) {
+            Main.report_error("Cannot perform binary operation \""+op.toString()+"\" with left operand of non-primitive type \""+leftChild.type.toString()+"\"", this);
+            return;
+        }
+        if (!(rightChild.type instanceof complexType.primitive)) {
+            Main.report_error("Cannot perform binary operation \""+op.toString()+"\" with right operand of non-primitive type \""+rightChild.type.toString()+"\"", this);
+            return;
+        }
         
-        // Type checking
+        basicType leftType = ((complexType.primitive) leftChild.type).btype;
+        basicType rightType = ((complexType.primitive) rightChild.type).btype;
         empty = true;
         switch (op) {
             case PLUS:
@@ -55,29 +59,29 @@ public class binaryOp_node extends expr_node {
             case GT:
             case LEQ:
             case GEQ:
-                if (leftChild.type != basicType.INT) {
+                if (leftType != basicType.INT) {
                     Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
-                if (rightChild.type != basicType.INT) {
+                if (rightType != basicType.INT) {
                     Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
                 break;
             case AND:
             case OR:
-                if (leftChild.type != basicType.BOOL) {
+                if (leftType != basicType.BOOL) {
                     Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
-                if (rightChild.type != basicType.BOOL) {
+                if (rightType != basicType.BOOL) {
                     Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
                 break;
             case EQ:
             case NEQ:
-                if (leftChild.type != rightChild.type) {
+                if (leftType != rightType) {
                     Main.report_error("Cannot compare expressions of differing types \""+leftChild.type.toString()+"\" and \""+rightChild.type.toString()+"\"", value);
                     return;
                 }

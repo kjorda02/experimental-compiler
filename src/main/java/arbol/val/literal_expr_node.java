@@ -16,13 +16,13 @@ public class literal_expr_node extends expr_node {
     public literal_expr_node(long l) {
         super("numeric literal");
         literalval = l;
-        type = basicType.INT;
+        type = new complexType.primitive(null, basicType.INT);
     }
     
     // Boolean literal
     public literal_expr_node(boolean b) {
        super("boolean literal");
-       type = basicType.BOOL;
+       type = new complexType.primitive(null, basicType.BOOL);
        if (b)
            literalval = -1;
        else

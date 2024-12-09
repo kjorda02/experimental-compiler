@@ -16,21 +16,39 @@ public abstract class complexType {
         return "o_O";
     }
     
-    public class primitive extends complexType {
+    public static class primitive extends complexType {
         public basicType btype;
         
-        public primitive(basicType b) {
+        public primitive(String n, basicType b) {
+            name = n;
             btype = b;
             bytes = btype.bytes;
         }
+        
+        @Override
+        public boolean equals(Object o) {
+            primitive other = (primitive) o;
+            if (name != null && other.name != null && !name.equals(other.name))
+                return false;
+            return btype == other.btype;
+        }
     }
     
-    public class pointer extends complexType {
+    public static class pointer extends complexType {
         public complexType baseType;
         
-        public pointer(complexType c) {
+        public pointer(String n, complexType c) {
+            name = n;
             baseType = c;
             bytes = 8; // TODO: Change based on system size
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            pointer other = (pointer) o;
+            if (name != null && other.name != null && !name.equals(other.name))
+                return false;
+            return baseType.equals(other.baseType);
         }
     }
     
@@ -38,27 +56,29 @@ public abstract class complexType {
         public complexType baseType;
         public int size;
         
-        public array(complexType c, int s) {
+        public array(String n, complexType c, int s) {
+            name = n;
             baseType = c;
             size = s;
             bytes = size*baseType.bytes; // TODO: Maybe keep array size in memory for runtime checks?
         }
+        
+        @Override
+        public boolean equals(Object o) {
+            array other = (array) o;
+            if (name != null && other.name != null && !name.equals(other.name))
+                return false;
+            
+            return size == other.size && baseType.equals(other.baseType);
+        }
     }
     
     public class struct extends complexType {
-        class field { // (dc) field descriptor
-            public int offset;
-            public complexType type;
-            
-            public field(int o, complexType c){
-                offset = 0;
-                type = c;
-            }
-        }
         HashMap<String, field> fields;
         int size; // Number of fields
         
-        public struct() {
+        public struct(String n) {
+            name = n;
             fields = new HashMap<>();
             size = 0;
         }
@@ -67,6 +87,31 @@ public abstract class complexType {
             fields.put(name, new field(bytes, c));
             bytes += c.bytes;
             size++;
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            struct other = (struct) o;
+            if (name != null && other.name != null && !name.equals(other.name))
+                return false;
+            
+            return fields.equals(other.fields);
+        }
+        
+        class field { // (dc) field descriptor
+            public int offset;
+            public complexType type;
+            
+            public field(int o, complexType c){
+                offset = 0;
+                type = c;
+            }
+            
+            @Override
+            public boolean equals(Object o) {
+                field other = (field) o;
+                return offset == other.offset && type.equals(other.type);
+            }
         }
     }
     
@@ -81,6 +126,12 @@ public abstract class complexType {
         
         public void addParam(complexType c) {
             paramTypes.add(c);
+        }
+        
+        @Override
+        public boolean equals(Object o) {
+            funcsig other = (funcsig) o;
+            return returnType.equals(other.returnType) && paramTypes.equals(other.paramTypes);
         }
     }
 }
