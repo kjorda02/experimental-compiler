@@ -8,7 +8,9 @@ package experimental_compiler;
 import java_cup.runtime.ComplexSymbolFactory.*;
 import java_cup.runtime.*;
 import java.util.HashMap;
-import sintactico.*;
+import arbol.*;
+import arbol.ref.*;
+import arbol.val.*;
 import datos.OP;
 import java_cup.runtime.XMLElement;
 
@@ -312,7 +314,7 @@ class CUP$Parser$actions {
               assign_node RESULT =null;
 		int ileft = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).left;
 		int iright = ((java_cup.runtime.Symbol)CUP$Parser$stack.elementAt(CUP$Parser$top-2)).right;
-		var_access_node i = (var_access_node)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
+		ref_node i = (ref_node)((java_cup.runtime.Symbol) CUP$Parser$stack.elementAt(CUP$Parser$top-2)).value;
 		int eleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int eright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		expr_node e = (expr_node)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
@@ -366,11 +368,11 @@ class CUP$Parser$actions {
           /*. . . . . . . . . . . . . . . . . . . .*/
           case 10: // access ::= ID 
             {
-              var_access_node RESULT =null;
+              ref_node RESULT =null;
 		int ileft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int iright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
 		String i = (String)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
-		 RESULT = new var_access_node(i); 
+		 RESULT = new ref_node(i); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("access",6, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }
           return CUP$Parser$result;
@@ -405,7 +407,7 @@ class CUP$Parser$actions {
               expr_node RESULT =null;
 		int aleft = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).left;
 		int aright = ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()).right;
-		var_access_node a = (var_access_node)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
+		ref_node a = (ref_node)((java_cup.runtime.Symbol) CUP$Parser$stack.peek()).value;
 		 RESULT = new expr_node(a); 
               CUP$Parser$result = parser.getSymbolFactory().newSymbol("atom_expr",7, ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), ((java_cup.runtime.Symbol)CUP$Parser$stack.peek()), RESULT);
             }

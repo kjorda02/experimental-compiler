@@ -1,4 +1,4 @@
-package sintactico;
+package arbol;
 
 /**
  *

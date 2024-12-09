@@ -1,8 +1,9 @@
-package sintactico;
+package arbol.val;
 import datos.*;
 import static datos.OP.AND;
 import static datos.OP.OR;
 import experimental_compiler.Main;
+import arbol.node;
 
 /**
  *

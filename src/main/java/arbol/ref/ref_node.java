@@ -1,16 +1,18 @@
-package sintactico;
+package arbol.ref;
 import datos.*;
 import datos.desc.*;
 import datos.cod.*;
+import arbol.node;
 
 /**
  *
  * @author kjorda
  */
-public class var_access_node extends node {
+public class ref_node extends node {
     String identifier;
+    public String dataType = null;
     
-    public var_access_node(String id) {
+    public ref_node(String id) {
         super("variable");
         identifier = id;
     }

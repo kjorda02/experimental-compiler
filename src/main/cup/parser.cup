@@ -2,7 +2,9 @@ package experimental_compiler;
 import java_cup.runtime.ComplexSymbolFactory.*;
 import java_cup.runtime.*;
 import java.util.HashMap;
-import sintactico.*;
+import arbol.*;
+import arbol.ref.*;
+import arbol.val.*;
 import datos.OP;
 
 
@@ -26,7 +28,7 @@ non terminal expr_node expr;
 non terminal literal_expr_node literal;
 non terminal call;
 non terminal arr_access;
-non terminal var_access_node access;
+non terminal ref_node access;
 non terminal expr_node atom_expr;
 non terminal unaryOp_node unary_expr;
 non terminal binaryOp_node binary_expr;
@@ -75,8 +77,10 @@ literal ::= INTLIT:i
 call    ::= ID LPAREN RPAREN ;
 arr_access  ::= ID LBRAC expr RBRAC ;
 access      ::= ID:i
-         {: RESULT = new var_access_node(i); :}
+         {: RESULT = new ref_node(i); :}
        ;
+
+
 
 atom_expr  ::= literal:e
          {: RESULT = new expr_node(e); :}

@@ -1,4 +1,4 @@
-package sintactico;
+package arbol;
 
 import datos.*;
 import datos.desc.*;
@@ -12,10 +12,8 @@ public class node extends ComplexSymbolFactory.ComplexSymbol {
     private static int id = 0;
     protected boolean empty;
     
-    public Integer var = null;    // Used for expressions. points to the position of the variable where 
-    public Integer displ = null;  // the result value is stored in the variable table
-    public typeDesc type; // Also used for expressions
-    public String dataType = null;
+    public Integer varNum = null;    // (nv) Points to a variable in the variable table
+    
     
     public node(String name) {
         super(name, id++);

@@ -1,8 +1,9 @@
-package sintactico;
+package arbol.val;
 
 import datos.*;
 import datos.cod.*;
 import datos.desc.*;
+import arbol.node;
 
 /**
  *
@@ -10,6 +11,8 @@ import datos.desc.*;
  */
 public class expr_node extends node { // Array indices and literals are only allowed here!
     private node n;
+    public typeDesc type; // Also used for expressions
+    public String dataType = null;
     
     public expr_node(node node) {
        super("atomic expression");

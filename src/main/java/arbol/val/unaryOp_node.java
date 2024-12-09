@@ -1,8 +1,10 @@
-package sintactico;
+package arbol.val;
+import arbol.val.expr_node;
 import experimental_compiler.Main;
 import datos.*;
 import datos.desc.*;
 import datos.cod.*;
+import arbol.node;
 
 /**
  *

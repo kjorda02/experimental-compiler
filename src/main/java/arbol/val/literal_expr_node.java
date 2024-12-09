@@ -1,8 +1,9 @@
-package sintactico;
+package arbol.val;
 
 import datos.*;
 import datos.cod.*;
 import datos.desc.*;
+import arbol.node;
 
 /**
  *
