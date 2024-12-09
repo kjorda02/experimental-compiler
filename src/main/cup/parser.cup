@@ -17,6 +17,7 @@ terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
 terminal LBRAC, RBRAC;
+terminal COMMA, DOT;
 terminal Integer INTLIT;
 terminal Boolean BOOLLIT;
 terminal String ID;
@@ -24,15 +25,16 @@ terminal String ID;
 /* Non-terminals */
 non terminal prog;
 non terminal stmt_node stmt;
-non terminal expr_node expr;
+non terminal assign_node assign;
+
 non terminal literal_expr_node literal;
-non terminal call;
-non terminal arr_access;
-non terminal ref_node access;
 non terminal expr_node atom_expr;
 non terminal unaryOp_node unary_expr;
 non terminal binaryOp_node binary_expr;
-non terminal assign_node assign ;
+non terminal expr_node expr;
+
+non terminal ref_node ref;
+
 
 /* Precedences */
 precedence left OR;
@@ -51,98 +53,94 @@ start with prog;
 
 /* Grammar rules */
 prog ::= stmt:s SEMI
-         {: s.gest(); :}
-       | stmt:s SEMI prog
-         {: s.gest(); :}
-       ;
+            {: s.gest(); :}
+        | stmt:s SEMI prog
+            {: s.gest(); :}
+        ;
 
 stmt ::= expr:e
-         {:
-            RESULT = new stmt_node(e);
-        :}
+            {: RESULT = new stmt_node(e); :}
+        | EXIT
+            {: done_parsing(); :}
+        ;
 
-       | EXIT
-         {: done_parsing(); :}
-       ;
+assign  ::= ref:r ASS expr:e
+            {: RESULT = new assign_node(r, e); :}
+        ;
 
-assign  ::= access:i ASS expr:e
-         {: RESULT = new assign_node(i,e); :}
-         ;
+ref ::= ID:i
+            {: RESULT = new identifier_ref_node(i); :}
+        | ref:r LBRAC expr:e RBRAC
+            {: RESULT = new displ_node(r, e); :}
+        | ref:r DOT ID:i
+            {: RESULT = new field_node(r, i); :}
+        ;
 
 literal ::= INTLIT:i
-         {: RESULT = new literal_expr_node(i); :}
-       | BOOLLIT:b
-         {: RESULT = new literal_expr_node(b); :}
-       ;
-call    ::= ID LPAREN RPAREN ;
-arr_access  ::= ID LBRAC expr RBRAC ;
-access      ::= ID:i
-         {: RESULT = new ref_node(i); :}
-       ;
-
-
+            {: RESULT = new literal_expr_node(i); :}
+        | BOOLLIT:b
+            {: RESULT = new literal_expr_node(b); :}
+        ;
 
 atom_expr  ::= literal:e
-         {: RESULT = new expr_node(e); :}
-       | LPAREN expr:e RPAREN
-         {: RESULT = e; :}
-       | access:a
-         {: RESULT = new expr_node(a); :}
-       | call
-       | arr_access
+            {: RESULT = new expr_node(e); :}
+        | LPAREN expr:e RPAREN
+            {: RESULT = e; :}
+        | ref:r
+            {: RESULT = new expr_node(r.varNum); :}
        ;
 
 unary_expr ::= atom_expr:e
-         {: RESULT = new unaryOp_node(e); :}
-       | NOT atom_expr:e
-         {: RESULT = new unaryOp_node(OP.NOT, e); :}
-       | NEG atom_expr:e
-         {: RESULT = new unaryOp_node(OP.NEG, e); :}
-       ;
+            {: RESULT = new unaryOp_node(e); :}
+        | NOT atom_expr:e
+            {: RESULT = new unaryOp_node(OP.NOT, e); :}
+        | NEG atom_expr:e
+            {: RESULT = new unaryOp_node(OP.NEG, e); :}
+        ;
 
 binary_expr  ::= unary_expr:e
-        {: RESULT = new binaryOp_node(e); :}
+            {: RESULT = new binaryOp_node(e); :}
 
-       | unary_expr:e1 DIV binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.DIV, e1, e2); :}
+        | unary_expr:e1 DIV binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.DIV, e1, e2); :}
 
-       | unary_expr:e1 MULT binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.TIMES, e1, e2); :}
+        | unary_expr:e1 MULT binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.TIMES, e1, e2); :}
        
-       | unary_expr:e1 PLUS binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.PLUS, e1, e2); :}
+        | unary_expr:e1 PLUS binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.PLUS, e1, e2); :}
 
-       | unary_expr:e1 NEG binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.NEG, e1, e2); :}
+        | unary_expr:e1 NEG binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.NEG, e1, e2); :}
 
-       | unary_expr:e1 LT binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.LT, e1, e2); :}
+        | unary_expr:e1 LT binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.LT, e1, e2); :}
 
-       | unary_expr:e1 GT binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.GT, e1, e2); :}
+        | unary_expr:e1 GT binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.GT, e1, e2); :}
 
-       | unary_expr:e1 LEQ binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.LEQ, e1, e2); :}
+        | unary_expr:e1 LEQ binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.LEQ, e1, e2); :}
 
-       | unary_expr:e1 GEQ binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.GEQ, e1, e2); :}
+        | unary_expr:e1 GEQ binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.GEQ, e1, e2); :}
 
-       | unary_expr:e1 EQ binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.EQ, e1, e2); :}
+        | unary_expr:e1 EQ binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.EQ, e1, e2); :}
 
-       | unary_expr:e1 NEQ binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.NEQ, e1, e2); :}
+        | unary_expr:e1 NEQ binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.NEQ, e1, e2); :}
 
-       | unary_expr:e1 AND binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.AND, e1, e2); :}
+        | unary_expr:e1 AND binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.AND, e1, e2); :}
 
-       | unary_expr:e1 OR binary_expr:e2
-         {: RESULT = new binaryOp_node(OP.OR, e1, e2); :}
-       ;
+        | unary_expr:e1 OR binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.OR, e1, e2); :}
+        ;
 
 expr       ::= binary_expr:e 
-         {: RESULT = new expr_node(e); :}
-       | assign:e
-         {: RESULT = new expr_node(e); :}
-    ;
+            {: RESULT = new expr_node(e); :}
+        | assign:e
+            {: RESULT = new expr_node(e); :}
+        ;
 

@@ -56,6 +56,9 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "=="           { return symbol(sym.EQ); }
 "!="           { return symbol(sym.NEQ); }
 
+","           { return symbol(sym.COMMA); }
+"."           { return symbol(sym.DOT); }
+
 {NUMBER}       { return symbol(sym.INTLIT, Integer.parseInt(yytext())); }
 "true"|"false" { return symbol(sym.BOOLLIT, Boolean.parseBoolean(yytext())); }
 {ID}           { return symbol(sym.ID, yytext()); }

@@ -6,54 +6,49 @@ package datos;
  */
 
 // Stores information associated with an identifier
-public class desc { // (d)
-    public enum idType { // Identifier type
-        VAR,
-        CONST,
-        FUNC,
-        TYPE
-    }
-
+public abstract class desc { // (d)
+    // (td): Identifier type: JUST USE INSTANCEOF
+    // (idt): DataType name: Not used since we keep a pointer to the actual type.
     
-    static int varIdCount = 0;
-    static int funcIdCount = 0;
-    
-    public idType type; // (td) Identifier type (e.g. variable, constant, function name, struct field, etc)
-    public String dataType; // (idt) Only used for variables, constants, struct fields, function arguments, etc
-    public int tableIdx; // (nv/np) Position in the variable or function table (depending on type)
-    public long val; // (v) Value for constants (if idType == CONST)
-    public typeDesc typeDesc; // (dt) Used if idType == TYPE.
-
-    // Variable or function parameter descriptor
-    public desc(idType idt, String datat) {
-        tableIdx = varTable.newvar(0, false);
-        type = idt;
-        dataType = datat;
+    public class variable extends desc {
+        public int varNum; // (nv) Position in the variable table
+        public complexType type;
+        
+        public variable(complexType c) {
+            type = c;
+            varNum = varTable.newvar(0, false);
+        }
     }
     
-    // Function descriptor
-    public desc() {
-        tableIdx = 0; // funcTable.newfunc(...);
-        type = type.FUNC;
+    public class constant extends desc {
+        long value; // (v)
+        basicType type;
+        
+        public constant(basicType b, long v) {
+            type = b;
+            value = v;
+        }
     }
     
-    // Type descriptor
-    public desc(typeDesc t) {
-        type = type.TYPE;
-        typeDesc = t;
+    public class type extends desc {
+        public complexType type; // (dt) Type descriptor
+        
+        public type(complexType c) {
+            type = c;
+        }
     }
     
-    // Constant descriptor
-    public desc(long v, String datat) {
-        type = type.CONST;
-        val = v;
-        dataType = datat;
+    public class function extends desc {
+        public int funcNum; // (np) Position in the function table
+        public int stackSize; // Stack size in bytes
+        public complexType.funcsig signature;
+        
+        public function(complexType.funcsig s) {
+            funcNum = 0; // funcTable.newfunc(...);
+            signature = s;
+            // stackSize = ...
+        }
     }
-    
-    // (dc) field descriptor
-    // (idr) record name
-    
-    // (dta) 
     
     @Override
     public String toString() {

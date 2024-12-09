@@ -9,20 +9,20 @@ import arbol.node;
  *
  * @author kjorda
  */
-public class literal_expr_node extends node {
+public class literal_expr_node extends expr_node {
     long literalval;
     
     // Integer literal
     public literal_expr_node(long l) {
         super("numeric literal");
         literalval = l;
-        type = new typeDesc(basicType.INT, 8);
+        type = basicType.INT;
     }
     
     // Boolean literal
     public literal_expr_node(boolean b) {
        super("boolean literal");
-       type = new typeDesc(basicType.BOOL, 1);
+       type = basicType.BOOL;
        if (b)
            literalval = -1;
        else
@@ -32,6 +32,6 @@ public class literal_expr_node extends node {
     public void gest() {
         int t = varTable.newvar(0, false);
         cod.genera(cod.op.COPYLIT, literalval, 0, t);
-        var = t;
+        varNum = t;
     }
 }

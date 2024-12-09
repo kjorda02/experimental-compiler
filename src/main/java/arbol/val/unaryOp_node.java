@@ -10,7 +10,7 @@ import arbol.node;
  *
  * @author kjorda
  */
-public class unaryOp_node extends node {
+public class unaryOp_node extends expr_node {
     private OP oper;
     expr_node child;
     
@@ -29,10 +29,9 @@ public class unaryOp_node extends node {
     public void gest() {
         child.gest();
         type = child.type;
-        dataType = child.dataType;
         
         if (oper == oper.NONE) {
-            var = child.var;
+            varNum = child.varNum;
             return;
         }
         
@@ -41,23 +40,23 @@ public class unaryOp_node extends node {
         empty = true;
         switch(oper) {
             case NOT:
-                if (child.type.basicType != basicType.BOOL) {
+                if (child.type != basicType.BOOL) {
                     Main.report_error("Operator '!' cannot be aplied to non-boolean type", this);
                     return;
                 }
                     
-                cod.genera(op.NOT, child.var, 0, t);
+                cod.genera(op.NOT, child.varNum, 0, t);
                 break;
             case NEG:
-                if (child.type.basicType != basicType.INT) {
+                if (child.type != basicType.INT) {
                     Main.report_error("Operator '-' cannot be aplied to non-numeric type", this);
                     return;
                 }
                 
-                cod.genera(op.NEG, child.var, 0, t);
+                cod.genera(op.NEG, child.varNum, 0, t);
                 break;
         }
         empty = false;
-        var = t;
+        varNum = t;
     }
 }

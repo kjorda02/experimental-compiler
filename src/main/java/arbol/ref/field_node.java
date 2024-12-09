@@ -1,10 +1,29 @@
 package arbol.ref;
 
+import datos.complexType;
+import experimental_compiler.Main;
+
 /**
  *
  * @author kjorda
  */
 // STRUCT FIELD ACCESS NODE
-public class field_node {
+public class field_node extends ref_node {
+    ref_node base;
+    String fieldName;
     
+    public field_node(ref_node s, String name) {
+        super("Struct field access");
+        base = s;
+        fieldName = name;
+    }
+    
+    public void gest() {
+        if (base.type instanceof complexType.struct) {
+            // Figure out var number based on the base's varNum and the displacement of the field in the type
+        }
+        else {
+            Main.report_error("Cannot access field \""+fieldName+"\": not a struct.", this);
+        }
+    }
 }

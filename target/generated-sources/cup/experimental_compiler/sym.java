@@ -20,19 +20,21 @@ public interface sym {
   public static final int NOT = 13;
   public static final int LPAREN = 6;
   public static final int GT = 15;
-  public static final int ID = 24;
+  public static final int ID = 26;
   public static final int ASS = 9;
   public static final int RBRAC = 21;
-  public static final int INTLIT = 22;
+  public static final int INTLIT = 24;
+  public static final int COMMA = 22;
   public static final int EOF = 0;
   public static final int MULT = 4;
   public static final int DIV = 5;
+  public static final int DOT = 23;
   public static final int error = 1;
   public static final int EQ = 18;
   public static final int LBRAC = 20;
   public static final int LEQ = 16;
   public static final int NEQ = 19;
-  public static final int BOOLLIT = 23;
+  public static final int BOOLLIT = 25;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
@@ -56,6 +58,8 @@ public interface sym {
   "NEQ",
   "LBRAC",
   "RBRAC",
+  "COMMA",
+  "DOT",
   "INTLIT",
   "BOOLLIT",
   "ID"

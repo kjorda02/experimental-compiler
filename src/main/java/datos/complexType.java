@@ -10,9 +10,13 @@ import java.util.HashMap;
 public abstract class complexType {
     public String name; // Null if anonymous type
     public int bytes; // Size in memory in bytes
-    public enum kind {PRIMITIVE, POINTER, ARRAY, STRUCT, FUNCSIG};
     
-    class primitive extends complexType {
+    @Override
+    public String toString() {
+        return "o_O";
+    }
+    
+    public class primitive extends complexType {
         public basicType btype;
         
         public primitive(basicType b) {
@@ -21,7 +25,7 @@ public abstract class complexType {
         }
     }
     
-    class pointer extends complexType {
+    public class pointer extends complexType {
         public complexType baseType;
         
         public pointer(complexType c) {
@@ -30,7 +34,7 @@ public abstract class complexType {
         }
     }
     
-    class array extends complexType {
+    public class array extends complexType {
         public complexType baseType;
         public int size;
         
@@ -41,8 +45,8 @@ public abstract class complexType {
         }
     }
     
-    class struct extends complexType {
-        class field {
+    public class struct extends complexType {
+        class field { // (dc) field descriptor
             public int offset;
             public complexType type;
             
@@ -66,7 +70,7 @@ public abstract class complexType {
         }
     }
     
-    class funcsig extends complexType {
+    public class funcsig extends complexType {
         public complexType returnType;
         public ArrayList<complexType> paramTypes;
         

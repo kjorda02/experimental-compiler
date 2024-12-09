@@ -9,7 +9,7 @@ import arbol.node;
  *
  * @author kjorda
  */
-public class binaryOp_node extends node {
+public class binaryOp_node extends expr_node {
     unaryOp_node leftChild;
     binaryOp_node rightChild;
     OP op;
@@ -31,17 +31,18 @@ public class binaryOp_node extends node {
         leftChild.gest();
         type = leftChild.type;
         if (op == OP.NONE) { // binary_expr -> unary_expr
-            var = leftChild.var;
+            varNum = leftChild.varNum;
             value = leftChild.value;
             return;
         }
         rightChild.gest();
         
-        if (leftChild.dataType != null && rightChild.dataType != null) {
-            if (!leftChild.dataType.equals(rightChild.dataType)) {
-                Main.report_error("Differing types for binary operation: \""+leftChild.dataType+"\" and \""+rightChild.dataType+"\"", value);
-            }
-        }
+        // Not allowing operations with complex types, or operator overloading for now...
+//        if (leftChild.dataType != null && rightChild.dataType != null) {
+//            if (!leftChild.dataType.equals(rightChild.dataType)) {
+//                Main.report_error("Differing types for binary operation: \""+leftChild.dataType+"\" and \""+rightChild.dataType+"\"", value);
+//            }
+//        }
         
         // Type checking
         empty = true;
@@ -54,30 +55,30 @@ public class binaryOp_node extends node {
             case GT:
             case LEQ:
             case GEQ:
-                if (leftChild.type.basicType != basicType.INT) {
-                    Main.report_error("Invalid type \""+leftChild.type.basicType.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
+                if (leftChild.type != basicType.INT) {
+                    Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
-                if (rightChild.type.basicType != basicType.INT) {
-                    Main.report_error("Invalid type \""+rightChild.type.basicType.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
+                if (rightChild.type != basicType.INT) {
+                    Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
                 break;
             case AND:
             case OR:
-                if (leftChild.type.basicType != basicType.BOOL) {
-                    Main.report_error("Invalid type \""+leftChild.type.basicType.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
+                if (leftChild.type != basicType.BOOL) {
+                    Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
-                if (rightChild.type.basicType != basicType.BOOL) {
-                    Main.report_error("Invalid type \""+rightChild.type.basicType.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
+                if (rightChild.type != basicType.BOOL) {
+                    Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
                     return;
                 }
                 break;
             case EQ:
             case NEQ:
-                if (leftChild.type.basicType != rightChild.type.basicType) {
-                    Main.report_error("Cannot compare expressions of differing types \""+leftChild.type.basicType.toString()+"\" and \""+rightChild.type.basicType.toString()+"\"", value);
+                if (leftChild.type != rightChild.type) {
+                    Main.report_error("Cannot compare expressions of differing types \""+leftChild.type.toString()+"\" and \""+rightChild.type.toString()+"\"", value);
                     return;
                 }
         }
@@ -86,22 +87,22 @@ public class binaryOp_node extends node {
         int t = varTable.newvar(0, false);
         switch(op){
             case PLUS:
-                cod.genera(cod.op.ADD, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.ADD, leftChild.varNum, rightChild.varNum, t);
                 break;
             case NEG:
-                cod.genera(cod.op.SUB, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.SUB, leftChild.varNum, rightChild.varNum, t);
                 break;
             case TIMES:
-                cod.genera(cod.op.PROD, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.PROD, leftChild.varNum, rightChild.varNum, t);
                 break;
             case DIV:
-                cod.genera(cod.op.DIV, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.DIV, leftChild.varNum, rightChild.varNum, t);
                 break;
             case AND:
-                cod.genera(cod.op.AND, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.AND, leftChild.varNum, rightChild.varNum, t);
                 break;
             case OR:
-                cod.genera(cod.op.OR, leftChild.var, rightChild.var, t);
+                cod.genera(cod.op.OR, leftChild.varNum, rightChild.varNum, t);
                 break;
             case LT:
                 gest_rel(cod.op.IFLT, t);
@@ -122,14 +123,14 @@ public class binaryOp_node extends node {
                 gest_rel(cod.op.IFNE, t);
                 break;
         }
-        var = t;
+        varNum = t;
     }
     
     private void gest_rel(cod.op op, int t) {
         int tag1 = cod.newTag();
         int tag2 = cod.newTag();
         
-        cod.genera(op, leftChild.var, rightChild.var, 0); // if leftchild ⊕ rightchild goto tag1
+        cod.genera(op, leftChild.varNum, rightChild.varNum, 0); // if leftchild ⊕ rightchild goto tag1
         cod.replaceWithTag(2, tag1);
         
         cod.genera(cod.op.COPYLIT, 0, 0, t); // t = 0
@@ -140,6 +141,5 @@ public class binaryOp_node extends node {
         cod.setTag(tag1); // tag1 : skip
         cod.genera(cod.op.COPYLIT, -1, 0, t); // t = -1
         cod.setTag(tag2); // tag2 : skip
-        
     }
 }
