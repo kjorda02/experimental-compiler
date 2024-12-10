@@ -39,9 +39,9 @@ non terminal expr_node expr;
 non terminal ref_node ref;
 
 non terminal complexType type;
-non terminal struct_node struct;
-non terminal field_decl_node field;
-non terminal struct_node fields;
+non terminal typedecl_node typedecl;
+non terminal complexType.struct struct;
+non terminal complexType.struct fields;
 
 non terminal decl_node decl;
 
@@ -63,45 +63,46 @@ start with prog;
 /* ========== Grammar rules ========== */
 prog ::= stmt:s SEMI
             {: s.gest(); :}
-        | stmt:s SEMI prog
+        | prog stmt:s SEMI
             {: s.gest(); :}
         ;
 
 stmt ::= decl:d
             {: RESULT = new stmt_node(d); :}
+        | typedecl:d
+            {: RESULT = new stmt_node(d); :}
         | expr:e
             {: RESULT = new stmt_node(e); :}
-        | EXIT
-            {: done_parsing(); :}
         ;
 
 assign  ::= ref:r ASS expr:e
             {: RESULT = new assign_node(r, e); :}
         ;
 
-field   ::= type ID
+fields  ::= type:t ID:i SEMI
+            {: RESULT = new complexType.struct(null, i, t); :}
+        | type:t ID:i SEMI fields:f
+            {: RESULT = f.addField(i, t); :}
         ;
 
-fields  ::= field SEMI
-        | field SEMI fields
-        ;
-
-struct  ::= STRUCT LKEY fields RKEY
+struct  ::= STRUCT LKEY fields:f RKEY
+            {: RESULT = f; :}
         ;
 
 type    ::= INT
-        {: RESULT = new complexType.primitive(null, basicType.INT); :}
+            {: RESULT = new complexType.primitive(null, basicType.INT); :}
         | BOOL
-        {: RESULT = new complexType.primitive(null, basicType.BOOL); :}
+            {: RESULT = new complexType.primitive(null, basicType.BOOL); :}
         | STRING
         | LBRAC expr:e RBRAC type:t
+            {: RESULT = new complexType.array(null, t, e); :}
         | MULT type:t
-        {: RESULT = new complexType.pointer(null, t); :}
+            {: RESULT = new complexType.pointer(null, t); :}
         | struct:s
-        /* {: RESULT = s.struct :}*/
+            {: RESULT = s; :}
         ;
 
-typedecl    ::= TYPE ID type
+typedecl    ::= TYPE ID type:t
         ;
 
 decl    ::= type:t ID:i
@@ -145,40 +146,40 @@ unary_expr ::= atom_expr:e
 binary_expr  ::= unary_expr:e
             {: RESULT = new binaryOp_node(e); :}
 
-        | unary_expr:e1 DIV binary_expr:e2
+        | binary_expr:e1 DIV binary_expr:e2
             {: RESULT = new binaryOp_node(OP.DIV, e1, e2); :}
 
-        | unary_expr:e1 MULT binary_expr:e2
+        | binary_expr:e1 MULT binary_expr:e2
             {: RESULT = new binaryOp_node(OP.TIMES, e1, e2); :}
        
-        | unary_expr:e1 PLUS binary_expr:e2
+        | binary_expr:e1 PLUS binary_expr:e2
             {: RESULT = new binaryOp_node(OP.PLUS, e1, e2); :}
 
-        | unary_expr:e1 NEG binary_expr:e2
+        | binary_expr:e1 NEG binary_expr:e2
             {: RESULT = new binaryOp_node(OP.NEG, e1, e2); :}
 
-        | unary_expr:e1 LT binary_expr:e2
+        | binary_expr:e1 LT binary_expr:e2
             {: RESULT = new binaryOp_node(OP.LT, e1, e2); :}
 
-        | unary_expr:e1 GT binary_expr:e2
+        | binary_expr:e1 GT binary_expr:e2
             {: RESULT = new binaryOp_node(OP.GT, e1, e2); :}
 
-        | unary_expr:e1 LEQ binary_expr:e2
+        | binary_expr:e1 LEQ binary_expr:e2
             {: RESULT = new binaryOp_node(OP.LEQ, e1, e2); :}
 
-        | unary_expr:e1 GEQ binary_expr:e2
+        | binary_expr:e1 GEQ binary_expr:e2
             {: RESULT = new binaryOp_node(OP.GEQ, e1, e2); :}
 
-        | unary_expr:e1 EQ binary_expr:e2
+        | binary_expr:e1 EQ binary_expr:e2
             {: RESULT = new binaryOp_node(OP.EQ, e1, e2); :}
 
-        | unary_expr:e1 NEQ binary_expr:e2
+        | binary_expr:e1 NEQ binary_expr:e2
             {: RESULT = new binaryOp_node(OP.NEQ, e1, e2); :}
 
-        | unary_expr:e1 AND binary_expr:e2
+        | binary_expr:e1 AND binary_expr:e2
             {: RESULT = new binaryOp_node(OP.AND, e1, e2); :}
 
-        | unary_expr:e1 OR binary_expr:e2
+        | binary_expr:e1 OR binary_expr:e2
             {: RESULT = new binaryOp_node(OP.OR, e1, e2); :}
         ;
 
@@ -187,4 +188,3 @@ expr       ::= binary_expr:e
         | assign:e
             {: RESULT = new expr_node(e); :}
         ;
-

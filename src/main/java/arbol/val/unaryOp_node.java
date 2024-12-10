@@ -18,6 +18,7 @@ public class unaryOp_node extends expr_node {
         child = expr;
         if (child.value != null) {
             value = child.value;
+            type = child.type;
         }
     }
     
@@ -27,6 +28,7 @@ public class unaryOp_node extends expr_node {
         oper = operator;
         if (child.value != null) {
             value = evalConst();
+            type = child.type;
         }
     }
     
@@ -41,7 +43,7 @@ public class unaryOp_node extends expr_node {
     }
     
     @Override
-    public void gest() {
+    public void gest() { // TODO: CHECK IF ASSIGNING TYPES AT CODE GENERATION TIME IS NECESSARY
         if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
             return;
         

@@ -20,7 +20,7 @@ import java_cup.runtime.*;
 %}
 
 newl = \n
-whitespace = [ \t\r\f]
+whitespace = [ \n\t\r\f]
 longcomment = "/*"([^*]|"*"[^/])*"*/"
 
 NUMBER = [0-9]+

@@ -2,6 +2,7 @@ package arbol.ref;
 
 import arbol.val.expr_node;
 import arbol.type.complexType;
+import datos.basicType;
 import experimental_compiler.Main;
 
 /**
@@ -25,9 +26,15 @@ public class displ_node extends ref_node {
         displ.gest();
         
         // TODO: Add toString to references so they can be printed out like id.field.otherField[32][32] ?
-        if (!(base.type instanceof complexType.struct)) 
+        if (!(base.type instanceof complexType.array)) {
             Main.report_error("Cannot index array: Not an array..", this);
-            
+            return;
+        }
+        
+        if (!(displ.type instanceof complexType.primitive) || ((complexType.primitive) displ.type).btype != basicType.INT) {
+            Main.report_error("Cannot index array with non-integer value: "+displ.type.toString(), this);
+            return;
+        }
         
 //        int t = varTable.newvar(0, false);
 //        cod.genera(cod.op.IDX_VAL, n.var, n.displ, t);

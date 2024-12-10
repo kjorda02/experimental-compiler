@@ -16,7 +16,7 @@ public abstract class desc { // (d)
         public int varNum; // (nv) Position in the variable table
         public complexType type;
         
-        public variable(complexType c) {
+        public variable(complexType c) { // TODO: HANDLE COMPLEX TYPES
             type = c;
             varNum = varTable.newvar(0, false);
         }
@@ -43,9 +43,9 @@ public abstract class desc { // (d)
     public static class function extends desc {
         public int funcNum; // (np) Position in the function table
         public int stackSize; // Stack size in bytes
-        public complexType.funcsig signature;
+        public complexType.funcptr signature;
         
-        public function(complexType.funcsig s) {
+        public function(complexType.funcptr s) {
             funcNum = 0; // funcTable.newfunc(...);
             signature = s;
             // stackSize = ...

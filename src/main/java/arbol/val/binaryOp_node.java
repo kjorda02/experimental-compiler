@@ -10,26 +10,29 @@ import experimental_compiler.Main;
  * @author kjorda
  */
 public class binaryOp_node extends expr_node {
-    unaryOp_node leftChild;
-    binaryOp_node rightChild;
+    expr_node leftChild, rightChild; // unaryOp_node or binaryOp_node
     OP op;
     
-    public binaryOp_node(OP operator, unaryOp_node n1, binaryOp_node n2) {
+    public binaryOp_node(OP operator, binaryOp_node n1, binaryOp_node n2) {
         super("BinaryOp");
         leftChild = n1;
         rightChild = n2;
         op = operator;
         
-        if (leftChild.value != null && rightChild.value != null)  // CONSTANT EXPRESSION
-            value = evalConst();
+        if (leftChild.value != null && rightChild.value != null){  // CONSTANT EXPRESSION
+            type = leftChild.type;
+            value = evalConst(); // Will update type if it's not the same as child's
+        }
     }
     
     public binaryOp_node(unaryOp_node n) {
         super("BinaryOp");
         leftChild = n;
         op = OP.NONE;
-        if (leftChild.value != null)
+        if (leftChild.value != null) {
             value = leftChild.value;
+            type = leftChild.type;
+        }
     }
     
     private long evalConst() {
@@ -47,23 +50,29 @@ public class binaryOp_node extends expr_node {
             case OR:
                 return leftChild.value | rightChild.value;
             case LT:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value<rightChild.value ? -1 : 0;
             case GT:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value>rightChild.value ? -1 : 0;
             case LEQ:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value<=rightChild.value ? -1 : 0;
             case GEQ:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value>=rightChild.value ? -1 : 0;
             case EQ:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value==rightChild.value ? -1 : 0;
             case NEQ:
+                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value!=rightChild.value ? -1 : 0;
         }
         return 0;
     }
     
     @Override
-    public void gest() {
+    public void gest() { // TODO: CHECK IF ASSIGNING TYPES AT CODE GENERATION TIME IS NECESSARY
         if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
             return;
         

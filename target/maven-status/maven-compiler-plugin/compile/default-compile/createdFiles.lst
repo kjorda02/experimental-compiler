@@ -2,6 +2,7 @@ datos/basicType.class
 arbol/val/binaryOp_node.class
 arbol/ref/identifier_ref_node.class
 datos/symbolTable$entry.class
+arbol/type/complexType$funcptr.class
 arbol/val/unaryOp_node$1.class
 arbol/assign_node.class
 arbol/node.class
@@ -12,12 +13,12 @@ datos/varTable$varInfo.class
 datos/symbolTable$restore_entry.class
 arbol/stmts_node.class
 arbol/ref/field_node.class
+datos/funcTable.class
 arbol/type/complexType$pointer.class
 arbol/stmt_node.class
 arbol/ref/ref_node.class
 arbol/type/complexType$primitive.class
 datos/desc.class
-arbol/type/complexType$funcsig.class
 datos/desc$constant.class
 datos/desc$function.class
 datos/varTable.class
@@ -25,7 +26,8 @@ datos/cod$op.class
 datos/cod$codigo3dirs.class
 experimental_compiler/Lexer.class
 arbol/type/complexType$struct$field.class
-arbol/type/field_decl_node.class
+experimental_compiler/Parser$CUP$Parser$actions.class
+arbol/type/typedecl_node.class
 experimental_compiler/Main.class
 arbol/type/complexType$struct.class
 datos/cod.class
@@ -35,9 +37,9 @@ datos/desc$variable.class
 datos/OP.class
 arbol/decl_node.class
 datos/cod$1.class
+experimental_compiler/Parser.class
 arbol/type/complexType$array.class
 arbol/val/expr_node.class
 datos/symbolTable.class
-arbol/type/struct_node.class
-arbol/type/type_node.class
+arbol/val/literal_expr_node.class
 experimental_compiler/sym.class

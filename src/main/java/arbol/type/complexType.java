@@ -1,20 +1,28 @@
 package arbol.type;
 
+import arbol.node;
+import arbol.val.expr_node;
 import datos.basicType;
-import java.util.ArrayList;
-import java.util.HashMap;
+import experimental_compiler.Main;
+import java.util.*;
+import java.util.Map.Entry;
 
 /**
  *
  * @author kjorda
  */
-public abstract class complexType {
+public abstract class complexType extends node{
     public String name; // Null if anonymous type
     public int bytes; // Size in memory in bytes
     
     @Override
     public String toString() {
         return "o_O";
+    }
+    
+    @Override
+    public void gest() {
+        
     }
     
     public static class primitive extends complexType {
@@ -32,6 +40,11 @@ public abstract class complexType {
             if (name != null && other.name != null && !name.equals(other.name))
                 return false;
             return btype == other.btype;
+        }
+        
+        @Override
+        public String toString() {
+            return btype.toString();
         }
     }
     
@@ -51,17 +64,27 @@ public abstract class complexType {
                 return false;
             return baseType.equals(other.baseType);
         }
+        
+        @Override
+        public String toString() {
+            return "*"+baseType.toString();
+        }
     }
     
-    public class array extends complexType {
+    public static class array extends complexType {
         public complexType baseType;
-        public int size;
+        public expr_node size;
         
-        public array(String n, complexType c, int s) {
+        public array(String n, complexType c, expr_node s) {
+            if (!(s.type instanceof complexType.primitive) || ((complexType.primitive) s.type).btype != basicType.INT) {
+                Main.report_error("Cannot declare array with non-integer size: "+s.type.toString(), this);
+                return;
+            }
             name = n;
             baseType = c;
             size = s;
-            bytes = size*baseType.bytes; // TODO: Maybe keep array size in memory for runtime checks?
+            if (size.value != null)
+                bytes = (int) (size.value*baseType.bytes); // TODO: Maybe keep array size in memory for runtime checks?
         }
         
         @Override
@@ -72,9 +95,24 @@ public abstract class complexType {
             
             return size == other.size && baseType.equals(other.baseType);
         }
+        
+        @Override
+        public void gest() {
+            size.gest();
+        }
+        
+        @Override
+        public String toString() {
+            String s = "[";
+            if (size.value == null)
+                s += "?"; // Variable length array, determined at runtime
+            else
+                s += String.valueOf(size.value);
+            return s + "]" + baseType.toString();
+        }
     }
     
-    public class struct extends complexType {
+    public static class struct extends complexType {
         HashMap<String, field> fields;
         int size; // Number of fields
         
@@ -84,10 +122,20 @@ public abstract class complexType {
             size = 0;
         }
         
-        public void addField(String name, complexType c) {
+        public struct(String structName, String fieldName, complexType fieldType) {
+            name = structName;
+            fields = new HashMap<>();
+            size = 1;
+            fields.put(fieldName, new field(bytes, fieldType));
+            bytes += fieldType.bytes;
+        
+        }
+        
+        public complexType.struct addField(String name, complexType c) {
             fields.put(name, new field(bytes, c));
             bytes += c.bytes;
             size++;
+            return this;
         }
         
         @Override
@@ -114,13 +162,30 @@ public abstract class complexType {
                 return offset == other.offset && type.equals(other.type);
             }
         }
+        
+        @Override
+        public String toString() {
+            List<Entry<String, field>> sortedFields = new ArrayList<>(fields.entrySet());
+            Collections.sort(sortedFields, (a, b) -> Integer.compare(a.getValue().offset, b.getValue().offset));
+            
+            StringBuilder s = new StringBuilder("struct{");
+
+            for (Entry<String, field> f : sortedFields) { // DOES NOT GUARANTEE ORDER!
+                s.append(f.getValue().type.toString());
+                s.append(" ");
+                s.append(f.getKey());
+                s.append(";");
+            }
+            s.append("}");
+            return s.toString();
+        }
     }
     
-    public class funcsig extends complexType {
+    public static class funcptr extends complexType {
         public complexType returnType;
         public ArrayList<complexType> paramTypes;
         
-        public funcsig(complexType c) {
+        public funcptr(complexType c) {
             returnType = c;
             paramTypes = new ArrayList<>();
         }
@@ -131,7 +196,7 @@ public abstract class complexType {
         
         @Override
         public boolean equals(Object o) {
-            funcsig other = (funcsig) o;
+            funcptr other = (funcptr) o;
             return returnType.equals(other.returnType) && paramTypes.equals(other.paramTypes);
         }
     }

@@ -6,11 +6,11 @@ import arbol.node;
  *
  * @author kjorda
  */
-public class type_node extends node {
+public class typedecl_node extends node {
     public complexType typeDesc;
     
-    public type_node() {
-        super("type");
+    public typedecl_node() {
+        super("type declaration node");
     }
     
     public void gest() {
