@@ -29,4 +29,10 @@ public class varTable {
         return num++;
     }
     
+    public static int newvar(int reservedSpace, int parentFuncIdx, boolean isParam) {
+        table.add(new varInfo(parentFuncIdx, isParam));
+        int addr = num;
+        num += reservedSpace;
+        return addr;
+    }
 }

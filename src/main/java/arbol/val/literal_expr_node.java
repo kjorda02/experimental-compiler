@@ -1,21 +1,17 @@
 package arbol.val;
 
+import arbol.type.complexType;
 import datos.*;
-import datos.cod.*;
-import datos.desc.*;
-import arbol.node;
 
 /**
  *
  * @author kjorda
  */
 public class literal_expr_node extends expr_node {
-    long literalval;
-    
     // Integer literal
     public literal_expr_node(long l) {
         super("numeric literal");
-        literalval = l;
+        value = l;
         type = new complexType.primitive(null, basicType.INT);
     }
     
@@ -24,14 +20,13 @@ public class literal_expr_node extends expr_node {
        super("boolean literal");
        type = new complexType.primitive(null, basicType.BOOL);
        if (b)
-           literalval = -1;
+           value = -1l;
        else
-           literalval = 0;
+           value = 0l;
     }
     
+    @Override
     public void gest() {
-        int t = varTable.newvar(0, false);
-        cod.genera(cod.op.COPYLIT, literalval, 0, t);
-        varNum = t;
+        
     }
 }

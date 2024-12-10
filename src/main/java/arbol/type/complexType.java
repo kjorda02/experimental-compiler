@@ -1,5 +1,6 @@
-package datos;
+package arbol.type;
 
+import datos.basicType;
 import java.util.ArrayList;
 import java.util.HashMap;
 

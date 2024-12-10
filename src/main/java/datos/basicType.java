@@ -9,7 +9,7 @@ public enum basicType { // Primitive types
         BOOL(1),
         VOID(0);
         
-        int bytes; // Size in memory in bytes
+        public int bytes; // Size in memory in bytes
         private basicType(int b) {
             bytes = b;
         }

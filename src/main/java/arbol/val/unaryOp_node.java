@@ -1,10 +1,8 @@
 package arbol.val;
-import arbol.val.expr_node;
+import arbol.type.complexType;
 import experimental_compiler.Main;
 import datos.*;
-import datos.desc.*;
 import datos.cod.*;
-import arbol.node;
 
 /**
  *
@@ -18,15 +16,35 @@ public class unaryOp_node extends expr_node {
         super("unary operator");
         oper = OP.NONE;
         child = expr;
+        if (child.value != null) {
+            value = child.value;
+        }
     }
     
     public unaryOp_node(OP operator, expr_node expr) {
         super("unary operator");
         child = expr;
         oper = operator;
+        if (child.value != null) {
+            value = evalConst();
+        }
     }
     
+    private long evalConst() {
+        switch(oper) {
+            case NOT:
+                return ~child.value;
+            case NEG:
+                return -child.value;
+        }
+        return 0;
+    }
+    
+    @Override
     public void gest() {
+        if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
+            return;
+        
         child.gest();
         type = child.type;
         

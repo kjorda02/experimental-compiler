@@ -1,11 +1,8 @@
 package arbol.ref;
 
-import arbol.ref.identifier_ref_node;
 import arbol.val.expr_node;
-import datos.*;
-import datos.cod.*;
-import datos.desc.*;
-import arbol.node;
+import arbol.type.complexType;
+import experimental_compiler.Main;
 
 /**
  *
@@ -22,10 +19,15 @@ public class displ_node extends ref_node {
         displ = d;
     }
     
+    @Override
     public void gest() {
         base.gest();
         displ.gest();
         
+        // TODO: Add toString to references so they can be printed out like id.field.otherField[32][32] ?
+        if (!(base.type instanceof complexType.struct)) 
+            Main.report_error("Cannot index array: Not an array..", this);
+            
         
 //        int t = varTable.newvar(0, false);
 //        cod.genera(cod.op.IDX_VAL, n.var, n.displ, t);

@@ -11,6 +11,7 @@ public class stmt_node extends node {
         this.n = n;
     }
     
+    @Override
     public void gest() {
         n.gest();
     }

@@ -1,4 +1,5 @@
 package arbol.ref;
+import arbol.type.complexType;
 import datos.*;
 import datos.desc.*;
 import datos.cod.*;
@@ -19,6 +20,7 @@ public class identifier_ref_node extends ref_node {
         value = null;
     }
     
+    @Override
     public void gest() {
         desc d = symbolTable.get(identifier);
         if (d instanceof desc.variable) {

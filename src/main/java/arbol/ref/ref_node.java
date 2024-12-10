@@ -1,6 +1,6 @@
 package arbol.ref;
 
-import datos.complexType;
+import arbol.type.complexType;
 import arbol.node;
 import experimental_compiler.Main;
 
@@ -18,5 +18,10 @@ public abstract class ref_node extends node {
     
     public ref_node(String nodeName) { // For inheritance
         super(nodeName);
+    }
+    
+    @Override
+    public void gest() {
+        
     }
 }

@@ -5,14 +5,17 @@ import java.util.HashMap;
 import arbol.*;
 import arbol.ref.*;
 import arbol.val.*;
-import datos.OP;
+import arbol.type.*;
+import datos.*;
 
 
 parser code {:
     
 :}
 
-/* Terminals (tokens from lexer) */
+/* ===== Terminals (tokens from lexer) ===== */
+terminal LKEY, RKEY;
+terminal INT, BOOL, STRING, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
 terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
@@ -22,7 +25,7 @@ terminal Integer INTLIT;
 terminal Boolean BOOLLIT;
 terminal String ID;
 
-/* Non-terminals */
+/* ========= Non-terminals ========= */
 non terminal prog;
 non terminal stmt_node stmt;
 non terminal assign_node assign;
@@ -35,8 +38,14 @@ non terminal expr_node expr;
 
 non terminal ref_node ref;
 
+non terminal complexType type;
+non terminal struct_node struct;
+non terminal field_decl_node field;
+non terminal struct_node fields;
 
-/* Precedences */
+non terminal decl_node decl;
+
+/* ========== Precedences ========== */
 precedence left OR;
 precedence left AND;
 precedence left NOT;
@@ -51,14 +60,16 @@ precedence left DIV;
 
 start with prog;
 
-/* Grammar rules */
+/* ========== Grammar rules ========== */
 prog ::= stmt:s SEMI
             {: s.gest(); :}
         | stmt:s SEMI prog
             {: s.gest(); :}
         ;
 
-stmt ::= expr:e
+stmt ::= decl:d
+            {: RESULT = new stmt_node(d); :}
+        | expr:e
             {: RESULT = new stmt_node(e); :}
         | EXIT
             {: done_parsing(); :}
@@ -66,6 +77,39 @@ stmt ::= expr:e
 
 assign  ::= ref:r ASS expr:e
             {: RESULT = new assign_node(r, e); :}
+        ;
+
+field   ::= type ID
+        ;
+
+fields  ::= field SEMI
+        | field SEMI fields
+        ;
+
+struct  ::= STRUCT LKEY fields RKEY
+        ;
+
+type    ::= INT
+        {: RESULT = new complexType.primitive(null, basicType.INT); :}
+        | BOOL
+        {: RESULT = new complexType.primitive(null, basicType.BOOL); :}
+        | STRING
+        | LBRAC expr:e RBRAC type:t
+        | MULT type:t
+        {: RESULT = new complexType.pointer(null, t); :}
+        | struct:s
+        /* {: RESULT = s.struct :}*/
+        ;
+
+typedecl    ::= TYPE ID type
+        ;
+
+decl    ::= type:t ID:i
+            {: RESULT = new decl_node(false, t, i); :}
+        | type:t ID:i ASS expr:e
+            {: RESULT = new decl_node(false, t, i, e); :}
+        | CONST type:t ID:i ASS literal:l
+            {: RESULT = new decl_node(true, t, i, l); :}
         ;
 
 ref ::= ID:i

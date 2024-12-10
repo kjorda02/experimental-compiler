@@ -2,8 +2,8 @@ package arbol;
 import arbol.ref.ref_node;
 import arbol.val.expr_node;
 import experimental_compiler.Main;
-import datos.complexType;
-import datos.complexType.*;
+import arbol.type.complexType;
+import arbol.type.complexType.*;
 import datos.*;
 /**
  *
@@ -14,16 +14,17 @@ public class assign_node extends node {
     public expr_node expr;
     
     public assign_node(ref_node v, expr_node e) {
-        super("assign node");
+        super("assign");
         ref = v;
         expr = e;
     }
     
+    @Override
     public void gest() {
-        ref.gest();
         expr.gest();
+        ref.gest();
         
-        if (ref.type.equals(expr.type)) {
+        if (!ref.type.equals(expr.type)) {
             Main.report_error("Cannot convert type \""+expr.type.toString()+"\" to \""+ref.type.toString()+"\" in assignation.", this);
             empty = true;
             return;

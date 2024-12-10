@@ -1,9 +1,9 @@
 package arbol.val;
+import arbol.type.complexType;
 import datos.*;
 import static datos.OP.AND;
 import static datos.OP.OR;
 import experimental_compiler.Main;
-import arbol.node;
 
 /**
  *
@@ -19,24 +19,78 @@ public class binaryOp_node extends expr_node {
         leftChild = n1;
         rightChild = n2;
         op = operator;
+        
+        if (leftChild.value != null && rightChild.value != null)  // CONSTANT EXPRESSION
+            value = evalConst();
     }
     
     public binaryOp_node(unaryOp_node n) {
         super("BinaryOp");
         leftChild = n;
         op = OP.NONE;
+        if (leftChild.value != null)
+            value = leftChild.value;
     }
     
+    private long evalConst() {
+        switch(op){
+            case PLUS:
+                return leftChild.value + rightChild.value;
+            case NEG:
+                return leftChild.value - rightChild.value;
+            case TIMES:
+                return leftChild.value * rightChild.value;
+            case DIV:
+                return leftChild.value / rightChild.value;
+            case AND:
+                return leftChild.value & rightChild.value;
+            case OR:
+                return leftChild.value | rightChild.value;
+            case LT:
+                return leftChild.value<rightChild.value ? -1 : 0;
+            case GT:
+                return leftChild.value>rightChild.value ? -1 : 0;
+            case LEQ:
+                return leftChild.value<=rightChild.value ? -1 : 0;
+            case GEQ:
+                return leftChild.value>=rightChild.value ? -1 : 0;
+            case EQ:
+                return leftChild.value==rightChild.value ? -1 : 0;
+            case NEQ:
+                return leftChild.value!=rightChild.value ? -1 : 0;
+        }
+        return 0;
+    }
+    
+    @Override
     public void gest() {
-        leftChild.gest();
+        if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
+            return;
+        
+        if (leftChild.value == null)
+            leftChild.gest();
+        else {
+            int t = varTable.newvar(0, false);
+            cod.genera(cod.op.COPYLIT, leftChild.value, 0, t);
+            leftChild.varNum = t;
+        }
+        
         type = leftChild.type;
         if (op == OP.NONE) { // binary_expr -> unary_expr
             varNum = leftChild.varNum;
             value = leftChild.value;
             return;
         }
-        rightChild.gest();
         
+        if (rightChild.value == null)
+            rightChild.gest();
+        else {
+            int t = varTable.newvar(0, false);
+            cod.genera(cod.op.COPYLIT, rightChild.value, 0, t);
+            rightChild.varNum = t;
+        }
+        
+        // TYPE CHECKING -------------------------------------------------------
         // Not allowing operator overloading for now
         if (!(leftChild.type instanceof complexType.primitive)) {
             Main.report_error("Cannot perform binary operation \""+op.toString()+"\" with left operand of non-primitive type \""+leftChild.type.toString()+"\"", this);
@@ -88,6 +142,7 @@ public class binaryOp_node extends expr_node {
         }
         empty = false;
         
+        // EXPRESSION EVALUATION -----------------------------------------------
         int t = varTable.newvar(0, false);
         switch(op){
             case PLUS:
