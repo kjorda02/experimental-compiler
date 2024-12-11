@@ -24,9 +24,4 @@ public class literal_expr_node extends expr_node {
        else
            value = 0l;
     }
-    
-    @Override
-    public void gest() {
-        
-    }
 }

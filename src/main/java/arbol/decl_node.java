@@ -1,7 +1,6 @@
 package arbol;
 import arbol.type.complexType;
 import arbol.val.expr_node;
-import arbol.val.literal_expr_node;
 import datos.*;
 import experimental_compiler.Main;
 
@@ -31,28 +30,51 @@ public class decl_node extends node {
     }
     
     @Override
-    public void gest() { // TODO: TYPE CHECKING, ASSIGN CONSTANTS TO CONSTANTS
+    public void gest() {
         type.gest();
         System.out.println(type.toString()); // Debug
         
         desc d;
-        if (isConst) { // TODO: Allow assign of constants to other constants?
+        if (isConst) {
             if (!(type instanceof complexType.primitive)) {
-                Main.report_error("Cannot define constant of non-primitive type \""+type.toString()+"\"", value);
+                Main.report_error("Cannot define constant of non-primitive type \""+type.toString()+"\"", this);
+                return;
+            }
+            if (expr == null) {
+                Main.report_error("Constant must be assigned a value at declaration.", this);
+                return;
+            }
+            if (!type.equals(expr.type)) {
+                Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to constant of type <"+type.toString()+">", this);
+                return;
+            }
+            if (expr.value == null) {
+                Main.report_error("Constants cannot be assigned runtime expressions", this);
                 return;
             }
             
-            long val = ((literal_expr_node) expr).value;
+            long val = ((expr_node) expr).value;
             basicType btype = ((complexType.primitive) type).btype;
             d = new desc.constant(btype, val);
         }
         else {
             d = new desc.variable(type);
-            if (expr != null) {
+            int varNumDst = ((desc.variable) d).varNum;
+            
+            if (expr == null)
+                return;
+            
+            if (!type.equals(expr.type)) {
+                Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to variable of type <"+type.toString()+">", this);
+                return;
+            }
+            
+            if (expr.value == null) { // Runtime expression
                 expr.gest();
-                int varNumDst = ((desc.variable) d).varNum;
                 cod.genera(cod.op.COPY, expr.varNum, 0, varNumDst);
             }
+            else  // Compile-time expression
+                cod.genera(cod.op.COPYLIT, expr.value, 0, varNumDst);
         }
         
         symbolTable.add(identifier, d);

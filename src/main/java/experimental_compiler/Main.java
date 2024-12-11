@@ -26,6 +26,7 @@ public class Main {
     public static void report_error(String message, Object info) {
         StringBuilder msg = new StringBuilder("ERROR");
         if (info instanceof Symbol) {
+            System.out.println("BRRRRRRRRRRRRRRRRRR");
             ComplexSymbol token = (ComplexSymbol)info;
             Location l = token.getLeft();
             

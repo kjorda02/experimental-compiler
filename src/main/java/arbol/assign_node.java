@@ -25,7 +25,7 @@ public class assign_node extends node {
         ref.gest();
         
         if (!ref.type.equals(expr.type)) {
-            Main.report_error("Cannot convert type \""+expr.type.toString()+"\" to \""+ref.type.toString()+"\" in assignation.", this);
+            Main.report_error("Cannot convert type <"+expr.type.toString()+"> to <"+ref.type.toString()+"> in assignment.", this);
             empty = true;
             return;
         }

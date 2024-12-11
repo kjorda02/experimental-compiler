@@ -1,7 +1,5 @@
 package arbol;
 
-import datos.*;
-import datos.desc.*;
 import java_cup.runtime.ComplexSymbolFactory;
 
 /**

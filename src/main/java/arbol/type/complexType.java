@@ -170,7 +170,7 @@ public abstract class complexType extends node{
             
             StringBuilder s = new StringBuilder("struct{");
 
-            for (Entry<String, field> f : sortedFields) { // DOES NOT GUARANTEE ORDER!
+            for (Entry<String, field> f : sortedFields) {
                 s.append(f.getValue().type.toString());
                 s.append(" ");
                 s.append(f.getKey());

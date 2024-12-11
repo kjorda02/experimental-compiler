@@ -1,6 +1,6 @@
 package experimental_compiler;
 import java_cup.runtime.*;
-
+import java_cup.runtime.ComplexSymbolFactory.*;
 
 %%
 %class Lexer
@@ -10,12 +10,16 @@ import java_cup.runtime.*;
 %column
 
 %{
-    private Symbol symbol(int type) {
-        return new Symbol(type);
+    private ComplexSymbol symbol(int type) {
+        Location left = new Location(yyline+1, yycolumn+1);
+        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
+        return new ComplexSymbol(sym.terminalNames[type], type, left, right);
     }
     
-    private Symbol symbol(int type, Object value) {
-        return new Symbol(type, value);
+    private ComplexSymbol symbol(int type, Object value) {
+        Location left = new Location(yyline+1, yycolumn+1);
+        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
+        return new ComplexSymbol(sym.terminalNames[type], type, left, right, value);
     }
 %}
 
@@ -33,7 +37,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "bool"      { return symbol(sym.BOOL); }
 "string"    { return symbol(sym.STRING); }
 "struct"    { return symbol(sym.STRUCT); }
-"type"    { return symbol(sym.TYPE); }
+"type"      { return symbol(sym.TYPE); }
 "if"        { return symbol(sym.IF); }
 "else"      { return symbol(sym.ELSE); }
 "while"     { return symbol(sym.WHILE); }

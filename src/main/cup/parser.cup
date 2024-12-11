@@ -8,9 +8,43 @@ import arbol.val.*;
 import arbol.type.*;
 import datos.*;
 
-
 parser code {:
-    
+    @Override
+    public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
+        report_error("Error sintàctic catastròfic", cur_token);
+        done_parsing();        
+    }
+
+    @Override
+    public void syntax_error(Symbol cur_token) {
+        report_error("Unexpected token", cur_token);
+    }
+
+    @Override
+    public void report_error(String message, Object info) {
+        StringBuilder msg = new StringBuilder("ERROR");
+        if (info instanceof Symbol) {
+            ComplexSymbol token = (ComplexSymbol) info;
+            Location l = token.getLeft();
+            
+            if (l != null) {
+                msg.append(" (linea: ")
+                   .append(l.getLine())
+                   .append(", columna: ")
+                   .append(l.getColumn())
+                   .append(")");
+            }
+        }
+        msg.append(": ").append(message);
+        
+        System.err.println(msg);
+    }
+
+    @Override
+    public void report_fatal_error(String message, Object info) throws Exception {
+        report_error("Error catastròfic ("+message+")", info);
+        done_parsing();
+    }
 :}
 
 /* ===== Terminals (tokens from lexer) ===== */
@@ -61,32 +95,20 @@ precedence left DIV;
 start with prog;
 
 /* ========== Grammar rules ========== */
-prog ::= stmt:s SEMI
-            {: s.gest(); :}
-        | prog stmt:s SEMI
-            {: s.gest(); :}
-        ;
-
-stmt ::= decl:d
-            {: RESULT = new stmt_node(d); :}
-        | typedecl:d
-            {: RESULT = new stmt_node(d); :}
-        | expr:e
-            {: RESULT = new stmt_node(e); :}
-        ;
-
-assign  ::= ref:r ASS expr:e
-            {: RESULT = new assign_node(r, e); :}
-        ;
 
 fields  ::= type:t ID:i SEMI
             {: RESULT = new complexType.struct(null, i, t); :}
         | type:t ID:i SEMI fields:f
             {: RESULT = f.addField(i, t); :}
+
+        | error
+        | error fields
         ;
 
 struct  ::= STRUCT LKEY fields:f RKEY
             {: RESULT = f; :}
+            
+            | struct LKEY error RKEY
         ;
 
 type    ::= INT
@@ -100,6 +122,8 @@ type    ::= INT
             {: RESULT = new complexType.pointer(null, t); :}
         | struct:s
             {: RESULT = s; :}
+
+        | LBRAC error RBRAC type
         ;
 
 typedecl    ::= TYPE ID type:t
@@ -109,8 +133,10 @@ decl    ::= type:t ID:i
             {: RESULT = new decl_node(false, t, i); :}
         | type:t ID:i ASS expr:e
             {: RESULT = new decl_node(false, t, i, e); :}
-        | CONST type:t ID:i ASS literal:l
-            {: RESULT = new decl_node(true, t, i, l); :}
+        | CONST:c type:t ID:i ASS expr:e
+            {: RESULT = new decl_node(true, t, i, e); 
+                System.out.println("Linea :"+cleft+", columna: "+tright);
+            :}
         ;
 
 ref ::= ID:i
@@ -119,6 +145,9 @@ ref ::= ID:i
             {: RESULT = new displ_node(r, e); :}
         | ref:r DOT ID:i
             {: RESULT = new field_node(r, i); :}
+
+        | ref:r LBRAC error RBRAC
+        | ref:r DOT error
         ;
 
 literal ::= INTLIT:i
@@ -127,15 +156,17 @@ literal ::= INTLIT:i
             {: RESULT = new literal_expr_node(b); :}
         ;
 
-atom_expr  ::= literal:e
+atom_expr   ::= literal:e
             {: RESULT = new expr_node(e); :}
         | LPAREN expr:e RPAREN
             {: RESULT = e; :}
         | ref:r
             {: RESULT = new expr_node(r); :}
+
+        | LPAREN error RPAREN
        ;
 
-unary_expr ::= atom_expr:e
+unary_expr  ::= atom_expr:e
             {: RESULT = new unaryOp_node(e); :}
         | NOT atom_expr:e
             {: RESULT = new unaryOp_node(OP.NOT, e); :}
@@ -143,7 +174,7 @@ unary_expr ::= atom_expr:e
             {: RESULT = new unaryOp_node(OP.NEG, e); :}
         ;
 
-binary_expr  ::= unary_expr:e
+binary_expr ::= unary_expr:e
             {: RESULT = new binaryOp_node(e); :}
 
         | binary_expr:e1 DIV binary_expr:e2
@@ -183,8 +214,28 @@ binary_expr  ::= unary_expr:e
             {: RESULT = new binaryOp_node(OP.OR, e1, e2); :}
         ;
 
-expr       ::= binary_expr:e 
+assign  ::= ref:r ASS expr:e
+            {: RESULT = new assign_node(r, e); :}
+        ;
+
+expr    ::= binary_expr:e 
             {: RESULT = new expr_node(e); :}
         | assign:e
             {: RESULT = new expr_node(e); :}
+        ;
+
+stmt    ::= decl:d
+            {: RESULT = new stmt_node(d); :}
+        | typedecl:d
+            {: RESULT = new stmt_node(d); :}
+        | expr:e
+            {: RESULT = new stmt_node(e); :}
+        
+        | error
+        ;
+
+prog    ::= stmt:s SEMI
+            {: s.gest(); :}
+        | prog stmt:s SEMI
+            {: s.gest(); :}
         ;
