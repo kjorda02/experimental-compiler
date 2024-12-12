@@ -3,6 +3,7 @@ import arbol.type.complexType;
 import arbol.val.expr_node;
 import datos.*;
 import experimental_compiler.Main;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
  *
@@ -14,25 +15,32 @@ public class decl_node extends node {
     expr_node expr;
     boolean isConst;
     
-    public decl_node(boolean c, complexType t, String s) {
-        super("variable/constant declaration");
+    public decl_node(complexType t, terminal_node<String> s) {
+        super(t.left, s.right);
         type = t;
-        identifier = s;
-        isConst = c;
+        identifier = s.value;
+        isConst = false;
     }
     
-    public decl_node(boolean c, complexType t, String s, expr_node e) {
-        super("variable/constant declaration");
+    public decl_node(complexType t, String s, expr_node e) {
+        super(e.left, e.right);
         type = t;
         identifier = s;
-        isConst = c;
         expr = e;
+        isConst = false;
+    }
+    
+    public decl_node(Location l, complexType t, String s, expr_node e) {
+        super(t.left, e.right);
+        type = t;
+        identifier = s;
+        expr = e;
+        isConst = true;
     }
     
     @Override
     public void gest() {
         type.gest();
-        System.out.println(type.toString()); // Debug
         
         desc d;
         if (isConst) {

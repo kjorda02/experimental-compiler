@@ -5,6 +5,8 @@
 package experimental_compiler;
 import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.*;
+import datos.*;
+import arbol.*;
 
 
 // See https://github.com/jflex-de/jflex/issues/222
@@ -345,15 +347,15 @@ class Lexer implements java_cup.runtime.Scanner {
 
   /* user code: */
     private ComplexSymbol symbol(int type) {
-        Location left = new Location(yyline+1, yycolumn+1);
-        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
+        Location left = new Location(yyline, yycolumn);
+        Location right = new Location(yyline, yycolumn+yytext().length());
         return new ComplexSymbol(sym.terminalNames[type], type, left, right);
     }
     
     private ComplexSymbol symbol(int type, Object value) {
-        Location left = new Location(yyline+1, yycolumn+1);
-        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
-        return new ComplexSymbol(sym.terminalNames[type], type, left, right, value);
+        Location left = new Location(yyline, yycolumn);
+        Location right = new Location(yyline, yycolumn+yytext().length());
+        return new ComplexSymbol(sym.terminalNames[type], type, left, right, new terminal_node(value, left, right));
     }
 
 
@@ -818,7 +820,7 @@ class Lexer implements java_cup.runtime.Scanner {
             // fall through
           case 52: break;
           case 12:
-            { return symbol(sym.INTLIT, Integer.parseInt(yytext()));
+            { return symbol(sym.INTLIT, (long) Integer.parseInt(yytext()));
             }
             // fall through
           case 53: break;
@@ -908,12 +910,12 @@ class Lexer implements java_cup.runtime.Scanner {
             // fall through
           case 70: break;
           case 30:
-            { return symbol(sym.INT);
+            { return symbol(sym.INT, basicType.INT);
             }
             // fall through
           case 71: break;
           case 31:
-            { return symbol(sym.BOOL);
+            { return symbol(sym.BOOL, basicType.BOOL);
             }
             // fall through
           case 72: break;
@@ -943,7 +945,7 @@ class Lexer implements java_cup.runtime.Scanner {
             // fall through
           case 77: break;
           case 37:
-            { return symbol(sym.CONST);
+            { return symbol(sym.CONST, null);
             }
             // fall through
           case 78: break;

@@ -35,6 +35,7 @@ arbol/ref/displ_node.class
 arbol/val/unaryOp_node.class
 datos/desc$variable.class
 datos/OP.class
+arbol/terminal_node.class
 arbol/decl_node.class
 datos/cod$1.class
 experimental_compiler/Parser.class

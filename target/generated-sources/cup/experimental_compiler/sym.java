@@ -10,54 +10,51 @@ public interface sym {
   /* terminals */
   public static final int BOOLLIT = 40;
   public static final int LKEY = 2;
-  public static final int MULT = 19;
-  public static final int CONST = 8;
-  public static final int CASE = 15;
-  public static final int LPAREN = 21;
-  public static final int SEMI = 23;
-  public static final int INT = 4;
-  public static final int RBRAC = 36;
-  public static final int FOR = 13;
-  public static final int RPAREN = 22;
-  public static final int NOT = 28;
-  public static final int AND = 26;
+  public static final int MULT = 16;
+  public static final int CONST = 5;
+  public static final int CASE = 12;
+  public static final int LPAREN = 18;
+  public static final int SEMI = 20;
+  public static final int INT = 36;
+  public static final int RBRAC = 33;
+  public static final int FOR = 10;
+  public static final int RPAREN = 19;
+  public static final int NOT = 25;
+  public static final int AND = 23;
   public static final int INTLIT = 39;
-  public static final int LT = 29;
-  public static final int TYPE = 9;
-  public static final int OR = 27;
-  public static final int COMMA = 37;
-  public static final int BOOL = 5;
-  public static final int DIV = 20;
-  public static final int GEQ = 32;
-  public static final int PLUS = 17;
-  public static final int EXIT = 25;
-  public static final int IF = 10;
+  public static final int LT = 26;
+  public static final int TYPE = 6;
+  public static final int OR = 24;
+  public static final int BOOL = 37;
+  public static final int COMMA = 34;
+  public static final int DIV = 17;
+  public static final int GEQ = 29;
+  public static final int PLUS = 14;
+  public static final int EXIT = 22;
+  public static final int IF = 7;
   public static final int ID = 41;
-  public static final int DOT = 38;
+  public static final int DOT = 35;
   public static final int EOF = 0;
-  public static final int ASS = 24;
+  public static final int ASS = 21;
   public static final int RKEY = 3;
   public static final int error = 1;
-  public static final int NEQ = 34;
-  public static final int BREAK = 16;
-  public static final int EQ = 33;
-  public static final int SWITCH = 14;
-  public static final int NEG = 18;
-  public static final int ELSE = 11;
-  public static final int WHILE = 12;
-  public static final int LEQ = 31;
-  public static final int STRING = 6;
-  public static final int LBRAC = 35;
-  public static final int STRUCT = 7;
-  public static final int GT = 30;
+  public static final int NEQ = 31;
+  public static final int BREAK = 13;
+  public static final int EQ = 30;
+  public static final int SWITCH = 11;
+  public static final int NEG = 15;
+  public static final int ELSE = 8;
+  public static final int WHILE = 9;
+  public static final int LEQ = 28;
+  public static final int STRING = 38;
+  public static final int LBRAC = 32;
+  public static final int STRUCT = 4;
+  public static final int GT = 27;
   public static final String[] terminalNames = new String[] {
   "EOF",
   "error",
   "LKEY",
   "RKEY",
-  "INT",
-  "BOOL",
-  "STRING",
   "STRUCT",
   "CONST",
   "TYPE",
@@ -90,6 +87,9 @@ public interface sym {
   "RBRAC",
   "COMMA",
   "DOT",
+  "INT",
+  "BOOL",
+  "STRING",
   "INTLIT",
   "BOOLLIT",
   "ID"

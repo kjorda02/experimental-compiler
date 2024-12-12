@@ -1,5 +1,6 @@
 package arbol.ref;
 
+import arbol.terminal_node;
 import arbol.type.complexType;
 import experimental_compiler.Main;
 
@@ -12,10 +13,10 @@ public class field_node extends ref_node {
     ref_node base;
     String fieldName;
     
-    public field_node(ref_node s, String name) {
-        super("Struct field access");
+    public field_node(ref_node s, terminal_node<String> name) {
+        super(s.left, name.right);
         base = s;
-        fieldName = name;
+        fieldName = name.value;
     }
     
     @Override

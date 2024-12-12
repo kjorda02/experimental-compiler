@@ -1,25 +1,23 @@
 package arbol;
 
-import java_cup.runtime.ComplexSymbolFactory;
+import java_cup.runtime.ComplexSymbolFactory.Location;
+
 
 /**
  *
  * @author kjorda
  */
-public class node extends ComplexSymbolFactory.ComplexSymbol {
-    private static int id = 0;
+public class node {
+    public Location left, right;
     protected boolean empty;
     
-    public Integer varNum = null;    // (nv) Points to a variable in the variable table
-    
-    
-    public node(String name) {
-        super(name, id++);
+    public node(Location l, Location r) {
+        left = l;
+        right = r;
         this.empty = false;
     }
     
     public node() {
-        super("", id++);
         empty = true;
     }
 

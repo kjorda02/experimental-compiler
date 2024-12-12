@@ -11,53 +11,34 @@ import datos.*;
 parser code {:
     @Override
     public void unrecovered_syntax_error(Symbol cur_token) throws Exception {
-        report_error("Error sintàctic catastròfic", cur_token);
+        Main.report_error("Error sintàctic catastròfic", cur_token);
         done_parsing();        
     }
 
     @Override
     public void syntax_error(Symbol cur_token) {
-        report_error("Unexpected token", cur_token);
-    }
-
-    @Override
-    public void report_error(String message, Object info) {
-        StringBuilder msg = new StringBuilder("ERROR");
-        if (info instanceof Symbol) {
-            ComplexSymbol token = (ComplexSymbol) info;
-            Location l = token.getLeft();
-            
-            if (l != null) {
-                msg.append(" (linea: ")
-                   .append(l.getLine())
-                   .append(", columna: ")
-                   .append(l.getColumn())
-                   .append(")");
-            }
-        }
-        msg.append(": ").append(message);
-        
-        System.err.println(msg);
+        Main.report_error("Unexpected token", cur_token);
     }
 
     @Override
     public void report_fatal_error(String message, Object info) throws Exception {
-        report_error("Error catastròfic ("+message+")", info);
+        Main.report_error("Error catastròfic ("+message+")", info);
         done_parsing();
     }
 :}
 
 /* ===== Terminals (tokens from lexer) ===== */
 terminal LKEY, RKEY;
-terminal INT, BOOL, STRING, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
+terminal terminal_node STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
 terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
 terminal LBRAC, RBRAC;
 terminal COMMA, DOT;
-terminal Integer INTLIT;
-terminal Boolean BOOLLIT;
-terminal String ID;
+terminal terminal_node<basicType> INT, BOOL, STRING;
+terminal terminal_node<Integer> INTLIT;
+terminal terminal_node<Boolean> BOOLLIT;
+terminal terminal_node<String> ID;
 
 /* ========= Non-terminals ========= */
 non terminal prog;
@@ -97,9 +78,9 @@ start with prog;
 /* ========== Grammar rules ========== */
 
 fields  ::= type:t ID:i SEMI
-            {: RESULT = new complexType.struct(null, i, t); :}
+            {: RESULT = new complexType.struct(null, i.value, t); :}
         | type:t ID:i SEMI fields:f
-            {: RESULT = f.addField(i, t); :}
+            {: RESULT = f.addField(i.value, t); :}
 
         | error
         | error fields
@@ -111,10 +92,10 @@ struct  ::= STRUCT LKEY fields:f RKEY
             | struct LKEY error RKEY
         ;
 
-type    ::= INT
-            {: RESULT = new complexType.primitive(null, basicType.INT); :}
-        | BOOL
-            {: RESULT = new complexType.primitive(null, basicType.BOOL); :}
+type    ::= INT:t
+            {: RESULT = new complexType.primitive(null, t.value); :}
+        | BOOL:t
+            {: RESULT = new complexType.primitive(null, t.value); :}
         | STRING
         | LBRAC expr:e RBRAC type:t
             {: RESULT = new complexType.array(null, t, e); :}
@@ -130,13 +111,11 @@ typedecl    ::= TYPE ID type:t
         ;
 
 decl    ::= type:t ID:i
-            {: RESULT = new decl_node(false, t, i); :}
+            {: RESULT = new decl_node(t, i); :}
         | type:t ID:i ASS expr:e
-            {: RESULT = new decl_node(false, t, i, e); :}
+            {: RESULT = new decl_node(t, i.value, e); :}
         | CONST:c type:t ID:i ASS expr:e
-            {: RESULT = new decl_node(true, t, i, e); 
-                System.out.println("Linea :"+cleft+", columna: "+tright);
-            :}
+            {: RESULT = new decl_node(c.left, t, i.value, e); :}
         ;
 
 ref ::= ID:i

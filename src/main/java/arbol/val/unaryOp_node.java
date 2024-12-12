@@ -13,7 +13,7 @@ public class unaryOp_node extends expr_node {
     expr_node child;
     
     public unaryOp_node(expr_node expr) {
-        super("unary operator");
+        super(expr.left, expr.right);
         oper = OP.NONE;
         child = expr;
         if (child.value != null) {
@@ -23,7 +23,7 @@ public class unaryOp_node extends expr_node {
     }
     
     public unaryOp_node(OP operator, expr_node expr) {
-        super("unary operator");
+        super(expr.left, expr.right);
         child = expr;
         oper = operator;
         if (child.value != null) {

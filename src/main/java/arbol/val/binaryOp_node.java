@@ -14,7 +14,7 @@ public class binaryOp_node extends expr_node {
     OP op;
     
     public binaryOp_node(OP operator, binaryOp_node n1, binaryOp_node n2) {
-        super("BinaryOp");
+        super(n1.left, n2.right);
         leftChild = n1;
         rightChild = n2;
         op = operator;
@@ -26,7 +26,7 @@ public class binaryOp_node extends expr_node {
     }
     
     public binaryOp_node(unaryOp_node n) {
-        super("BinaryOp");
+        super(n.left, n.right);
         leftChild = n;
         op = OP.NONE;
         if (leftChild.value != null) {

@@ -1,16 +1,26 @@
 package experimental_compiler;
+import arbol.node;
 import java_cup.runtime.ComplexSymbolFactory.*;
 import java.io.*;
 import java_cup.runtime.Symbol;
 import datos.cod;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 
 public class Main {
+    static final int ERRORINDENT = 5;
+    static final String PATH = "resources/prog.txt";
+    static String[] lines; // For printing errors
+    
     public static void main(String[] args) {
         System.out.flush();
         try {
+            lines = Files.readAllLines(Paths.get(PATH))
+                                .toArray(new String[0]);
+            
             cod.init();
             // Create a lexer that reads from standard input
-            Lexer lexer = new Lexer(new FileReader("resources/prog.txt"));
+            Lexer lexer = new Lexer(new FileReader(PATH));
             
             // Create a parser that uses the lexer
             Parser p = new Parser(lexer);
@@ -22,24 +32,60 @@ public class Main {
             e.printStackTrace();
         }
     }
-    
+  
     public static void report_error(String message, Object info) {
-        StringBuilder msg = new StringBuilder("ERROR");
+        
+        StringBuilder msg = new StringBuilder();
+        Location l, r;
+        l = r = null;
         if (info instanceof Symbol) {
-            System.out.println("BRRRRRRRRRRRRRRRRRR");
-            ComplexSymbol token = (ComplexSymbol)info;
-            Location l = token.getLeft();
+            ComplexSymbol token = (ComplexSymbol) info;
+            l = token.getLeft();
+            r = token.getRight();
+        }
+        else if (info instanceof node) {
+            node nodo = (node) info;
+            l = nodo.left;
+            r = nodo.right;
+        }
+        msg.append("[");
+        msg.append(l.getLine()+1);
+        msg.append(":");
+        msg.append(l.getColumn()+1);
+        msg.append("] ERROR: ");
+        msg.append(message);
+        msg.append("\n");
+        
+        int indent = String.valueOf(r.getLine()).length()+1;
+        for (int i = l.getLine(); i <= r.getLine(); i++) {
             
-            if (l != null) {
-                msg.append(" (fila: ")
-                   .append(l.getLine())
-                   .append(", columna: ")
-                   .append(l.getColumn())
-                   .append(")");
+            if (i == l.getLine() && i != r.getLine()) {
+                for (int j = 0; j < l.getColumn()+ERRORINDENT+2; j++) {msg.append(" ");}
+                for (int j = l.getColumn(); j < lines[i].length(); j++) {msg.append("v");}
+                msg.append("\n");
+            }
+            
+            for (int j = indent; j < ERRORINDENT; j++) {msg.append(" ");} // spaces before number
+            
+            String s = String.valueOf(i);
+            msg.append(s); // print number
+            msg.append(" | ");
+            msg.append(lines[i]);
+            msg.append("\n");
+            
+            
+            if (l.getLine() == r.getLine()) {
+                for (int j = 0; j < l.getColumn()+ERRORINDENT+2; j++) {msg.append(" ");}
+                for (int j = l.getColumn(); j < r.getColumn(); j++) {msg.append("^");}
+                msg.append("\n");
+            }
+            else if (i == r.getLine()) {
+                for (int j = 0; j < ERRORINDENT+2; j++) {msg.append(" ");}
+                for (int j = 0; j < r.getColumn(); j++) {msg.append("^");}
+                msg.append("\n");
             }
         }
-        msg.append(": ").append(message);
-        
+ 
         System.err.println(msg);
     }
 }

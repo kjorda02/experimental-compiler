@@ -15,7 +15,7 @@ public class displ_node extends ref_node {
     expr_node displ;
     
     public displ_node(ref_node b, expr_node d) {
-        super("Array index");
+        super(b.left, d.right);
         base = b;
         displ = d;
     }

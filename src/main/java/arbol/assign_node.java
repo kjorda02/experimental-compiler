@@ -2,8 +2,6 @@ package arbol;
 import arbol.ref.ref_node;
 import arbol.val.expr_node;
 import experimental_compiler.Main;
-import arbol.type.complexType;
-import arbol.type.complexType.*;
 import datos.*;
 /**
  *
@@ -14,7 +12,7 @@ public class assign_node extends node {
     public expr_node expr;
     
     public assign_node(ref_node v, expr_node e) {
-        super("assign");
+        super(v.left, e.right);
         ref = v;
         expr = e;
     }

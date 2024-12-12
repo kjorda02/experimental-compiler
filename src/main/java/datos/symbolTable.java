@@ -62,7 +62,10 @@ public class symbolTable { // (ts)
     }
     
     public static desc get(String s) {
-        return table.get(s).val;
+        entry e = table.get(s);
+        if (e == null)
+            return null;
+        return e.val;
     }
     
     public static void enterBlock() {

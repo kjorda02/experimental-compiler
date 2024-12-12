@@ -1,6 +1,8 @@
 package experimental_compiler;
 import java_cup.runtime.*;
 import java_cup.runtime.ComplexSymbolFactory.*;
+import datos.*;
+import arbol.*;
 
 %%
 %class Lexer
@@ -11,15 +13,15 @@ import java_cup.runtime.ComplexSymbolFactory.*;
 
 %{
     private ComplexSymbol symbol(int type) {
-        Location left = new Location(yyline+1, yycolumn+1);
-        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
+        Location left = new Location(yyline, yycolumn);
+        Location right = new Location(yyline, yycolumn+yytext().length());
         return new ComplexSymbol(sym.terminalNames[type], type, left, right);
     }
     
     private ComplexSymbol symbol(int type, Object value) {
-        Location left = new Location(yyline+1, yycolumn+1);
-        Location right = new Location(yyline+1, yycolumn+yytext().length()+1);
-        return new ComplexSymbol(sym.terminalNames[type], type, left, right, value);
+        Location left = new Location(yyline, yycolumn);
+        Location right = new Location(yyline, yycolumn+yytext().length());
+        return new ComplexSymbol(sym.terminalNames[type], type, left, right, new terminal_node(value, left, right));
     }
 %}
 
@@ -33,8 +35,8 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 
 %%
 
-"int"       { return symbol(sym.INT); }
-"bool"      { return symbol(sym.BOOL); }
+"int"       { return symbol(sym.INT, basicType.INT); }
+"bool"      { return symbol(sym.BOOL, basicType.BOOL); }
 "string"    { return symbol(sym.STRING); }
 "struct"    { return symbol(sym.STRUCT); }
 "type"      { return symbol(sym.TYPE); }
@@ -45,7 +47,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "switch"    { return symbol(sym.SWITCH); }
 "case"      { return symbol(sym.CASE); }
 "break"     { return symbol(sym.BREAK); }
-"const"     { return symbol(sym.CONST); }
+"const"     { return symbol(sym.CONST, null); }
 
 "="         { return symbol(sym.ASS); }
 "+"         { return symbol(sym.PLUS); }
@@ -77,7 +79,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 ","             { return symbol(sym.COMMA); }
 "."             { return symbol(sym.DOT); }
 
-{NUMBER}        { return symbol(sym.INTLIT, Integer.parseInt(yytext())); }
+{NUMBER}        { return symbol(sym.INTLIT, (long) Integer.parseInt(yytext())); }
 "true"|"false"  { return symbol(sym.BOOLLIT, Boolean.parseBoolean(yytext())); }
 {ID}            { return symbol(sym.ID, yytext()); }
 

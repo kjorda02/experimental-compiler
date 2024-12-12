@@ -9,6 +9,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/val/binaryOp_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/identifier_ref_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/target/generated-sources/cup/experimental_compiler/sym.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/terminal_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/field_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/target/generated-sources/jflex/experimental_compiler/Lexer.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/assign_node.java

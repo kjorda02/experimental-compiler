@@ -4,18 +4,22 @@ import arbol.type.complexType;
 import arbol.assign_node;
 import arbol.node;
 import arbol.ref.identifier_ref_node;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
  *
  * @author kjorda
  */
 public class expr_node extends node { // Array indices and literals are only allowed here!
+    public Integer varNum = null;    // (nv) Points to a variable in the variable table
     private node n; // expr_node, identifier_ref_node or assign_node
     public complexType type;
     public Long value; // Value for constants
     
     public expr_node(node node) {
-       super("atomic expression");
+       super(node.left, node.right);
+       if (left == null)
+            System.out.println("BBBBBBBBBBBBBBBBBBB");
        n = node;
        if (n instanceof assign_node) 
             n = ((assign_node) n).expr; // Get the expression if it was an assignment
@@ -30,17 +34,23 @@ public class expr_node extends node { // Array indices and literals are only all
        }
     }
     
-    public expr_node(String nodeName) { // For inheritance
-        super(nodeName);
+    public expr_node(Location left, Location  right) { // For inheritance
+        super(left, right);
+        if (left == null)
+            System.out.println("BBBBBBBBBBBBBBBBBBB");
     }
     
     @Override
     public void gest() {
-        if (n.value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
+        if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
             return;
         
         n.gest(); // Either process the expression or process the assignment (which will process its expression)
-        varNum = n.varNum;
+        if (n instanceof expr_node)
+            varNum = ((expr_node) n).varNum;
+        else if (n instanceof identifier_ref_node)
+            varNum = ((identifier_ref_node) n).varNum;
+        
         type = ((expr_node) n).type;
     }
 }

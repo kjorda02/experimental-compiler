@@ -1,11 +1,13 @@
 package arbol.type;
 
 import arbol.node;
+import arbol.terminal_node;
 import arbol.val.expr_node;
 import datos.basicType;
 import experimental_compiler.Main;
 import java.util.*;
 import java.util.Map.Entry;
+import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
  *
@@ -27,6 +29,12 @@ public abstract class complexType extends node{
     
     public static class primitive extends complexType {
         public basicType btype;
+        
+//        public primitive(terminal_node<String> n, terminal_node<basicType> b) {
+//            this(n.value, b.value);
+//            left = b.left;
+//            right = b.right;
+//        }
         
         public primitive(String n, basicType b) {
             name = n;
@@ -76,8 +84,10 @@ public abstract class complexType extends node{
         public expr_node size;
         
         public array(String n, complexType c, expr_node s) {
+            left = s.left;
+            right = s.right;
             if (!(s.type instanceof complexType.primitive) || ((complexType.primitive) s.type).btype != basicType.INT) {
-                Main.report_error("Cannot declare array with non-integer size: "+s.type.toString(), this);
+                Main.report_error("Cannot declare array with non-integer size ("+s.type.toString()+")", this);
                 return;
             }
             name = n;
@@ -122,19 +132,28 @@ public abstract class complexType extends node{
             size = 0;
         }
         
+//        public struct(String structName, terminal_node<String> fieldName, complexType fieldType) {
+//            this(structName, fieldName.value, fieldType);
+//            left = fieldType.left;
+//            right = fieldName.right;
+//        }
+        
         public struct(String structName, String fieldName, complexType fieldType) {
             name = structName;
             fields = new HashMap<>();
             size = 1;
             fields.put(fieldName, new field(bytes, fieldType));
             bytes += fieldType.bytes;
-        
         }
+        
+//        public complexType.struct addField(terminal_node<String> name, complexType c) {
+//            fields.put(name.value, new field(bytes, c));
         
         public complexType.struct addField(String name, complexType c) {
             fields.put(name, new field(bytes, c));
             bytes += c.bytes;
             size++;
+            //left = c.left; // In production (fields -> type ID SEMI fields), we expand the left to the left of type
             return this;
         }
         

@@ -1,3 +1,5 @@
 const int c = 43;
 const int d = c*3;
 [4]struct{[d*32][5]int a; bool b;} hello;
+bool jelou = hello;
+    
