@@ -1,4 +1,5 @@
 package arbol.val;
+import arbol.node;
 import arbol.type.complexType;
 import datos.*;
 import static datos.OP.AND;
@@ -19,20 +20,25 @@ public class binaryOp_node extends expr_node {
         rightChild = n2;
         op = operator;
         
-        if (leftChild.value != null && rightChild.value != null){  // CONSTANT EXPRESSION
-            type = leftChild.type;
+        if (node.error(n1, n2) || checkTypes())
+            return;
+        
+        
+        type = leftChild.type;
+        if (leftChild.value != null && rightChild.value != null)  // CONSTANT EXPRESSION
             value = evalConst(); // Will update type if it's not the same as child's
-        }
+        if (leftChild.value != null && op == OP.NONE)
+            value = leftChild.value;
+        error = false;
     }
     
     public binaryOp_node(unaryOp_node n) {
         super(n.left, n.right);
         leftChild = n;
         op = OP.NONE;
-        if (leftChild.value != null) {
-            value = leftChild.value;
-            type = leftChild.type;
-        }
+        type = leftChild.type;
+        value = leftChild.value; // Null unless compile-time expression
+        error = n.isEmpty();
     }
     
     private long evalConst() {
@@ -71,48 +77,20 @@ public class binaryOp_node extends expr_node {
         return 0;
     }
     
-    @Override
-    public void gest() { // TODO: CHECK IF ASSIGNING TYPES AT CODE GENERATION TIME IS NECESSARY
-        if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
-            return;
-        
-        if (leftChild.value == null)
-            leftChild.gest();
-        else {
-            int t = varTable.newvar(0, false);
-            cod.genera(cod.op.COPYLIT, leftChild.value, 0, t);
-            leftChild.varNum = t;
-        }
-        
-        type = leftChild.type;
-        if (op == OP.NONE) { // binary_expr -> unary_expr
-            varNum = leftChild.varNum;
-            value = leftChild.value;
-            return;
-        }
-        
-        if (rightChild.value == null)
-            rightChild.gest();
-        else {
-            int t = varTable.newvar(0, false);
-            cod.genera(cod.op.COPYLIT, rightChild.value, 0, t);
-            rightChild.varNum = t;
-        }
-        
-        // TYPE CHECKING -------------------------------------------------------
+    private boolean checkTypes() {
         // Not allowing operator overloading for now
         if (!(leftChild.type instanceof complexType.primitive)) {
             Main.report_error("Cannot perform binary operation \""+op.toString()+"\" with left operand of non-primitive type \""+leftChild.type.toString()+"\"", this);
-            return;
+            return true;
         }
         if (!(rightChild.type instanceof complexType.primitive)) {
             Main.report_error("Cannot perform binary operation \""+op.toString()+"\" with right operand of non-primitive type \""+rightChild.type.toString()+"\"", this);
-            return;
+            return true;
         }
         
         basicType leftType = ((complexType.primitive) leftChild.type).btype;
         basicType rightType = ((complexType.primitive) rightChild.type).btype;
-        empty = true;
+
         switch (op) {
             case PLUS:
             case NEG:
@@ -124,32 +102,59 @@ public class binaryOp_node extends expr_node {
             case GEQ:
                 if (leftType != basicType.INT) {
                     Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
-                    return;
+                    return true;
                 }
                 if (rightType != basicType.INT) {
                     Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
-                    return;
+                    return true;
                 }
                 break;
             case AND:
             case OR:
                 if (leftType != basicType.BOOL) {
                     Main.report_error("Invalid type \""+leftChild.type.toString()+"\" for left argument of binary operator \""+op.toString()+"\"", this);
-                    return;
+                    return true;
                 }
                 if (rightType != basicType.BOOL) {
                     Main.report_error("Invalid type \""+rightChild.type.toString()+"\" for right argument of binary operator \""+op.toString()+"\"", this);
-                    return;
+                    return true;
                 }
                 break;
             case EQ:
             case NEQ:
                 if (leftType != rightType) {
                     Main.report_error("Cannot compare expressions of differing types \""+leftChild.type.toString()+"\" and \""+rightChild.type.toString()+"\"", value);
-                    return;
+                    return true;
                 }
         }
-        empty = false;
+        return false;
+    }
+    
+    @Override
+    public void gest() {
+        if (value != null || error) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
+            return;
+        
+        if (leftChild.value != null) {
+            int t = varTable.newvar(0, false); // For compile-time expressions, we create a variable 
+            cod.genera(cod.op.COPYLIT, leftChild.value, 0, t); // so that we can operate with the other expression
+            leftChild.varNum = t;
+        }
+        else { // Normal runtime expression
+            leftChild.gest(); 
+            if (op == OP.NONE) { // binary_expr -> unary_expr
+                varNum = leftChild.varNum;
+                return;
+            }
+            
+            if (rightChild.value != null) { // If the left child is a runtime expression, this one could be compile-time
+                int t = varTable.newvar(0, false);
+                cod.genera(cod.op.COPYLIT, rightChild.value, 0, t);
+                rightChild.varNum = t;
+            }
+            else 
+                rightChild.gest(); 
+        }
         
         // EXPRESSION EVALUATION -----------------------------------------------
         int t = varTable.newvar(0, false);

@@ -1,19 +1,17 @@
 package arbol.type;
 
 import arbol.node;
-import arbol.terminal_node;
 import arbol.val.expr_node;
 import datos.basicType;
 import experimental_compiler.Main;
 import java.util.*;
 import java.util.Map.Entry;
-import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
  *
  * @author kjorda
  */
-public abstract class complexType extends node{
+public abstract class complexType extends node {
     public String name; // Null if anonymous type
     public int bytes; // Size in memory in bytes
     
@@ -25,7 +23,7 @@ public abstract class complexType extends node{
     @Override
     public void gest() {
         
-    }
+    }   
     
     public static class primitive extends complexType {
         public basicType btype;
@@ -40,10 +38,14 @@ public abstract class complexType extends node{
             name = n;
             btype = b;
             bytes = btype.bytes;
+            error = false;
         }
         
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof primitive))
+                return false;
+            
             primitive other = (primitive) o;
             if (name != null && other.name != null && !name.equals(other.name))
                 return false;
@@ -63,10 +65,14 @@ public abstract class complexType extends node{
             name = n;
             baseType = c;
             bytes = 8; // TODO: Change based on system size
+            error = false;
         }
         
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof pointer))
+                return false;
+            
             pointer other = (pointer) o;
             if (name != null && other.name != null && !name.equals(other.name))
                 return false;
@@ -86,6 +92,10 @@ public abstract class complexType extends node{
         public array(String n, complexType c, expr_node s) {
             left = s.left;
             right = s.right;
+            
+            if (s.isEmpty())
+                return;
+            
             if (!(s.type instanceof complexType.primitive) || ((complexType.primitive) s.type).btype != basicType.INT) {
                 Main.report_error("Cannot declare array with non-integer size ("+s.type.toString()+")", this);
                 return;
@@ -95,10 +105,15 @@ public abstract class complexType extends node{
             size = s;
             if (size.value != null)
                 bytes = (int) (size.value*baseType.bytes); // TODO: Maybe keep array size in memory for runtime checks?
+            
+            error = false;
         }
         
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof array))
+                return false;
+            
             array other = (array) o;
             if (name != null && other.name != null && !name.equals(other.name))
                 return false;
@@ -130,6 +145,7 @@ public abstract class complexType extends node{
             name = n;
             fields = new HashMap<>();
             size = 0;
+            error = false;
         }
         
 //        public struct(String structName, terminal_node<String> fieldName, complexType fieldType) {
@@ -159,6 +175,9 @@ public abstract class complexType extends node{
         
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof struct))
+                return false;
+            
             struct other = (struct) o;
             if (name != null && other.name != null && !name.equals(other.name))
                 return false;
@@ -207,6 +226,7 @@ public abstract class complexType extends node{
         public funcptr(complexType c) {
             returnType = c;
             paramTypes = new ArrayList<>();
+            error = false;
         }
         
         public void addParam(complexType c) {
@@ -215,6 +235,9 @@ public abstract class complexType extends node{
         
         @Override
         public boolean equals(Object o) {
+            if (!(o instanceof funcptr))
+                return false;
+            
             funcptr other = (funcptr) o;
             return returnType.equals(other.returnType) && paramTypes.equals(other.paramTypes);
         }

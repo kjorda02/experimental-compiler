@@ -1,5 +1,6 @@
 package arbol.ref;
 
+import arbol.node;
 import arbol.terminal_node;
 import arbol.type.complexType;
 import experimental_compiler.Main;
@@ -17,13 +18,17 @@ public class field_node extends ref_node {
         super(s.left, name.right);
         base = s;
         fieldName = name.value;
+        
+        if (!(base.type instanceof complexType.struct)) {
+            Main.report_error("Cannot access field \""+fieldName+"\": not a struct.", s.left, name.right);
+            return;
+        }
+        error = false;
     }
     
     @Override
     public void gest() {
-        if (!(base.type instanceof complexType.struct)) 
-            Main.report_error("Cannot access field \""+fieldName+"\": not a struct.", this);
-        
+        if (error) return;
         // Figure out var number based on the base's varNum and the displacement of the field in the type
     }
 }

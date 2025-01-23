@@ -11,80 +11,89 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
  */
 public class decl_node extends node {
     complexType type; // (dt)
-    String identifier;
+    terminal_node<String> id;
     expr_node expr;
-    boolean isConst;
+    desc.variable vard;
     
-    public decl_node(complexType t, terminal_node<String> s) {
-        super(t.left, s.right);
+    public decl_node(complexType t, terminal_node<String> ident) {
+        super(((node)ident).left, ident.right);
         type = t;
-        identifier = s.value;
-        isConst = false;
-    }
-    
-    public decl_node(complexType t, String s, expr_node e) {
-        super(e.left, e.right);
-        type = t;
-        identifier = s;
-        expr = e;
-        isConst = false;
-    }
-    
-    public decl_node(Location l, complexType t, String s, expr_node e) {
-        super(t.left, e.right);
-        type = t;
-        identifier = s;
-        expr = e;
-        isConst = true;
-    }
-    
-    @Override
-    public void gest() {
-        type.gest();
+        id = ident;
+        if (node.error(t, ident))
+            return;
         
-        desc d;
-        if (isConst) {
-            if (!(type instanceof complexType.primitive)) {
-                Main.report_error("Cannot define constant of non-primitive type \""+type.toString()+"\"", this);
-                return;
-            }
-            if (expr == null) {
-                Main.report_error("Constant must be assigned a value at declaration.", this);
+        addVar();
+    }
+    
+    public decl_node(complexType t, terminal_node<String> ident, expr_node e) {
+        super(((node)ident).left, e.right);
+        type = t;
+        id = ident;
+        expr = e;
+        if (node.error(t, ident, e))
+            return;
+        
+        addVar();
+    }
+    
+    public decl_node(Location l, complexType t, terminal_node<String> ident, expr_node e) { // constant
+        super(l, e.right);
+        type = t;
+        id = ident;
+        expr = e;
+        
+        if (node.error(t, ident, e))
+            return;
+        
+        if (!(type instanceof complexType.primitive)) {
+                Main.report_error("Cannot define constant of non-primitive type \""+type.toString()+"\"", id);
                 return;
             }
             if (!type.equals(expr.type)) {
-                Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to constant of type <"+type.toString()+">", this);
+                Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to constant of type <"+type.toString()+">", expr);
                 return;
             }
             if (expr.value == null) {
-                Main.report_error("Constants cannot be assigned runtime expressions", this);
+                Main.report_error("Cannot assign runtime expression to constant", expr);
                 return;
             }
             
             long val = ((expr_node) expr).value;
             basicType btype = ((complexType.primitive) type).btype;
-            d = new desc.constant(btype, val);
+            desc dc = new desc.constant(btype, val);
+            symbolTable.add(ident.value, dc);
+            error = false;
+    }
+    
+    private void addVar() {
+        if (expr != null && !type.equals(expr.type)) {
+            Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to variable of type <"+type.toString()+">", expr);
+            return;
         }
-        else {
-            d = new desc.variable(type);
-            int varNumDst = ((desc.variable) d).varNum;
-            
-            if (expr == null)
-                return;
-            
-            if (!type.equals(expr.type)) {
-                Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to variable of type <"+type.toString()+">", this);
-                return;
-            }
-            
-            if (expr.value == null) { // Runtime expression
-                expr.gest();
-                cod.genera(cod.op.COPY, expr.varNum, 0, varNumDst);
-            }
-            else  // Compile-time expression
-                cod.genera(cod.op.COPYLIT, expr.value, 0, varNumDst);
+
+        vard = new desc.variable(type);
+        if (symbolTable.add(id.value, vard)) {
+            Main.report_error("Identifier \""+id.value+"\" is already in use in current scope.", id);
+            return;
         }
+        error = false;
+    }
+
+    @Override
+    public void gest() {
+        if (error)
+            return;
         
-        symbolTable.add(identifier, d);
+        if (vard == null || expr == null) // If it's a constant or it's a declaration without initial value
+            return;
+        
+        int varNumDst = ((desc.variable) vard).varNum;
+        
+        if (expr.value == null) { // Runtime expression
+            expr.gest();
+            cod.genera(cod.op.COPY, expr.varNum, 0, varNumDst);
+        }
+        else  // Compile-time expression
+            cod.genera(cod.op.COPYLIT, expr.value, 0, varNumDst);
     }
 }

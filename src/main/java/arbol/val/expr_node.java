@@ -4,6 +4,7 @@ import arbol.type.complexType;
 import arbol.assign_node;
 import arbol.node;
 import arbol.ref.identifier_ref_node;
+import arbol.ref.ref_node;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
@@ -17,27 +18,31 @@ public class expr_node extends node { // Array indices and literals are only all
     public Long value; // Value for constants
     
     public expr_node(node node) {
-       super(node.left, node.right);
-       if (left == null)
-            System.out.println("BBBBBBBBBBBBBBBBBBB");
-       n = node;
-       if (n instanceof assign_node) 
-            n = ((assign_node) n).expr; // Get the expression if it was an assignment
+        super(node.left, node.right);
+        n = node;
+        if (n.isEmpty())
+            return;
+        
+        if (node instanceof ref_node) {
+            type = ((ref_node) node).type;
 
-       if (n instanceof identifier_ref_node && ((identifier_ref_node) n).value != null) {
-           value = ((identifier_ref_node) n).value;
-           type =  ((identifier_ref_node) n).type;
-       }
-       if (n instanceof expr_node && ((expr_node) n).value != null) {
-           value = ((expr_node) n).value;
-           type =  ((expr_node) n).type;
-       }
+            if (node instanceof identifier_ref_node)
+                value = (((identifier_ref_node) node)).value; // Compile-time value, only for basic references, not arrays or structs
+        }
+        else if (node instanceof assign_node) 
+             node = ((assign_node) node).expr; // Get the expression if it was an assignment
+        
+        if (node instanceof expr_node) {
+            expr_node exn = (expr_node) node;
+            type =  exn.type;
+            value = exn.value;
+        }
+       
+       error = false;
     }
     
     public expr_node(Location left, Location  right) { // For inheritance
         super(left, right);
-        if (left == null)
-            System.out.println("BBBBBBBBBBBBBBBBBBB");
     }
     
     @Override
@@ -46,11 +51,12 @@ public class expr_node extends node { // Array indices and literals are only all
             return;
         
         n.gest(); // Either process the expression or process the assignment (which will process its expression)
+        if (n instanceof assign_node)
+            n = ((assign_node)n).expr;
         if (n instanceof expr_node)
             varNum = ((expr_node) n).varNum;
         else if (n instanceof identifier_ref_node)
             varNum = ((identifier_ref_node) n).varNum;
         
-        type = ((expr_node) n).type;
     }
 }

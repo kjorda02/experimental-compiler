@@ -34,8 +34,6 @@ public class Main {
     }
   
     public static void report_error(String message, Object info) {
-        
-        StringBuilder msg = new StringBuilder();
         Location l, r;
         l = r = null;
         if (info instanceof Symbol) {
@@ -48,6 +46,11 @@ public class Main {
             l = nodo.left;
             r = nodo.right;
         }
+        report_error(message, l, r);
+    }
+    
+    public static void report_error(String message, Location l, Location r) {
+        StringBuilder msg = new StringBuilder();
         msg.append("[");
         msg.append(l.getLine()+1);
         msg.append(":");
@@ -67,12 +70,11 @@ public class Main {
             
             for (int j = indent; j < ERRORINDENT; j++) {msg.append(" ");} // spaces before number
             
-            String s = String.valueOf(i);
+            String s = String.valueOf(i+1);
             msg.append(s); // print number
             msg.append(" | ");
             msg.append(lines[i]);
             msg.append("\n");
-            
             
             if (l.getLine() == r.getLine()) {
                 for (int j = 0; j < l.getColumn()+ERRORINDENT+2; j++) {msg.append(" ");}

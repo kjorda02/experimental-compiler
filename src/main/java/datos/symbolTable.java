@@ -44,10 +44,10 @@ public class symbolTable { // (ts)
         currScope = 1;
     }
     
-    public static void add(String id, desc desc) {
+    public static boolean add(String id, desc desc) {
         if (table.containsKey(id)) { // Check if the identifier is in use
             if (table.get(id).scopeDecl == currScope) // If it was declared in the current scope -> Error
-                Main.report_error("Identifier \""+id+"\" is already in use in current scope.", null);
+                return true;
             
             // If it was declared in previous (parent) scope, we need to save it before overwriting it
             // so that we can restore it once we exit the current scope
@@ -59,6 +59,7 @@ public class symbolTable { // (ts)
             
         }
         table.put(id, new entry(currScope, desc)); // Now we can write or overwrite without worry
+        return false;
     }
     
     public static desc get(String s) {

@@ -1,5 +1,7 @@
-const int c = 43;
+const int c = 5;
 const int d = c*3;
-[4]struct{[d*32][5]int a; bool b;} hello;
-bool jelou = hello;
-    
+[4]struct{[d*32][5]int a; bool b;} jelou;
+
+int a = 4;
+[5]int b;
+int s = a>b[2];

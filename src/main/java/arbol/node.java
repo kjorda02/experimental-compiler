@@ -9,24 +9,35 @@ import java_cup.runtime.ComplexSymbolFactory.Location;
  */
 public class node {
     public Location left, right;
-    protected boolean empty;
+    protected boolean error;
     
     public node(Location l, Location r) {
         left = l;
         right = r;
-        this.empty = false;
+        this.error = true;
     }
     
     public node() {
-        empty = true;
+        error = true;
     }
 
     public boolean isEmpty() {
-        return empty;
+        return error;
     }
     
     public void gest() {
         
     }
     
+    public static boolean error(node n1) {
+        return n1.isEmpty();
+    }
+    
+    public static boolean error(node n1, node n2) {
+        return n1.isEmpty() || n2.isEmpty();
+    }
+    
+    public static boolean error(node n1, node n2, node n3) {
+        return n1.isEmpty() || n2.isEmpty() || n3.isEmpty();
+    }
  }

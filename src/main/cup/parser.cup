@@ -42,6 +42,7 @@ terminal terminal_node<String> ID;
 
 /* ========= Non-terminals ========= */
 non terminal prog;
+non terminal stmts;
 non terminal stmt_node stmt;
 non terminal assign_node assign;
 
@@ -113,9 +114,9 @@ typedecl    ::= TYPE ID type:t
 decl    ::= type:t ID:i
             {: RESULT = new decl_node(t, i); :}
         | type:t ID:i ASS expr:e
-            {: RESULT = new decl_node(t, i.value, e); :}
+            {: RESULT = new decl_node(t, i, e); :}
         | CONST:c type:t ID:i ASS expr:e
-            {: RESULT = new decl_node(c.left, t, i.value, e); :}
+            {: RESULT = new decl_node(c.left, t, i, e); :}
         ;
 
 ref ::= ID:i
@@ -211,10 +212,15 @@ stmt    ::= decl:d
             {: RESULT = new stmt_node(e); :}
         
         | error
+            {: RESULT = new stmt_node(new node()); :}
         ;
 
-prog    ::= stmt:s SEMI
+stmts    ::= stmt:s SEMI
             {: s.gest(); :}
-        | prog stmt:s SEMI
+        | stmts stmt:s SEMI
             {: s.gest(); :}
+        ;
+
+prog    ::= stmts:s
+            {: s.gest() :}
         ;

@@ -18,23 +18,27 @@ public class displ_node extends ref_node {
         super(b.left, d.right);
         base = b;
         displ = d;
-    }
-    
-    @Override
-    public void gest() {
-        base.gest();
-        displ.gest();
         
         // TODO: Add toString to references so they can be printed out like id.field.otherField[32][32] ?
         if (!(base.type instanceof complexType.array)) {
-            Main.report_error("Cannot index array: Not an array..", this);
+            Main.report_error("Cannot index array: Not an array.", b.left, d.right);
             return;
         }
         
         if (!(displ.type instanceof complexType.primitive) || ((complexType.primitive) displ.type).btype != basicType.INT) {
-            Main.report_error("Cannot index array with non-integer value: "+displ.type.toString(), this);
+            Main.report_error("Cannot index array with non-integer value: "+displ.type.toString(), b.left, d.right);
             return;
         }
+        
+        type = ((complexType.array)base.type).baseType;
+        error = false;
+    }
+    
+    @Override
+    public void gest() {
+        if (error) return;
+        base.gest();
+        displ.gest();
         
 //        int t = varTable.newvar(0, false);
 //        cod.genera(cod.op.IDX_VAL, n.var, n.displ, t);

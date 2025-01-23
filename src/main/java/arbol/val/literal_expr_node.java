@@ -13,6 +13,7 @@ public class literal_expr_node extends expr_node {
     public literal_expr_node(terminal_node<?> node) {
         super(node.left, node.right);
         
+        error = false;
         if (node.value instanceof Long) { // NUMERIC LITERAL
             type = new complexType.primitive(null, basicType.INT);
             value = (Long) node.value;
@@ -24,5 +25,7 @@ public class literal_expr_node extends expr_node {
             else
                 value = 0l;
         }
+        else 
+            error = true;
     }
 }
