@@ -1,7 +1,6 @@
-const int c = 5;
-const int d = c*3;
-[4]struct{[d*32][5]int a; bool b;} jelou;
+int a = 1;
+while (a<10) {
+    a = a + 1;
+}
 
-int a = 4;
-[5]int b;
-int s = a>b[2];
+

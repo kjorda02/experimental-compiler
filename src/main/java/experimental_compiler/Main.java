@@ -36,10 +36,17 @@ public class Main {
     public static void report_error(String message, Object info) {
         Location l, r;
         l = r = null;
-        if (info instanceof Symbol) {
+        if (info instanceof ComplexSymbol) {
             ComplexSymbol token = (ComplexSymbol) info;
             l = token.getLeft();
             r = token.getRight();
+        }
+        else if (info instanceof Symbol) {
+            if (((Symbol)info).sym == 0)
+                System.out.println("ERROR: Unexpected end of file.");
+            else if(((Symbol)info).sym == 1)
+                System.out.println("ERROR: Unexpected error.");
+            return;
         }
         else if (info instanceof node) {
             node nodo = (node) info;

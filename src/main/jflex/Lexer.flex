@@ -85,7 +85,6 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 
 
 {whitespace}    { }
-{newl}          { return symbol(sym.SEMI); }
 
 [^]             { throw new Error("Illegal character <" + yytext() + ">"); }
 

@@ -6,6 +6,7 @@ import arbol.*;
 import arbol.ref.*;
 import arbol.val.*;
 import arbol.type.*;
+import arbol.flow.*;
 import datos.*;
 
 parser code {:
@@ -42,7 +43,10 @@ terminal terminal_node<String> ID;
 
 /* ========= Non-terminals ========= */
 non terminal prog;
-non terminal stmts;
+non terminal while_node while;
+non terminal ifstmt_node ifstmt;
+non terminal stmt_node blockstmt;
+non terminal stmts_node stmts;
 non terminal stmt_node stmt;
 non terminal assign_node assign;
 
@@ -204,6 +208,14 @@ expr    ::= binary_expr:e
             {: RESULT = new expr_node(e); :}
         ;
 
+ifstmt  ::= IF LPAREN expr:e RPAREN LKEY stmts:s RKEY
+            {: RESULT = new ifstmt_node(e, s); :}
+        ;
+
+while   ::= WHILE LPAREN expr:e RPAREN LKEY stmts:s RKEY
+            {: RESULT = new while_node(e, s); :}
+        ;
+
 stmt    ::= decl:d
             {: RESULT = new stmt_node(d); :}
         | typedecl:d
@@ -215,12 +227,22 @@ stmt    ::= decl:d
             {: RESULT = new stmt_node(new node()); :}
         ;
 
+blockstmt ::= ifstmt:i
+            {: RESULT = new stmt_node(i); :}
+        | while:w
+            {: RESULT = new stmt_node(w); :}
+        ;
+
 stmts    ::= stmt:s SEMI
-            {: s.gest(); :}
-        | stmts stmt:s SEMI
-            {: s.gest(); :}
+            {: RESULT = new stmts_node(s); :}
+        | stmt:s SEMI stmts:ss
+            {: RESULT = new stmts_node(s, ss); :}
+        | blockstmt:b
+            {: RESULT = new stmts_node(b); :}
+        | blockstmt:b stmts:ss
+            {: RESULT = new stmts_node(b, ss); :}
         ;
 
 prog    ::= stmts:s
-            {: s.gest() :}
+            {: s.gest(); :}
         ;

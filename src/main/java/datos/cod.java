@@ -1,7 +1,6 @@
 package datos;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 
 /**
  *
@@ -10,7 +9,6 @@ import java.util.HashMap;
 public class cod {
     public static enum op {
         COPY("copy "),
-        COPYLIT("copylit "),
         ADD("+"),
         SUB("-"),
         PROD("*"),
@@ -45,6 +43,7 @@ public class cod {
     public static class codigo3dirs {
         public op operation;
         public long[] op = new long[3];
+        public int imm = -1;  // -1: no immediates, 0: op1 is immediate, 1: op2 is immediate, 2: both op1 and op2 are immediate (only idx_ass)
         
         codigo3dirs(op op, long op1, long op2, long dst) {
             this.operation = op;
@@ -53,9 +52,25 @@ public class cod {
             this.op[2] = dst;
         }
         
-        public long op1() { return op[0]; }
-        public long op2() { return op[1]; }
-        public long dst() { return op[2]; }
+        public void setImmediate(int i) {
+            imm = i;
+        }
+        
+        private String op1() {
+            if (imm == 0 || imm == 2)
+                return ""+op[0]; 
+            else
+                return "t"+op[0];
+        }
+        private String op2() {
+            if (imm == 1 || imm == 2)
+                return ""+op[1];
+            else
+                return "t"+op[1];
+        }
+        private String dst() {
+            return "t"+op[2];
+        }
         
         public String toString(ArrayList<Integer> tagNums) {
             String s = "";
@@ -67,25 +82,23 @@ public class cod {
                 case MOD:
                 case AND:
                 case OR: // dst = op1 ⊕ op2
-                    s += "t"+dst()+" = t"+op1()+" "+operation.str+" t"+op2();
+                    s += dst()+" = "+op1()+" "+operation.str+" "+op2();
                     break;
                 case NEG:
                 case NOT: // dst = ⊕ op1
-                    s += "t"+dst()+" = "+operation.str+"t"+op1();
+                    s += dst()+" = "+operation.str+" "+op1();
                     break;
                 case COPY:
-                    s += "t"+dst()+" = t"+op1();
-                case COPYLIT:
-                    s += "t"+dst()+" = "+op1();
+                    s += dst()+" = "+op1();
                     break;
                 case IDX_VAL: // dst = op1[op2]
-                    s += "t"+dst()+" = t"+op1()+"[t"+op2()+"]";
+                    s += dst()+" = "+op1()+"["+op2()+"]";
                     break;
                 case IDX_ASS: // dst[op2] = op1
-                    s += "t"+dst()+"[t"+op2()+"] = t"+op1();
+                    s += dst()+"["+op2()+"] = "+op1();
                     break;
                 case GOTO: // goto dst
-                    s += "goto "+str(dst());
+                    s += "goto "+str(op[2]); // get tag of the destination operand
                     break;
                 case IFLT:
                 case IFLE:
@@ -93,7 +106,7 @@ public class cod {
                 case IFNE:
                 case IFGE:
                 case IFGT: // if op1 ⊕ op2 goto dst
-                    s += "if t"+op1()+" "+operation.str+" t"+op2()+" goto "+str(dst());
+                    s += "if "+op1()+" "+operation.str+" "+op2()+" goto "+str(op[2]);
                     break;
                 case PMB:
                 case CALL:
@@ -101,10 +114,10 @@ public class cod {
                     s += operation.str+dst(); // TODO: Get function name from the table
                     break;
                 case PARAM_S:
-                    s += "param_s t"+dst(); // param_s dst
+                    s += "param_s "+dst(); // param_s dst
                     break;
                 case PARAM_C:
-                    s += "param_c t"+op1()+"[t"+op2()+"]"; // param_c op1[op2]
+                    s += "param_c "+op1()+"["+op2()+"]"; // param_c op1[op2]
                     break;
             }
             return s;
@@ -133,6 +146,15 @@ public class cod {
         tagNums.add(-1); // tagNums[currentAddr+1]
         codigo.add(new codigo3dirs(op, op1, op2, dst)); // codigo[currentAddr]
         currentAddr++;
+    }
+    
+    public static void setImmediate(boolean op1, boolean op2) {
+        if (op1 && op2)
+            codigo.get(currentAddr-1).setImmediate(2);
+        else if (op1)
+            codigo.get(currentAddr-1).setImmediate(0);
+        else if (op2)
+            codigo.get(currentAddr-1).setImmediate(1);
     }
     
     public static void replaceWithTag(int pos, int tagNum) {

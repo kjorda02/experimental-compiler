@@ -93,7 +93,9 @@ public class decl_node extends node {
             expr.gest();
             cod.genera(cod.op.COPY, expr.varNum, 0, varNumDst);
         }
-        else  // Compile-time expression
-            cod.genera(cod.op.COPYLIT, expr.value, 0, varNumDst);
+        else { // Compile-time expression
+            cod.genera(cod.op.COPY, expr.value, 0, varNumDst);
+            cod.setImmediate(true, false);
+        }  
     }
 }

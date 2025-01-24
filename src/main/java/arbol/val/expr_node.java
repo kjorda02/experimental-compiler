@@ -5,6 +5,8 @@ import arbol.assign_node;
 import arbol.node;
 import arbol.ref.identifier_ref_node;
 import arbol.ref.ref_node;
+import datos.cod;
+import datos.varTable;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
@@ -43,6 +45,16 @@ public class expr_node extends node { // Array indices and literals are only all
     
     public expr_node(Location left, Location  right) { // For inheritance
         super(left, right);
+    }
+    
+    public int getVarNum() {
+        if (varNum == null) {
+            int t = varTable.newvar(0, false);
+            cod.genera(cod.op.COPY, value, 0, t); // so that we can operate with the other expression
+            cod.setImmediate(true, false);
+            varNum = t;
+        }
+        return varNum;
     }
     
     @Override

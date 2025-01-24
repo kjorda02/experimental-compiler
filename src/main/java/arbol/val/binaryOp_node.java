@@ -23,8 +23,6 @@ public class binaryOp_node extends expr_node {
         if (node.error(n1, n2) || checkTypes())
             return;
         
-        
-        type = leftChild.type;
         if (leftChild.value != null && rightChild.value != null)  // CONSTANT EXPRESSION
             value = evalConst(); // Will update type if it's not the same as child's
         if (leftChild.value != null && op == OP.NONE)
@@ -56,22 +54,16 @@ public class binaryOp_node extends expr_node {
             case OR:
                 return leftChild.value | rightChild.value;
             case LT:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value<rightChild.value ? -1 : 0;
             case GT:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value>rightChild.value ? -1 : 0;
             case LEQ:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value<=rightChild.value ? -1 : 0;
             case GEQ:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value>=rightChild.value ? -1 : 0;
             case EQ:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value==rightChild.value ? -1 : 0;
             case NEQ:
-                type = new complexType.primitive(null, basicType.BOOL);
                 return leftChild.value!=rightChild.value ? -1 : 0;
         }
         return 0;
@@ -91,11 +83,13 @@ public class binaryOp_node extends expr_node {
         basicType leftType = ((complexType.primitive) leftChild.type).btype;
         basicType rightType = ((complexType.primitive) rightChild.type).btype;
 
+        type = new complexType.primitive(null, basicType.BOOL);
         switch (op) {
             case PLUS:
             case NEG:
             case TIMES:
             case DIV:
+                type = new complexType.primitive(null, basicType.INT);
             case LT:
             case GT:
             case LEQ:
@@ -135,84 +129,83 @@ public class binaryOp_node extends expr_node {
         if (value != null || error) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
             return;
         
-        if (leftChild.value != null) {
-            int t = varTable.newvar(0, false); // For compile-time expressions, we create a variable 
-            cod.genera(cod.op.COPYLIT, leftChild.value, 0, t); // so that we can operate with the other expression
-            leftChild.varNum = t;
-        }
-        else { // Normal runtime expression
-            leftChild.gest(); 
+        if (leftChild.value == null) {
+            leftChild.gest();
             if (op == OP.NONE) { // binary_expr -> unary_expr
                 varNum = leftChild.varNum;
                 return;
             }
-            
-            if (rightChild.value != null) { // If the left child is a runtime expression, this one could be compile-time
-                int t = varTable.newvar(0, false);
-                cod.genera(cod.op.COPYLIT, rightChild.value, 0, t);
-                rightChild.varNum = t;
-            }
-            else 
-                rightChild.gest(); 
         }
+        if (rightChild.value == null)
+            rightChild.gest();
         
         // EXPRESSION EVALUATION -----------------------------------------------
+        long op1 = (leftChild.value == null) ? leftChild.varNum : leftChild.value;
+        long op2 = (rightChild.value == null) ? rightChild.varNum : rightChild.value;
+        
         int t = varTable.newvar(0, false);
         switch(op){
-            case PLUS:
-                cod.genera(cod.op.ADD, leftChild.varNum, rightChild.varNum, t);
-                break;
-            case NEG:
-                cod.genera(cod.op.SUB, leftChild.varNum, rightChild.varNum, t);
-                break;
-            case TIMES:
-                cod.genera(cod.op.PROD, leftChild.varNum, rightChild.varNum, t);
-                break;
-            case DIV:
-                cod.genera(cod.op.DIV, leftChild.varNum, rightChild.varNum, t);
-                break;
-            case AND:
-                cod.genera(cod.op.AND, leftChild.varNum, rightChild.varNum, t);
-                break;
-            case OR:
-                cod.genera(cod.op.OR, leftChild.varNum, rightChild.varNum, t);
-                break;
             case LT:
-                gest_rel(cod.op.IFLT, t);
+                gest_rel(cod.op.IFLT, op1, op2, t);
                 break;
             case GT:
-                gest_rel(cod.op.IFGT, t);
+                gest_rel(cod.op.IFGT, op1, op2, t);
                 break;
             case LEQ:
-                gest_rel(cod.op.IFLE, t);
+                gest_rel(cod.op.IFLE, op1, op2, t);
                 break;
             case GEQ:
-                gest_rel(cod.op.IFGE, t);
+                gest_rel(cod.op.IFGE, op1, op2, t);
                 break;
             case EQ:
-                gest_rel(cod.op.IFEQ, t);
+                gest_rel(cod.op.IFEQ, op1, op2, t);
                 break;
             case NEQ:
-                gest_rel(cod.op.IFNE, t);
+                gest_rel(cod.op.IFNE, op1, op2, t);
                 break;
+            default:
+                switch(op) {
+                    case PLUS:
+                        cod.genera(cod.op.ADD, op1, op2, t);
+                        break;
+                    case NEG:
+                        cod.genera(cod.op.SUB, op1, op2, t);
+                        break;
+                    case TIMES:
+                        cod.genera(cod.op.PROD, op1, op2, t);
+                        break;
+                    case DIV:
+                        cod.genera(cod.op.DIV, op1, op2, t);
+                        break;
+                    case AND:
+                        cod.genera(cod.op.AND, op1, op2, t);
+                        break;
+                    case OR:
+                        cod.genera(cod.op.OR, op1, op2, t);
+                        break;
+                }
+                cod.setImmediate(leftChild.value != null, rightChild.value != null);
         }
         varNum = t;
     }
     
-    private void gest_rel(cod.op op, int t) {
+    private void gest_rel(cod.op op, long op1, long op2, int t) {
         int tag1 = cod.newTag();
         int tag2 = cod.newTag();
         
-        cod.genera(op, leftChild.varNum, rightChild.varNum, 0); // if leftchild ⊕ rightchild goto tag1
+        cod.genera(op, op1, op2, 0); // if leftchild ⊕ rightchild goto tag1
+        cod.setImmediate(leftChild.value != null, rightChild.value != null);
         cod.replaceWithTag(2, tag1);
         
-        cod.genera(cod.op.COPYLIT, 0, 0, t); // t = 0
+        cod.genera(cod.op.COPY, 0, 0, t); // t = 0
+        cod.setImmediate(true, false);
         
         cod.genera(cod.op.GOTO, 0, 0, 0); // GOTO tag2
         cod.replaceWithTag(2, tag2);
         
         cod.setTag(tag1); // tag1 : skip
-        cod.genera(cod.op.COPYLIT, -1, 0, t); // t = -1
+        cod.genera(cod.op.COPY, -1, 0, t); // t = -1
+        cod.setImmediate(true, false);
         cod.setTag(tag2); // tag2 : skip
     }
 }
