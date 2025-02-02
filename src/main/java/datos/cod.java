@@ -58,18 +58,18 @@ public class cod {
         
         private String op1() {
             if (imm == 0 || imm == 2)
-                return ""+op[0]; 
+                return ""+op[0]; // If it's an immediate value, just print it directly
             else
-                return "t"+op[0];
+                return varTable.get((int)op[0]).name; // Prints the source-code name or t<n> if it's a compiler-generated variable
         }
         private String op2() {
             if (imm == 1 || imm == 2)
                 return ""+op[1];
             else
-                return "t"+op[1];
+                return varTable.get((int)op[1]).name;
         }
         private String dst() {
-            return "t"+op[2];
+            return varTable.get((int)op[2]).name;
         }
         
         public String toString(ArrayList<Integer> tagNums) {
@@ -210,5 +210,4 @@ public class cod {
         
         return s.toString();
     }
-    
 }

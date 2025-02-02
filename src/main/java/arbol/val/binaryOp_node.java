@@ -143,7 +143,7 @@ public class binaryOp_node extends expr_node {
         long op1 = (leftChild.value == null) ? leftChild.varNum : leftChild.value;
         long op2 = (rightChild.value == null) ? rightChild.varNum : rightChild.value;
         
-        int t = varTable.newvar(0, false);
+        int t = varTable.newvar(null, type.bytes);
         switch(op){
             case LT:
                 gest_rel(cod.op.IFLT, op1, op2, t);

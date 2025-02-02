@@ -1,4 +1,6 @@
-package arbol;
+package arbol.flow;
+
+import arbol.node;
 
 /**
  *

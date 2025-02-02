@@ -11,11 +11,10 @@ arbol/type/complexType.class
 arbol/val/binaryOp_node$1.class
 datos/varTable$varInfo.class
 datos/symbolTable$restore_entry.class
-arbol/stmts_node.class
 arbol/ref/field_node.class
 datos/funcTable.class
 arbol/type/complexType$pointer.class
-arbol/stmt_node.class
+arbol/flow/stmts_node.class
 arbol/flow/ifstmt_node.class
 arbol/ref/ref_node.class
 arbol/type/complexType$primitive.class
@@ -41,6 +40,7 @@ arbol/decl_node.class
 datos/cod$1.class
 experimental_compiler/Parser.class
 arbol/type/complexType$array.class
+arbol/flow/stmt_node.class
 arbol/val/expr_node.class
 arbol/flow/while_node.class
 datos/symbolTable.class

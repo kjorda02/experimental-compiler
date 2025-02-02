@@ -16,10 +16,10 @@ public abstract class desc { // (d)
         public int varNum; // (nv) Position in the variable table
         public complexType type;
         
-        public variable(complexType c) { // TODO: HANDLE COMPLEX TYPES
+        public variable(complexType c, int varnum) {
             type = c;
-            varNum = varTable.newvar(0, false);
         }
+        
     }
     
     public static class constant extends desc {

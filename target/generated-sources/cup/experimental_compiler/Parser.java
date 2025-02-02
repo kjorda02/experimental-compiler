@@ -5,6 +5,8 @@
 
 package experimental_compiler;
 
+import arbol.flow.stmts_node;
+import arbol.flow.stmt_node;
 import java_cup.runtime.ComplexSymbolFactory.*;
 import java_cup.runtime.*;
 import java.util.HashMap;

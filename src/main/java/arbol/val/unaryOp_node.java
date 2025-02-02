@@ -73,7 +73,7 @@ public class unaryOp_node extends expr_node {
         }
         
         // We cannot store the result of the operation in the same variable, since that variable
-        int t = varTable.newvar(0, false); // Could correspond to an actual variable
+        int t = varTable.newvar(null, type.bytes); // Could correspond to an actual variable
         varNum = t;
         switch(oper) {
             case NOT:

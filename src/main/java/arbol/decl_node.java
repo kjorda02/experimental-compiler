@@ -70,8 +70,8 @@ public class decl_node extends node {
             Main.report_error("Cannot assign expression of type <"+expr.type.toString()+"> to variable of type <"+type.toString()+">", expr);
             return;
         }
-
-        vard = new desc.variable(type);
+        
+        vard = new desc.variable(type, -1); // Placeholder variable number
         if (symbolTable.add(id.value, vard)) {
             Main.report_error("Identifier \""+id.value+"\" is already in use in current scope.", id);
             return;
@@ -84,17 +84,21 @@ public class decl_node extends node {
         if (error)
             return;
         
-        if (vard == null || expr == null) // If it's a constant or it's a declaration without initial value
+        if (vard == null) // If it's a constant
             return;
         
-        int varNumDst = ((desc.variable) vard).varNum;
+        int num = varTable.newvar(null, type.bytes, false, id.value);
+        vard.varNum = num; // Update descriptor that's already in symbol table
+        
+        if (expr == null) // if it's a declaration without initial value
+            return;
         
         if (expr.value == null) { // Runtime expression
             expr.gest();
-            cod.genera(cod.op.COPY, expr.varNum, 0, varNumDst);
+            cod.genera(cod.op.COPY, expr.varNum, 0, vard.varNum);
         }
         else { // Compile-time expression
-            cod.genera(cod.op.COPY, expr.value, 0, varNumDst);
+            cod.genera(cod.op.COPY, expr.value, 0, vard.varNum);
             cod.setImmediate(true, false);
         }  
     }

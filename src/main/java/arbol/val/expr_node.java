@@ -47,16 +47,6 @@ public class expr_node extends node { // Array indices and literals are only all
         super(left, right);
     }
     
-    public int getVarNum() {
-        if (varNum == null) {
-            int t = varTable.newvar(0, false);
-            cod.genera(cod.op.COPY, value, 0, t); // so that we can operate with the other expression
-            cod.setImmediate(true, false);
-            varNum = t;
-        }
-        return varNum;
-    }
-    
     @Override
     public void gest() {
         if (value != null) // DO NOT GENERATE CODE FOR COMPILE TIME EXPRESSIONS
