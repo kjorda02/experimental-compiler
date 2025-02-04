@@ -6,7 +6,7 @@ import arbol.node;
  *
  * @author kjorda
  */
-public class stmts_node extends node{
+public class stmts_node extends node {
     stmt_node stmt;
     stmts_node stmts;
     

@@ -7,6 +7,7 @@ import arbol.ref.*;
 import arbol.val.*;
 import arbol.type.*;
 import arbol.flow.*;
+import arbol.fun.*;
 import datos.*;
 
 parser code {:
@@ -30,8 +31,8 @@ parser code {:
 
 /* ===== Terminals (tokens from lexer) ===== */
 terminal LKEY, RKEY;
-terminal terminal_node STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
-terminal PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
+terminal terminal_node GLOBAL, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
+terminal terminal_node PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
 terminal LBRAC, RBRAC;
@@ -64,6 +65,10 @@ non terminal complexType.struct struct;
 non terminal complexType.struct fields;
 
 non terminal decl_node decl;
+
+non terminal arglist_node arglist;
+non terminal complexType.funcsig funcsig;
+non terminal fundecl_node fundecl;
 
 /* ========== Precedences ========== */
 precedence left OR;
@@ -123,12 +128,21 @@ decl    ::= type:t ID:i
             {: RESULT = new decl_node(c.left, t, i, e); :}
         ;
 
+arglist   ::= type:t ID:i COMMA arglist:l
+            {: RESULT = new arglist_node(t, i, l); :}
+        |
+            {: RESULT = new arglist_node(); :} 
+            
+        ;
+
 ref ::= ID:i
             {: RESULT = new identifier_ref_node(i); :}
         | ref:r LBRAC expr:e RBRAC
             {: RESULT = new displ_node(r, e); :}
         | ref:r DOT ID:i
             {: RESULT = new field_node(r, i); :}
+        | ID:i LPAREN arglist:l RPAREN:rp
+            {: RESULT = new call_node(i, l, rp.right); :}
 
         | ref:r LBRAC error RBRAC
         | ref:r DOT error
@@ -218,8 +232,6 @@ while   ::= WHILE LPAREN expr:e RPAREN LKEY stmts:s RKEY
 
 stmt    ::= decl:d
             {: RESULT = new stmt_node(d); :}
-        | typedecl:d
-            {: RESULT = new stmt_node(d); :}
         | expr:e
             {: RESULT = new stmt_node(e); :}
         
@@ -243,6 +255,24 @@ stmts    ::= stmt:s SEMI
             {: RESULT = new stmts_node(b, ss); :}
         ;
 
-prog    ::= stmts:s
-            {: s.gest(); :}
+funcsig  ::= type:t ID:i LPAREN arglist:l RPAREN
+            {: RESULT = new complexType.funcsig(t, i, l); :}
+        ;
+
+fundecl ::= funcsig:sig LKEY stmts:s RKEY
+            {: RESULT = new fundecl_node(sig, s); :}
+        ;
+
+prog    ::= fundecl:d
+            {: d.gest(); :}
+        | fundecl:d prog:p
+            {: d.gest(); RESULT = p; :}
+        | typedecl:d SEMI
+            {: d.gest(); :}
+        | typedecl:d prog:p
+            {: d.gest(); RESULT = p; :}
+        | decl:d SEMI
+            {: d.gest(); :}
+        | decl:d SEMI prog:p
+            {: d.gest(); :}
         ;

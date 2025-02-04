@@ -48,6 +48,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "case"      { return symbol(sym.CASE); }
 "break"     { return symbol(sym.BREAK); }
 "const"     { return symbol(sym.CONST, null); }
+"global"     { return symbol(sym.GLOBAL); }
 
 "="         { return symbol(sym.ASS); }
 "+"         { return symbol(sym.PLUS); }
@@ -55,7 +56,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "*"         { return symbol(sym.MULT); }
 "/"         { return symbol(sym.DIV); }
 "("         { return symbol(sym.LPAREN); }
-")"         { return symbol(sym.RPAREN); }
+")"         { return symbol(sym.RPAREN, null); }
 ";"         { return symbol(sym.SEMI); }
 
 

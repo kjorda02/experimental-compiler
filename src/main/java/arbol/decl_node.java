@@ -87,7 +87,7 @@ public class decl_node extends node {
         if (vard == null) // If it's a constant
             return;
         
-        int num = varTable.newvar(null, type.bytes, false, id.value);
+        int num = varTable.newvar(funcTable.currentFunc, type.bytes, false, id.value);
         vard.varNum = num; // Update descriptor that's already in symbol table
         
         if (expr == null) // if it's a declaration without initial value

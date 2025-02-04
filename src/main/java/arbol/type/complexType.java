@@ -1,6 +1,8 @@
 package arbol.type;
 
+import arbol.fun.arglist_node;
 import arbol.node;
+import arbol.terminal_node;
 import arbol.val.expr_node;
 import datos.basicType;
 import experimental_compiler.Main;
@@ -219,13 +221,18 @@ public abstract class complexType extends node {
         }
     }
     
-    public static class funcptr extends complexType {
+    public static class funcsig extends complexType { // function signature
         public complexType returnType;
         public ArrayList<complexType> paramTypes;
+        public terminal_node<String> name;
         
-        public funcptr(complexType c) {
+        public funcsig(complexType c, terminal_node<String> n, arglist_node l) {
+            name = n;
             returnType = c;
             paramTypes = new ArrayList<>();
+            for ( ; l.list != null; l = l.list) {
+                paramTypes.add(l.type);
+            }
             error = false;
         }
         
@@ -235,10 +242,10 @@ public abstract class complexType extends node {
         
         @Override
         public boolean equals(Object o) {
-            if (!(o instanceof funcptr))
+            if (!(o instanceof funcsig))
                 return false;
             
-            funcptr other = (funcptr) o;
+            funcsig other = (funcsig) o;
             return returnType.equals(other.returnType) && paramTypes.equals(other.paramTypes);
         }
     }

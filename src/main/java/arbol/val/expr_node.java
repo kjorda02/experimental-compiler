@@ -5,8 +5,6 @@ import arbol.assign_node;
 import arbol.node;
 import arbol.ref.identifier_ref_node;
 import arbol.ref.ref_node;
-import datos.cod;
-import datos.varTable;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**

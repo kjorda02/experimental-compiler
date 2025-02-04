@@ -1,6 +1,5 @@
 package arbol.ref;
 
-import arbol.node;
 import arbol.terminal_node;
 import arbol.type.complexType;
 import experimental_compiler.Main;

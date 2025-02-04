@@ -4,6 +4,7 @@ import java_cup.runtime.ComplexSymbolFactory.*;
 import java.io.*;
 import java_cup.runtime.Symbol;
 import datos.cod;
+import datos.varTable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -28,6 +29,7 @@ public class Main {
             // Parse and evaluate the input
             Object result = p.parse(); 
             System.out.println(cod.toStr());
+            varTable.outputVarTable("variable_table.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }

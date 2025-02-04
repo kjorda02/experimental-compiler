@@ -19,7 +19,6 @@ public abstract class desc { // (d)
         public variable(complexType c, int varnum) {
             type = c;
         }
-        
     }
     
     public static class constant extends desc {
@@ -43,9 +42,9 @@ public abstract class desc { // (d)
     public static class function extends desc {
         public int funcNum; // (np) Position in the function table
         public int stackSize; // Stack size in bytes
-        public complexType.funcptr signature;
+        public complexType.funcsig signature;
         
-        public function(complexType.funcptr s) {
+        public function(complexType.funcsig s) {
             funcNum = 0; // funcTable.newfunc(...);
             signature = s;
             // stackSize = ...
