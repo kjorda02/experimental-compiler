@@ -39,7 +39,7 @@ public class call_node extends ref_node {
     
     @Override
     public void gest() {
-        
+        funcTable.addCaller(funcID); // Adds currentFunc as a caller
         
         // TODO: Handle complex types
         

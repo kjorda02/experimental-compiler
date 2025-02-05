@@ -15,7 +15,7 @@ public class varTable {
         public int size; // Size in bytes
         public int disp; // Displacement relative to base pointer. Cannot be known until optimization is done.
         public boolean inRegister; // If true, disp indicates the register number.
-        public boolean isParameter; // If in register: a0-a7 for params, t0-t6 or s1-s11 for local variables
+        public boolean isParameter; // Only kept for printing
         public String name; // Name of the corresponding variable in the source code
         public int tmpNum; // Temporary variable number if it's a compiler-generated variable
         
@@ -24,12 +24,6 @@ public class varTable {
             size = s;
             isParameter = i;
             name = n;
-        }
-        
-        public varInfo(int p, int s, boolean i, String n, int offset, boolean inReg) { // For parameters
-            this(p, s, i, n);
-            inRegister = inReg;
-            disp = offset;
         }
     }
     
@@ -41,18 +35,23 @@ public class varTable {
         return table.get(i);
     }
     
-    public static int newvar(int parent, int size, String name, int offset, boolean inRegister) { // Function parameter
-        table.add(new varInfo(parent, size, true, name, offset, inRegister)); // Add to arrayList in position vars
-        return vars++;
-    }
-    
-    public static int newvar(int parent, int size, String name) { // Source code variable, not a parameter
-        table.add(new varInfo(parent, size, false, name));
+    public static int newvar(int parent, int size, boolean isParam, String name) { // Source code variable
+        table.add(new varInfo(parent, size, isParam, name));
+        if (parent >= 0) {
+            if (isParam)
+                funcTable.addParam(parent, vars);
+            else
+                funcTable.addVar(parent, vars);
+        }
         return vars++;
     }
     
     public static int newvar(int parent, int size) { // Compiler-generated variable, not a parameter
         table.add(new varInfo(parent, size, false, "t"+tmpVars++));
+        
+        if (parent >= 0) {
+            funcTable.addVar(parent, vars);
+        }
         return vars++;
     }
     
@@ -65,22 +64,39 @@ public class varTable {
         return s;
     }
     
+    public static void setAReg(int varNum, int reg) {
+        table.get(varNum).inRegister = true;
+        table.get(varNum).disp = reg;
+    }
+    
+    public static void setTReg(int varNum, int reg) {
+        table.get(varNum).inRegister = true;
+        table.get(varNum).disp = reg+10;
+    }
+    
+    public static void setSReg(int varNum, int reg) {
+        table.get(varNum).inRegister = true;
+        table.get(varNum).disp = reg+20;
+    }
+    
+    public static void setStack(int varNum, int offset) {
+        table.get(varNum).inRegister = false;
+        table.get(varNum).disp = offset;
+    }
+    
     public static String formatLoc(varInfo v, int len) {
         String s = "";
         if (v.inRegister) {
-            if (v.isParameter) {
-                s = "a"+v.disp;
-            }
-            else {
-                if (v.disp < 10) 
-                    s = "t"+v.disp;
-                else 
-                    s = "s"+(v.disp-10);
-            }
+            if (v.disp < 10) 
+                s = "a"+v.disp; // a0-a7
+            else if (v.disp < 20) 
+                s = "t"+(v.disp-10); // t0-t6
+            else
+                s = "s"+(v.disp-20); // s1-s11
         }
         else {
             if (v.parentFunc == -1) 
-                s = ""+v.disp;
+                s = v.name;
             else
                 s = v.disp+"(FP)";
         }
@@ -94,7 +110,6 @@ public class varTable {
                     format("size", 6)+format("location", 9)+format("inRegister", 11)+format("param", 6)+" |\n");
             for (int i = 0; i < table.size(); i++) {
                 varInfo v = table.get(i);
-                String parentFunc;
                 
                 writer.write("| "+format(""+i, 5)+format(v.name, 15)+format(""+v.parentFunc, 15)+format(funcTable.name(v.parentFunc), 15)+
                     format(""+v.size, 6)+formatLoc(v, 9)+format(""+v.inRegister, 11)+format(""+v.isParameter, 6)+" |\n");

@@ -9,6 +9,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/datos/basicType.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/datos/symbolTable.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/Main.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/instructions/goto_instructions.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/val/binaryOp_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/call_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/identifier_ref_node.java
@@ -16,6 +17,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/terminal_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/field_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/fun/arglist_node.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/instructions/instructions.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/target/generated-sources/jflex/experimental_compiler/Lexer.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/assign_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/flow/stmts_node.java
@@ -26,6 +28,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/type/typedecl_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/val/literal_expr_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/target/generated-sources/cup/experimental_compiler/Parser.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/instructions/alu_instructions.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/val/unaryOp_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/ref/ref_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/datos/funcTable.java

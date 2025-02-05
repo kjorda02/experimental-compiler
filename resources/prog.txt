@@ -4,6 +4,7 @@ int b = 2;
 int main() {
     int a = 3;
     int b = 11;
+    [5]int c;
     while (a<b) {
         a = a + 1;
     }

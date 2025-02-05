@@ -9,23 +9,27 @@ import java.io.IOException;
  *
  * @author kjorda
  */
-public class fun_instructions {
+public class goto_instructions {
     public static void translate(codigo3dirs c, BufferedWriter w) throws IOException {
         op o = c.operation;
         switch(o) {
-            case PMB:
+            case GOTO:
                 break;
-            case CALL:
+            case IFLT:
                 break;
-            case RTN:
+            case IFLE:
                 break;
-            case PARAM_S:
+            case IFEQ:
                 break;
-            case PARAM_C:
+            case IFNE:
                 break;
-                
+            case IFGE:
+                break;
+            case IFGT:
+                break;
+
             default:
-                
+                fun_instructions.translate(c, w);
         }
     }
 }

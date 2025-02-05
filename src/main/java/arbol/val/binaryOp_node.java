@@ -195,13 +195,13 @@ public class binaryOp_node extends expr_node {
         
         cod.genera(op, op1, op2, 0); // if leftchild ⊕ rightchild goto tag1
         cod.setImmediate(leftChild.value != null, rightChild.value != null);
-        cod.replaceWithTag(2, tag1);
+        cod.jmpTag(tag1);
         
         cod.genera(cod.op.COPY, 0, 0, t); // t = 0
         cod.setImmediate(true, false);
         
         cod.genera(cod.op.GOTO, 0, 0, 0); // GOTO tag2
-        cod.replaceWithTag(2, tag2);
+        cod.jmpTag(tag2);
         
         cod.setTag(tag1); // tag1 : skip
         cod.genera(cod.op.COPY, -1, 0, t); // t = -1

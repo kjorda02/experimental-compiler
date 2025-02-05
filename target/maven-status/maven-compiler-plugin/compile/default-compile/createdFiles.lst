@@ -12,16 +12,21 @@ arbol/type/complexType$funcsig.class
 datos/desc$function.class
 datos/cod$codigo3dirs.class
 experimental_compiler/Lexer.class
+experimental_compiler/instructions/fun_instructions$1.class
+experimental_compiler/instructions/goto_instructions.class
 arbol/type/typedecl_node.class
 experimental_compiler/Main.class
 datos/cod.class
 arbol/ref/displ_node.class
 arbol/val/unaryOp_node.class
+experimental_compiler/instructions/instructions$1.class
+experimental_compiler/instructions/alu_instructions.class
 arbol/terminal_node.class
 arbol/fun/fundecl_node.class
 arbol/type/complexType$array.class
 arbol/flow/stmt_node.class
 arbol/flow/while_node.class
+experimental_compiler/instructions/instructions.class
 arbol/fun/arglist_node.class
 arbol/ref/identifier_ref_node.class
 arbol/val/unaryOp_node$1.class
@@ -39,6 +44,7 @@ datos/varTable.class
 datos/cod$op.class
 arbol/type/complexType$struct$field.class
 experimental_compiler/Parser$CUP$Parser$actions.class
+experimental_compiler/instructions/goto_instructions$1.class
 arbol/type/complexType$struct.class
 experimental_compiler/instructions/fun_instructions.class
 datos/desc$variable.class
@@ -49,5 +55,6 @@ experimental_compiler/Parser.class
 arbol/val/expr_node.class
 datos/funcTable$funcInfo.class
 datos/symbolTable.class
+experimental_compiler/instructions/alu_instructions$1.class
 arbol/val/literal_expr_node.class
 experimental_compiler/sym.class

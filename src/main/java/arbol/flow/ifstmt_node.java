@@ -43,7 +43,7 @@ public class ifstmt_node extends node {
         
         cod.genera(cod.op.IFEQ, expr.varNum, 0, 0); // if expr = 0 goto endTag
         cod.setImmediate(false, true);
-        cod.replaceWithTag(2, endTag);
+        cod.jmpTag(endTag);
         
         stmts.gest();
         

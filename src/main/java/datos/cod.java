@@ -1,6 +1,7 @@
 package datos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 
 /**
  *
@@ -31,7 +32,8 @@ public class cod {
         CALL("call "),
         RTN("rtn "),
         PARAM_S(""),
-        PARAM_C("");
+        PARAM_C(""),
+        SKIP("");
         
         String str;
         
@@ -44,6 +46,7 @@ public class cod {
         public op operation;
         public long[] op = new long[3];
         public int imm = -1;  // -1: no immediates, 0: op1 is immediate, 1: op2 is immediate, 2: both op1 and op2 are immediate (only idx_ass)
+        public String jmpTag;
         
         codigo3dirs(op op, long op1, long op2, long dst) {
             this.operation = op;
@@ -69,10 +72,13 @@ public class cod {
                 return varTable.get((int)op[1]).name;
         }
         private String dst() {
-            return varTable.get((int)op[2]).name;
+            if (jmpTag != null)
+                return jmpTag;
+            else
+                return varTable.get((int)op[2]).name;
         }
         
-        public String toString(ArrayList<Integer> tagNums) {
+        public String toString() {
             String s = "";
             switch(operation) {
                 case ADD:
@@ -98,7 +104,7 @@ public class cod {
                     s += dst()+"["+op2()+"] = "+op1();
                     break;
                 case GOTO: // goto dst
-                    s += "goto "+str(op[2]); // get tag of the destination operand
+                    s += "goto "+dst(); // get tag of the destination operand
                     break;
                 case IFLT:
                 case IFLE:
@@ -106,7 +112,7 @@ public class cod {
                 case IFNE:
                 case IFGE:
                 case IFGT: // if op1 ⊕ op2 goto dst
-                    s += "if "+op1()+" "+operation.str+" "+op2()+" goto "+str(op[2]);
+                    s += "if "+op1()+" "+operation.str+" "+op2()+" goto "+dst();
                     break;
                 case PMB:
                 case CALL:
@@ -119,31 +125,18 @@ public class cod {
                 case PARAM_C:
                     s += "param_c "+op1()+"["+op2()+"]"; // param_c op1[op2]
                     break;
+                case SKIP:
+                    s += jmpTag+":";
             }
             return s;
-        }
-        
-        private String str(long addr) {
-            if (tagNums.get((int)addr) == -1 || addr >= tagNums.size())
-                return ""+addr;
-            else 
-                return "e"+tagNums.get((int)addr);
         }
     }
     
     private static ArrayList<codigo3dirs> codigo = new ArrayList<>();
-    private static ArrayList<Integer> tags = new ArrayList<>();
-    private static ArrayList<Integer> tagNums = new ArrayList<>(); // Tag number for each address (if it has a tag associated)
-    private static ArrayList<ArrayList<Integer[]>> tagUsages = new ArrayList<>();
     private static int currentAddr = 0;
-    private static int currTagNum = 0;
-    
-    public static void init() {
-        tagNums.add(-1); // tagNums[0]
-    }
+    private static int tagNum = 0;
     
     public static void genera(op op, long op1, long op2, long dst) {
-        tagNums.add(-1); // tagNums[currentAddr+1]
         codigo.add(new codigo3dirs(op, op1, op2, dst)); // codigo[currentAddr]
         currentAddr++;
     }
@@ -157,55 +150,40 @@ public class cod {
             codigo.get(currentAddr-1).setImmediate(1);
     }
     
-    public static void replaceWithTag(int pos, int tagNum) {
-        if (tagNum < 0) 
-            return;
-            
-        if (tags.get(tagNum) != -1) // The tag has already been set
-            codigo.get(currentAddr-1).op[pos] = tags.get(tagNum);
-        else // Add this to the list of usages so that the correct address can be added when the tag is defined
-            tagUsages.get(tagNum).add(new Integer[]{currentAddr-1, pos});
-    }
-    
     public static int newTag() {
-        tags.add(-1); // tags[currTagNum]
-        tagUsages.add(new ArrayList<>()); // tagUsages[currTagNum]
-        return currTagNum++;
+        return tagNum++;
     }
     
-    public static void setTag(int tagNum) {
-        tags.set(tagNum, currentAddr);
-        tagNums.set(currentAddr, tagNum);
-        
-        // Replace usages with correct address
-        for (Integer[] usage : tagUsages.get(tagNum)) {
-            codigo.get(usage[0]).op[usage[1]] = currentAddr;
-        }
+    public static codigo3dirs fetch(int i) {
+        if (i < codigo.size())
+            return codigo.get(i);
+        return null;
     }
     
-//    public int getTagAddr(int tagNum) {
-//        return tags.get(tagNum);
-//    }
+    public static void jmpTag(int num) {
+        codigo.get(currentAddr-1).jmpTag = "e"+num;
+    }
+    
+    public static void setTag(int num) {
+        codigo.add(new codigo3dirs(op.SKIP, 0, 0, 0));
+        codigo.get(currentAddr++).jmpTag = "e"+num;
+    }
+    
+    public static void setTag(String name) {
+        codigo.add(new codigo3dirs(op.SKIP, 0, 0, 0));
+        codigo.get(currentAddr++).jmpTag = name;
+    }
     
     public static String toStr() {
         StringBuilder s = new StringBuilder();
         for (int i = 0; i < currentAddr; i++) {
             s.append(i);
-            s.append(" ");
-            if (tagNums.get(i) != -1) {
-                s.append("e");
-                s.append(tagNums.get(i));
-                s.append(":");
-            }
-            s.append("\t");
-            s.append(codigo.get(i).toString(tagNums));
+            s.append(" \t");
+            if (codigo.get(i).operation != op.SKIP)
+                s.append("\t");
+            
+            s.append(codigo.get(i).toString());
             s.append("\n");
-        }
-        if (tagNums.get(currentAddr) != -1) {
-            s.append(currentAddr);
-            s.append(" e");
-            s.append(tagNums.get(currentAddr));
-            s.append(":");
         }
         
         return s.toString();

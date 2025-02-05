@@ -22,7 +22,6 @@ public class Main {
                                 .toArray(new String[0]);
             
             symbolTable.clear();
-            cod.init();
             // Create a lexer that reads from standard input
             Lexer lexer = new Lexer(new FileReader(PATH));
             
@@ -30,7 +29,9 @@ public class Main {
             Parser p = new Parser(lexer);
             
             // Parse and evaluate the input
-            Object result = p.parse(); 
+            Object result = p.parse();
+            // Optimize
+            funcTable.allocateAllVars();
             System.out.println(cod.toStr());
             varTable.outputVarTable("variable_table.txt");
             funcTable.outputFuncTable("function_table.txt");

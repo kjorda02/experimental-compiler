@@ -30,6 +30,7 @@ public class fundecl_node extends node {
     @Override
     public void gest() {
         funcTable.currentFunc = funcID;
+        cod.setTag(signature.name.value);
         cod.genera(cod.op.PMB, 0, 0, 0);
         
         stmts.gest();

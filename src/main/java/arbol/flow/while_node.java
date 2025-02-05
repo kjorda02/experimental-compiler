@@ -37,18 +37,18 @@ public class while_node extends node {
             if (expr.value != 0) { // Infinite loop
                 stmts.gest();
                 cod.genera(cod.op.GOTO, 0, 0, 0);
-                cod.replaceWithTag(2, condTag);
+                cod.jmpTag(condTag);
             }
             return;
         }
         
         cod.genera(cod.op.IFEQ, expr.varNum, 0, 0); // if t_expr = 0 goto endTag
         cod.setImmediate(false, true);
-        cod.replaceWithTag(2, endTag);
+        cod.jmpTag(endTag);
         
         stmts.gest();
         cod.genera(cod.op.GOTO, 0, 0, 0);
-        cod.replaceWithTag(2, condTag);
+        cod.jmpTag(condTag);
         
         cod.setTag(endTag);
     }
