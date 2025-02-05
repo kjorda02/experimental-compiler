@@ -40,7 +40,8 @@ public class symbolTable { // (ts)
     public static void clear() {
         restoreTable.clear();
         table.clear();
-        currScope = 1;
+        currScope = 0;
+        scopeTable[currScope] = -1;
     }
     
     public static boolean add(String id, desc desc) {

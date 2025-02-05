@@ -48,7 +48,8 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 "case"      { return symbol(sym.CASE); }
 "break"     { return symbol(sym.BREAK); }
 "const"     { return symbol(sym.CONST, null); }
-"global"     { return symbol(sym.GLOBAL); }
+"out"       { return symbol(sym.OUT); }
+"void"       { return symbol(sym.VOID); }
 
 "="         { return symbol(sym.ASS); }
 "+"         { return symbol(sym.PLUS); }

@@ -1,7 +1,10 @@
 int a = 1;
+int b = 2;
 
 int main() {
-    while (a<10) {
+    int a = 3;
+    int b = 11;
+    while (a<b) {
         a = a + 1;
     }
 }

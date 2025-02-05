@@ -4,6 +4,8 @@ import java_cup.runtime.ComplexSymbolFactory.*;
 import java.io.*;
 import java_cup.runtime.Symbol;
 import datos.cod;
+import datos.funcTable;
+import datos.symbolTable;
 import datos.varTable;
 import java.nio.file.Files;
 import java.nio.file.Paths;
@@ -19,6 +21,7 @@ public class Main {
             lines = Files.readAllLines(Paths.get(PATH))
                                 .toArray(new String[0]);
             
+            symbolTable.clear();
             cod.init();
             // Create a lexer that reads from standard input
             Lexer lexer = new Lexer(new FileReader(PATH));
@@ -30,6 +33,7 @@ public class Main {
             Object result = p.parse(); 
             System.out.println(cod.toStr());
             varTable.outputVarTable("variable_table.txt");
+            funcTable.outputFuncTable("function_table.txt");
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -221,9 +221,11 @@ public abstract class complexType extends node {
         }
     }
     
-    public static class funcsig extends complexType { // function signature
+    public static class funcsig extends complexType { // We consider it a type for function pointers
         public complexType returnType;
         public ArrayList<complexType> paramTypes;
+        public ArrayList<String> paramNames;
+        public ArrayList<Boolean> paramModes; // true = ouput mode
         public terminal_node<String> name;
         
         public funcsig(complexType c, terminal_node<String> n, arglist_node l) {
@@ -232,6 +234,8 @@ public abstract class complexType extends node {
             paramTypes = new ArrayList<>();
             for ( ; l.list != null; l = l.list) {
                 paramTypes.add(l.type);
+                paramNames.add(l.name);
+                paramModes.add(l.out);
             }
             error = false;
         }

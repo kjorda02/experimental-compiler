@@ -31,7 +31,7 @@ parser code {:
 
 /* ===== Terminals (tokens from lexer) ===== */
 terminal LKEY, RKEY;
-terminal terminal_node GLOBAL, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
+terminal terminal_node VOID, OUT, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
 terminal terminal_node PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
@@ -69,6 +69,8 @@ non terminal decl_node decl;
 non terminal arglist_node arglist;
 non terminal complexType.funcsig funcsig;
 non terminal fundecl_node fundecl;
+non terminal lkey;
+non terminal rkey;
 
 /* ========== Precedences ========== */
 precedence left OR;
@@ -96,10 +98,10 @@ fields  ::= type:t ID:i SEMI
         | error fields
         ;
 
-struct  ::= STRUCT LKEY fields:f RKEY
+struct  ::= STRUCT lkey fields:f rkey
             {: RESULT = f; :}
             
-            | struct LKEY error RKEY
+            | struct lkey error rkey
         ;
 
 type    ::= INT:t
@@ -129,7 +131,9 @@ decl    ::= type:t ID:i
         ;
 
 arglist   ::= type:t ID:i COMMA arglist:l
-            {: RESULT = new arglist_node(t, i, l); :}
+            {: RESULT = new arglist_node(t, i, l, false); :}
+        |      OUT type:t ID:i COMMA arglist:l
+            {: RESULT = new arglist_node(t, i, l, true); :}
         |
             {: RESULT = new arglist_node(); :} 
             
@@ -222,11 +226,19 @@ expr    ::= binary_expr:e
             {: RESULT = new expr_node(e); :}
         ;
 
-ifstmt  ::= IF LPAREN expr:e RPAREN LKEY stmts:s RKEY
+lkey    ::= LKEY
+            {: symbolTable.enterBlock(); :}
+        ;
+
+rkey    ::= RKEY
+            {: symbolTable.exitBlock(); :}
+        ;
+
+ifstmt  ::= IF LPAREN expr:e RPAREN lkey stmts:s rkey
             {: RESULT = new ifstmt_node(e, s); :}
         ;
 
-while   ::= WHILE LPAREN expr:e RPAREN LKEY stmts:s RKEY
+while   ::= WHILE LPAREN expr:e RPAREN lkey stmts:s rkey
             {: RESULT = new while_node(e, s); :}
         ;
 
@@ -257,22 +269,24 @@ stmts    ::= stmt:s SEMI
 
 funcsig  ::= type:t ID:i LPAREN arglist:l RPAREN
             {: RESULT = new complexType.funcsig(t, i, l); :}
+        | VOID ID:i LPAREN arglist:l RPAREN
+            {: RESULT = new complexType.funcsig(null, i, l); :}
         ;
 
-fundecl ::= funcsig:sig LKEY stmts:s RKEY
+fundecl ::= funcsig:sig lkey stmts:s rkey
             {: RESULT = new fundecl_node(sig, s); :}
         ;
 
 prog    ::= fundecl:d
             {: d.gest(); :}
-        | fundecl:d prog:p
+        | prog:p fundecl:d
             {: d.gest(); RESULT = p; :}
         | typedecl:d SEMI
             {: d.gest(); :}
-        | typedecl:d prog:p
+        | prog:p typedecl:d
             {: d.gest(); RESULT = p; :}
         | decl:d SEMI
             {: d.gest(); :}
-        | decl:d SEMI prog:p
+        | prog:p decl:d SEMI
             {: d.gest(); :}
         ;

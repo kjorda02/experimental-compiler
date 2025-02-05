@@ -41,13 +41,11 @@ public abstract class desc { // (d)
     
     public static class function extends desc {
         public int funcNum; // (np) Position in the function table
-        public int stackSize; // Stack size in bytes
         public complexType.funcsig signature;
         
-        public function(complexType.funcsig s) {
-            funcNum = 0; // funcTable.newfunc(...);
+        public function(int num, complexType.funcsig s) {
+            funcNum = num; // funcTable.newfunc(...);
             signature = s;
-            // stackSize = ...
         }
     }
     

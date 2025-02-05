@@ -1,3 +1,9 @@
-| num  name           parentFunc     size  displ inRegister param  |
-| 0    a              main           4     0     false      false  |
+| num  name           parentFuncID   parentFunc     size  location inRegister param  |
+| 0    a              -1                            4     0        false      false  |
+| 1    b              -1                            4     0        false      false  |
+| 2    returnval      0              main           4     a0       true       true   |
+| 3    a              0              main           4     0(FP)    false      false  |
+| 4    b              0              main           4     0(FP)    false      false  |
+| 5    t0             0              main           1     0(FP)    false      false  |
+| 6    t1             0              main           4     0(FP)    false      false  |
 
