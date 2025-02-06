@@ -117,7 +117,7 @@ public class cod {
                 case PMB:
                 case CALL:
                 case RTN:
-                    s += operation.str+dst(); // TODO: Get function name from the table
+                    s += operation.str+((int)op[2]); // TODO: Get function name from the table
                     break;
                 case PARAM_S:
                     s += "param_s "+dst(); // param_s dst

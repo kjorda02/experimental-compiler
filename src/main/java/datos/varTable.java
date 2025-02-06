@@ -38,9 +38,7 @@ public class varTable {
     public static int newvar(int parent, int size, boolean isParam, String name) { // Source code variable
         table.add(new varInfo(parent, size, isParam, name));
         if (parent >= 0) {
-            if (isParam)
-                funcTable.addParam(parent, vars);
-            else
+            if (!isParam)
                 funcTable.addVar(parent, vars);
         }
         return vars++;
@@ -84,21 +82,25 @@ public class varTable {
         table.get(varNum).disp = offset;
     }
     
-    public static String formatLoc(varInfo v, int len) {
+    public static String reg(int n) {
+        if (n < 10) 
+            return "a"+n; // a0-a7
+        if (n < 20) 
+            return "t"+(n-10); // t0-t6
+        
+        return "s"+(n-20); // s1-s11
+    }
+    
+    public static String loc(varInfo v, int len) {
         String s = "";
         if (v.inRegister) {
-            if (v.disp < 10) 
-                s = "a"+v.disp; // a0-a7
-            else if (v.disp < 20) 
-                s = "t"+(v.disp-10); // t0-t6
-            else
-                s = "s"+(v.disp-20); // s1-s11
+            return reg(v.disp);
         }
         else {
             if (v.parentFunc == -1) 
                 s = v.name;
             else
-                s = v.disp+"(FP)";
+                s = v.disp+"(fp)";
         }
         
         return format(s, len);
@@ -112,7 +114,7 @@ public class varTable {
                 varInfo v = table.get(i);
                 
                 writer.write("| "+format(""+i, 5)+format(v.name, 15)+format(""+v.parentFunc, 15)+format(funcTable.name(v.parentFunc), 15)+
-                    format(""+v.size, 6)+formatLoc(v, 9)+format(""+v.inRegister, 11)+format(""+v.isParameter, 6)+" |\n");
+                    format(""+v.size, 6)+loc(v, 9)+format(""+v.inRegister, 11)+format(""+v.isParameter, 6)+" |\n");
             }
             writer.newLine();
         } catch (IOException e) {

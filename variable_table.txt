@@ -1,10 +1,12 @@
 | num  name           parentFuncID   parentFunc     size  location inRegister param  |
-| 0    a              -1                            4     a        false      false  |
-| 1    b              -1                            4     b        false      false  |
-| 2    returnval      0              main           4     a0       true       true   |
-| 3    a              0              main           4     a1       true       false  |
-| 4    b              0              main           4     a2       true       false  |
-| 5    c              0              main           20    0(FP)    false      false  |
-| 6    t0             0              main           1     a3       true       false  |
-| 7    t1             0              main           4     a4       true       false  |
+| 0    returnval      1              square         4     a0true       true   |
+| 1    a              1              square         4     48(fp)   false      true   |
+| 2    b              1              square         4     52(fp)   false      true   |
+| 3    t0             1              square         4     s1true       false  |
+| 4    returnval      2              main           4     a0true       true   |
+| 5    a              2              main           4     a4true       false  |
+| 6    siuuuu         2              main           4     a5true       false  |
+| 7    c              2              main           4     a6true       false  |
+| 8    result         2              main           4     a7true       false  |
+| 9    t1             2              main           4     t0true       false  |
 

@@ -1,11 +1,15 @@
-int a = 1;
-int b = 2;
+
+void test() {
+    
+}
+
+int square(int a, int b) {
+    return a*b;
+}
 
 int main() {
-    int a = 3;
-    int b = 11;
-    [5]int c;
-    while (a<b) {
-        a = a + 1;
-    }
+    int a = 45;
+    int siuuuu = 21;
+    int c = a;
+    int result = square(a, siuuuu);
 }

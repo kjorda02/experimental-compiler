@@ -14,6 +14,7 @@ public class Main {
     static final int ERRORINDENT = 5;
     static final String PATH = "resources/prog.txt";
     static String[] lines; // For printing errors
+    static boolean error = false;
     
     public static void main(String[] args) {
         System.out.flush();
@@ -30,7 +31,11 @@ public class Main {
             
             // Parse and evaluate the input
             Object result = p.parse();
-            // Optimize
+            
+            if (error) 
+                return;
+                
+            // Optimize    
             funcTable.allocateAllVars();
             System.out.println(cod.toStr());
             varTable.outputVarTable("variable_table.txt");
@@ -41,6 +46,7 @@ public class Main {
     }
   
     public static void report_error(String message, Object info) {
+        error = true;
         Location l, r;
         l = r = null;
         if (info instanceof ComplexSymbol) {
@@ -64,6 +70,7 @@ public class Main {
     }
     
     public static void report_error(String message, Location l, Location r) {
+        error = true;
         StringBuilder msg = new StringBuilder();
         msg.append("[");
         msg.append(l.getLine()+1);

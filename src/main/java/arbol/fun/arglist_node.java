@@ -1,31 +1,21 @@
 package arbol.fun;
 
-import arbol.node;
-import arbol.terminal_node;
-import arbol.type.complexType;
+import arbol.val.expr_node;
 
 /**
  *
  * @author kjorda
  */
-public class arglist_node extends node{
-    public arglist_node list;
-    public complexType type;
-    public String name;
-    public boolean out;
+public class arglist_node {
+    public expr_node expr;
+    public arglist_node next;
     
-    public arglist_node(complexType t, terminal_node<String> id, arglist_node l, boolean o) {
-        type = t;
-        out = o;
-        name = id.value;
+    public arglist_node(expr_node e, arglist_node n) {
+        expr = e;
+        next = n;
     }
     
     public arglist_node() {
-        
-    }
-    
-    @Override
-    public void gest() {
         
     }
 }

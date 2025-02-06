@@ -22,6 +22,7 @@ arbol/val/unaryOp_node.class
 experimental_compiler/instructions/instructions$1.class
 experimental_compiler/instructions/alu_instructions.class
 arbol/terminal_node.class
+arbol/fun/return_node.class
 arbol/fun/fundecl_node.class
 arbol/type/complexType$array.class
 arbol/flow/stmt_node.class
@@ -57,4 +58,5 @@ datos/funcTable$funcInfo.class
 datos/symbolTable.class
 experimental_compiler/instructions/alu_instructions$1.class
 arbol/val/literal_expr_node.class
+arbol/fun/argDeclList_node.class
 experimental_compiler/sym.class

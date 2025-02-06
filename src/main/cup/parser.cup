@@ -31,7 +31,7 @@ parser code {:
 
 /* ===== Terminals (tokens from lexer) ===== */
 terminal LKEY, RKEY;
-terminal terminal_node VOID, OUT, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
+terminal terminal_node RETURN, VOID, OUT, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
 terminal terminal_node PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
@@ -66,9 +66,13 @@ non terminal complexType.struct fields;
 
 non terminal decl_node decl;
 
+non terminal argDeclList_node argdecls;
 non terminal arglist_node arglist;
 non terminal complexType.funcsig funcsig;
 non terminal fundecl_node fundecl;
+non terminal fundecl_node partfundef;
+non terminal fundecl_node fundef;
+non terminal return_node return;
 non terminal lkey;
 non terminal rkey;
 
@@ -130,13 +134,12 @@ decl    ::= type:t ID:i
             {: RESULT = new decl_node(c.left, t, i, e); :}
         ;
 
-arglist   ::= type:t ID:i COMMA arglist:l
-            {: RESULT = new arglist_node(t, i, l, false); :}
-        |      OUT type:t ID:i COMMA arglist:l
-            {: RESULT = new arglist_node(t, i, l, true); :}
+arglist   ::= expr:e COMMA arglist:l
+            {: RESULT = new arglist_node(e, l); :}
+        |   expr:e
+            {: RESULT = new arglist_node(e, null); :}
         |
-            {: RESULT = new arglist_node(); :} 
-            
+            {: RESULT = null; :} 
         ;
 
 ref ::= ID:i
@@ -242,10 +245,18 @@ while   ::= WHILE LPAREN expr:e RPAREN lkey stmts:s rkey
             {: RESULT = new while_node(e, s); :}
         ;
 
+return  ::= RETURN:r
+            {: RESULT = new return_node(r); :}
+        | RETURN:r expr:e
+            {: RESULT = new return_node(r, e); :}
+        ;
+
 stmt    ::= decl:d
             {: RESULT = new stmt_node(d); :}
         | expr:e
             {: RESULT = new stmt_node(e); :}
+        | return:r
+            {: RESULT = new stmt_node(r); :}
         
         | error
             {: RESULT = new stmt_node(new node()); :}
@@ -267,19 +278,47 @@ stmts    ::= stmt:s SEMI
             {: RESULT = new stmts_node(b, ss); :}
         ;
 
-funcsig  ::= type:t ID:i LPAREN arglist:l RPAREN
+argdecls ::= type:t ID:i COMMA argdecls:l
+            {: RESULT = new argDeclList_node(t, i, l, false); :}
+        |   type:t ID:i
+            {: RESULT = new argDeclList_node(t, i, null, false); :}
+        |   OUT type:t ID:i COMMA argdecls:l
+            {: RESULT = new argDeclList_node(t, i, l, true); :}
+        |   OUT type:t ID:i
+            {: RESULT = new argDeclList_node(t, i, null, true); :}
+        |
+            {: RESULT = null; :} 
+        ;
+
+funcsig  ::= type:t ID:i LPAREN argdecls:l RPAREN
             {: RESULT = new complexType.funcsig(t, i, l); :}
-        | VOID ID:i LPAREN arglist:l RPAREN
+        | VOID ID:i LPAREN argdecls:l RPAREN
             {: RESULT = new complexType.funcsig(null, i, l); :}
         ;
 
-fundecl ::= funcsig:sig lkey stmts:s rkey
-            {: RESULT = new fundecl_node(sig, s); :}
+fundecl ::= funcsig:sig SEMI
+            {: RESULT = new fundecl_node(sig, false); :}
+        | funcsig:sig
+            {: RESULT = new fundecl_node(sig, true); :}
+        ;
+
+partfundef ::= fundecl:f lkey
+            {: f.addArgs(); RESULT = f; :}
+        ;
+
+fundef ::= partfundef:f stmts:s rkey
+            {: f.setStmts(s); RESULT = f; :}
+        | partfundef:f rkey
+            {: f.setStmts(null); RESULT = f;:}
         ;
 
 prog    ::= fundecl:d
             {: d.gest(); :}
         | prog:p fundecl:d
+            {: d.gest(); RESULT = p; :}
+        | fundef:d
+            {: d.gest(); :}
+        | prog:p fundef:d
             {: d.gest(); RESULT = p; :}
         | typedecl:d SEMI
             {: d.gest(); :}

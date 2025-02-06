@@ -20,8 +20,9 @@ public class binaryOp_node extends expr_node {
         rightChild = n2;
         op = operator;
         
-        if (node.error(n1, n2) || checkTypes())
+        if (node.error(n1, n2) || checkTypes()) {
             return;
+        }   
         
         if (leftChild.value != null && rightChild.value != null)  // CONSTANT EXPRESSION
             value = evalConst(); // Will update type if it's not the same as child's

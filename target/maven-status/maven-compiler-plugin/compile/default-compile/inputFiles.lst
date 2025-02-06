@@ -2,6 +2,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/type/complexType.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/fun/fundecl_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/flow/ifstmt_node.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/fun/argDeclList_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/datos/varTable.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/flow/stmt_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/instructions/fun_instructions.java
@@ -26,6 +27,7 @@
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/decl_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/datos/cod.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/type/typedecl_node.java
+/home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/fun/return_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/arbol/val/literal_expr_node.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/target/generated-sources/cup/experimental_compiler/Parser.java
 /home/kjorda/Documents/UNI/compiladores/experimental-compiler/src/main/java/experimental_compiler/instructions/alu_instructions.java

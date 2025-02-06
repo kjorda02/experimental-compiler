@@ -61,11 +61,12 @@ public class symbolTable { // (ts)
         table.put(id, new entry(currScope, desc)); // Now we can write or overwrite without worry
         return false;
     }
-    
+        
     public static desc get(String s) {
         entry e = table.get(s);
         if (e == null)
             return null;
+        
         return e.val;
     }
     
@@ -83,6 +84,18 @@ public class symbolTable { // (ts)
             restore_entry entrada = restoreTable.get(i);
             table.put(entrada.ident, new entry(entrada.scopeDecl, entrada.val));
         }
+        
+        ArrayList<String> removeIDs = new ArrayList<>();
+        for (String id : table.keySet()) { // Get leftover ids declared in this block
+            if (table.get(id).scopeDecl == currScope) {
+                removeIDs.add(id);
+            }
+        }
+        
+        for (String id : removeIDs) { // To avoid concurrentModificationException. Cannot remove while iterating
+            table.remove(id);
+        }
+        
         currScope--; // Go to previous scope
     }
 }

@@ -16,8 +16,9 @@ public abstract class desc { // (d)
         public int varNum; // (nv) Position in the variable table
         public complexType type;
         
-        public variable(complexType c, int varnum) {
+        public variable(complexType c, int v) {
             type = c;
+            varNum = v;
         }
     }
     
@@ -42,10 +43,12 @@ public abstract class desc { // (d)
     public static class function extends desc {
         public int funcNum; // (np) Position in the function table
         public complexType.funcsig signature;
+        public boolean defined;
         
         public function(int num, complexType.funcsig s) {
             funcNum = num; // funcTable.newfunc(...);
             signature = s;
+            defined = false;
         }
     }
     

@@ -1,6 +1,6 @@
 package arbol.type;
 
-import arbol.fun.arglist_node;
+import arbol.fun.argDeclList_node;
 import arbol.node;
 import arbol.terminal_node;
 import arbol.val.expr_node;
@@ -228,11 +228,13 @@ public abstract class complexType extends node {
         public ArrayList<Boolean> paramModes; // true = ouput mode
         public terminal_node<String> name;
         
-        public funcsig(complexType c, terminal_node<String> n, arglist_node l) {
+        public funcsig(complexType c, terminal_node<String> n, argDeclList_node l) {
             name = n;
             returnType = c;
             paramTypes = new ArrayList<>();
-            for ( ; l.list != null; l = l.list) {
+            paramNames = new ArrayList<>();
+            paramModes = new ArrayList<>();
+            for ( ; l != null; l = l.next) {
                 paramTypes.add(l.type);
                 paramNames.add(l.name);
                 paramModes.add(l.out);

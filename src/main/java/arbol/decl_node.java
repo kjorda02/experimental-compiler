@@ -71,7 +71,8 @@ public class decl_node extends node {
             return;
         }
         
-        vard = new desc.variable(type, -1); // Placeholder variable number
+        int num = varTable.newvar(funcTable.currentFunc, type.bytes, false, id.value);
+        vard = new desc.variable(type, num); // Placeholder variable number
         if (symbolTable.add(id.value, vard)) {
             Main.report_error("Identifier \""+id.value+"\" is already in use in current scope.", id);
             return;
@@ -86,9 +87,6 @@ public class decl_node extends node {
         
         if (vard == null) // If it's a constant
             return;
-        
-        int num = varTable.newvar(funcTable.currentFunc, type.bytes, false, id.value);
-        vard.varNum = num; // Update descriptor that's already in symbol table
         
         if (expr == null) // if it's a declaration without initial value
             return;

@@ -3,6 +3,7 @@ package arbol.val;
 import arbol.type.complexType;
 import arbol.assign_node;
 import arbol.node;
+import arbol.ref.call_node;
 import arbol.ref.identifier_ref_node;
 import arbol.ref.ref_node;
 import java_cup.runtime.ComplexSymbolFactory.Location;
@@ -57,6 +58,8 @@ public class expr_node extends node { // Array indices and literals are only all
             varNum = ((expr_node) n).varNum;
         else if (n instanceof identifier_ref_node)
             varNum = ((identifier_ref_node) n).varNum;
+        else if (n instanceof call_node)
+            varNum = ((call_node) n).varNum;
         
     }
 }

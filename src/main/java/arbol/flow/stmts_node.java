@@ -19,6 +19,10 @@ public class stmts_node extends node {
         stmt = n1;
     }
     
+    public stmts_node() {
+        stmt = null;
+    }
+    
     @Override
     public void gest() {
         stmt.gest();

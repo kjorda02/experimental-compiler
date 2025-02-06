@@ -27,7 +27,9 @@ public class funcTable {
         
         ArrayList<Integer> callers = new ArrayList<>(); // List of functions that have called this one
         ArrayList<Integer> vars = new ArrayList<>();
-        ArrayList<Integer> params = new ArrayList<>();
+        public ArrayList<Integer> params = new ArrayList<>();
+        public int returnVar = -1;
+        public int[] tmpRegs = new int[3]; // Registers for operating with values in memory
         
         public funcInfo(String n) {
             name = n;
@@ -39,10 +41,6 @@ public class funcTable {
     
     public static void addVar(int funcID, int varID) {
         table.get(funcID).vars.add(varID);
-    }
-    
-    public static void addParam(int funcID, int paramID) {
-        table.get(funcID).params.add(paramID);
     }
     
     public static void addCaller(int callee) {
@@ -58,24 +56,36 @@ public class funcTable {
     public static boolean allocateVars(int funcID) {
         funcInfo f = table.get(funcID);
         
-        boolean[] prev_used_a_regs = Arrays.copyOf(f.unsafe_a_regs, f.unsafe_a_regs.length);
-        boolean[] prev_used_t_regs = Arrays.copyOf(f.unsafe_t_regs, f.unsafe_t_regs.length);
+        boolean[] prev_used_a_regs = Arrays.copyOf(f.used_a_regs, f.used_a_regs.length);
+        boolean[] prev_used_t_regs = Arrays.copyOf(f.used_t_regs, f.used_t_regs.length);
         int prev_used_s_regs = f.used_s_regs;
         
+        Arrays.fill(f.used_a_regs, false);
+        Arrays.fill(f.used_t_regs, false);
+        f.used_s_regs = 1; // 1 s-reg always used for frame pointer
+        // Don't need to clear the unsafe registers. If they were previously unsafe they'll be unsafe now.
+        
         for (int num : f.params) { // For each parameter
-            varInfo v = varTable.get(num);
             allocateVar(f, num, true);
         }
         
         for (int num : f.vars) { // For each local variable
-            varInfo v = varTable.get(num);
-            allocateVar(f, num, true);
+            allocateVar(f, num, false);
+        }
+        
+        if (f.returnVar != -1) {
+            varTable.setAReg(f.returnVar, 0); // Set return value to a0. Same register can still be used for argument
+            f.used_a_regs[0] = true;
+        }
+        
+        for (int i = 0; i < 3; i++) { // Allocate 3 temporary registers
+            f.tmpRegs[i] = allocateTmpReg(f);
         }
         
         if (Arrays.equals(prev_used_a_regs, f.used_a_regs)
             && Arrays.equals(prev_used_t_regs, f.used_t_regs)
             && prev_used_s_regs == f.used_s_regs) 
-            return false; // No changes
+            return false; // No changes 
         
         // TODO: Update caller's unsafe registers
         for (int num : f.callers) { // For each function that calls this one
@@ -85,6 +95,7 @@ public class funcTable {
             for (int i = 0; i < f.used_a_regs.length; i++) {
                 if (!caller.unsafe_a_regs[i] && f.used_a_regs[i]) {
                     caller.unsafe_a_regs[i] = true;
+                    caller.total_unsafe_regs++;
                     changes = true;
                 }
             }
@@ -92,6 +103,7 @@ public class funcTable {
             for (int i = 0; i < f.used_t_regs.length; i++) {
                 if (!caller.unsafe_t_regs[i] && f.used_t_regs[i]) {
                     caller.unsafe_t_regs[i] = true;
+                    caller.total_unsafe_regs++;
                     changes = true;
                 }
             }
@@ -115,37 +127,50 @@ public class funcTable {
         - If num of unsafe registers + num of s-regs left == 3, don't assign s-reg, continue to 5
     5. Assign locations on stack
     */
-    public static void allocateVar(funcInfo f, int varID, boolean isParam) {
-        varInfo v = varTable.get(varID);
-        if (v.size > 4) {
-            allocateStack(f, varID, isParam);
-            return;
+    public static int allocateVar(funcInfo f, int varID, boolean isParam) {
+        if (varID != -1) {
+            varInfo v = varTable.get(varID);
+            if (v.size > 4) {
+                allocateStack(f, varID, isParam);
+                return 0;
+            }
         }
+        
         
         for (int i = 0; i < f.used_a_regs.length; i++) { // Allocate on a-register
-            if (!f.used_a_regs[i]) {
-                varTable.setAReg(varID, i);
+            if (!f.used_a_regs[i] && !f.unsafe_a_regs[i]) {
                 f.used_a_regs[i] = true;
-                return;
+                
+                if (varID != -1)
+                    varTable.setAReg(varID, i);
+                
+                return i;
             }
         }
         
-        for (int i = 0; i < f.used_t_regs.length; i++) { // Allocate on t-register
-            if (!f.used_t_regs[i]) {
-                varTable.setTReg(varID, i);
-                f.used_t_regs[i] = true;
-                return;
+        if (!isParam) {
+            for (int i = 0; i < f.used_t_regs.length; i++) { // Allocate on t-register
+                if (!f.used_t_regs[i] && !f.unsafe_t_regs[i]) {
+                    f.used_t_regs[i] = true;
+                    if (varID != -1)
+                        varTable.setTReg(varID, i);
+                    
+                    return i+10;
+                }
             }
-        }
-        
-        if (f.total_unsafe_regs + (12-f.used_s_regs) != 3) { // Always leave 3 registers for operations with stack variables
-            varTable.setSReg(varID, f.used_s_regs++); // Allocate on s-register
-            return;
+
+            if (f.total_unsafe_regs + (12-f.used_s_regs) != 3) { // Always leave 3 registers for operations with stack variables
+                if (varID != -1)
+                    varTable.setSReg(varID, f.used_s_regs); // Allocate on s-register
+                
+                return 20+f.used_s_regs++;
+            }
         }
         
         // Last resort option: Store the variable on the stack 
         // (will need to be copied to/from one of the 3 registers reserved for this purpose)
         allocateStack(f, varID, isParam);
+        return 0;
     }
     
     public static void allocateStack(funcInfo f, int varID, boolean isParam) {
@@ -161,8 +186,30 @@ public class funcTable {
         f.stackSize += size;
     }
     
-    public funcInfo get(int id) {
+    public static int allocateTmpReg(funcInfo f) {
+        for (int i = 0; i < f.unsafe_a_regs.length; i++) { // Allocate on a-reg
+            if (!f.used_a_regs[i] && f.unsafe_a_regs[i]) {
+                f.used_a_regs[i] = true;
+                return i;
+            }
+        }
+        
+        for (int i = 0; i < f.unsafe_t_regs.length; i++) { // Allocate on t-reg
+            if (!f.used_t_regs[i] && f.unsafe_t_regs[i]) {
+                f.used_t_regs[i] = true;
+                return i+10;
+            }
+        }
+        
+        return allocateVar(f, -1, false);
+    }
+    
+    public static funcInfo get(int id) {
         return table.get(id);
+    }
+    
+    public static funcInfo getCurrent() {
+        return table.get(currentFunc);
     }
     
     public void addArg(String s) {
@@ -176,6 +223,7 @@ public class funcTable {
             return table.get(id).name;
     }
     
+    
     public static int add(complexType.funcsig signature) {
         funcInfo f = new funcInfo(signature.name.value);
         table.add(f);
@@ -183,7 +231,10 @@ public class funcTable {
         
         // Will contain value if primitive type. Pointer to pre-allocated space if complex type
         if (signature.returnType != null) {
-            varTable.newvar(id, signature.returnType.bytes, true, "returnval");
+            if (signature.returnType instanceof complexType.primitive || signature.returnType instanceof complexType.pointer)
+                f.returnVar = varTable.newvar(id, signature.returnType.bytes, true, "returnval");
+            else
+                f.returnVar = varTable.newvar(id, 4, true, "returnval");
         }
         
         for (int i = 0; i < signature.paramTypes.size(); i++) {
@@ -192,7 +243,8 @@ public class funcTable {
             if (signature.paramModes.get(i) == true) // Out argument mode
                 size = 4; // Only takes in a pointer, caller has reserved space for return value
             
-            varTable.newvar(id, size, true, signature.paramNames.get(i));
+            int num = varTable.newvar(id, size, true, signature.paramNames.get(i));
+            f.params.add(num);
         }
         
         // We do not reserve space for out arguments, since the callee already has done so. 
@@ -203,12 +255,39 @@ public class funcTable {
     public static void outputFuncTable(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write("| "+format("num", 5)+format("name", 15)+format("stackSize", 10)+format("argsSize", 9)+
-                    format("s-regs", 7)+format("t-regs", 7)+format("a-regs", 7)+" |\n");
+                    format("a-regs", 24)+format("t-regs", 21)+format("s-regs", 36)+format("temp regs", 9)+" |\n");
             for (int i = 0; i < table.size(); i++) {
                 funcTable.funcInfo f = table.get(i);
                 
-                writer.write("| "+format(""+i, 5)+format(f.name, 15)+format(""+f.stackSize, 10)+format(""+f.argsStackSize, 9)+
-                    format(""+f.used_s_regs, 7)+format(""+f.used_t_regs, 7)+format(""+f.used_a_regs, 7)+" |\n");
+                writer.write("| "+format(""+i, 5)+format(f.name, 15)+format(""+f.stackSize, 10)+format(""+f.argsStackSize, 9));
+                
+                String s = "";
+                for (int j = 0; j < f.used_a_regs.length; j++) {
+                    if (f.used_a_regs[j])
+                        s += "a"+j+" ";
+                }
+                writer.write(format(s, 24));
+                
+                s = "";
+                for (int j = 0; j < f.used_t_regs.length; j++) {
+                    if (f.used_t_regs[j])
+                        s += "t"+j+" ";
+                }
+                writer.write(format(s, 21));
+                
+                s = "";
+                for (int j = 0; j < f.used_s_regs; j++) {
+                    s += "s"+j+" ";
+                }
+                writer.write(format(s, 36));
+                
+                s = "";
+                for (int j = 0; j < f.tmpRegs.length; j++) {
+                    s += varTable.reg(f.tmpRegs[j])+" ";
+                }
+                writer.write(format(s, 9));
+                
+                writer.write(" |\n");
             }
             writer.newLine();
         } catch (IOException e) {
