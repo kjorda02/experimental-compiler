@@ -82,7 +82,7 @@ ID = [a-zA-Z][a-zA-Z0-9]*
 ","             { return symbol(sym.COMMA); }
 "."             { return symbol(sym.DOT); }
 
-{NUMBER}        { return symbol(sym.INTLIT, (long) Integer.parseInt(yytext())); }
+{NUMBER}        { return symbol(sym.INTLIT, (int) Integer.parseInt(yytext())); }
 "true"|"false"  { return symbol(sym.BOOLLIT, Boolean.parseBoolean(yytext())); }
 {ID}            { return symbol(sym.ID, yytext()); }
 

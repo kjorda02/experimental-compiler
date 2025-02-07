@@ -50,7 +50,7 @@ public class unaryOp_node extends expr_node {
         error = false;
     }
     
-    private long evalConst() {
+    private int evalConst() {
         switch(oper) {
             case NOT:
                 return ~child.value;

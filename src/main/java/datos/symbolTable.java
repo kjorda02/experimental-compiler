@@ -61,7 +61,7 @@ public class symbolTable { // (ts)
         table.put(id, new entry(currScope, desc)); // Now we can write or overwrite without worry
         return false;
     }
-        
+    
     public static desc get(String s) {
         entry e = table.get(s);
         if (e == null)

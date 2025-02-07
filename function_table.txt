@@ -1,5 +1,4 @@
 | num  name           stackSize argsSize a-regs                  t-regs               s-regs                              temp regs |
-| 0    test           4         0        a0 a1 a2                                     s0                                  a0 a1 a2  |
-| 1    square         4         56       a0 a1 a2 a3                                  s0 s1                               a1 a2 a3  |
-| 2    main           4         0        a0 a1 a2 a3 a4 a5 a6 a7 t0                   s0                                  a1 a2 a3  |
+| 0    fib            32        4        a0 a1 a2                                     s0 s1 s2 s3 s4 s5 s6                a1 a2     |
+| 1    main           8         0        a0 a1 a2 a3 a4                               s0                                  a1 a2     |
 

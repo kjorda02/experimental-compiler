@@ -7,6 +7,7 @@ import datos.cod;
 import datos.funcTable;
 import datos.symbolTable;
 import datos.varTable;
+import experimental_compiler.instructions.ins;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 
@@ -37,9 +38,11 @@ public class Main {
                 
             // Optimize    
             funcTable.allocateAllVars();
+            varTable.allocateVarsGlobal();
             System.out.println(cod.toStr());
             varTable.outputVarTable("variable_table.txt");
             funcTable.outputFuncTable("function_table.txt");
+            ins.generate("output.s");
         } catch (Exception e) {
             e.printStackTrace();
         }

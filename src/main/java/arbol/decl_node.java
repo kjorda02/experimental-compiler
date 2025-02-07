@@ -30,8 +30,9 @@ public class decl_node extends node {
         type = t;
         id = ident;
         expr = e;
-        if (node.error(t, ident, e))
+        if (node.error(t, ident, e)) {
             return;
+        }
         
         addVar();
     }
@@ -58,7 +59,7 @@ public class decl_node extends node {
                 return;
             }
             
-            long val = ((expr_node) expr).value;
+            int val = ((expr_node) expr).value;
             basicType btype = ((complexType.primitive) type).btype;
             desc dc = new desc.constant(btype, val);
             symbolTable.add(ident.value, dc);

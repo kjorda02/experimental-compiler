@@ -1,5 +1,7 @@
 package datos;
 
+import static datos.funcTable.allocateVar;
+import datos.funcTable.funcInfo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -13,7 +15,7 @@ public class varTable {
     public static class varInfo {
         public int parentFunc; // Name of the function where it's declared
         public int size; // Size in bytes
-        public int disp; // Displacement relative to base pointer. Cannot be known until optimization is done.
+        public int offset; // Displacement relative to base pointer. Cannot be known until optimization is done.
         public boolean inRegister; // If true, disp indicates the register number.
         public boolean isParameter; // Only kept for printing
         public String name; // Name of the corresponding variable in the source code
@@ -53,6 +55,17 @@ public class varTable {
         return vars++;
     }
     
+    public static void allocateVarsGlobal() {
+        for (varInfo v : table) {
+            if (v.parentFunc == -1 && v.name == null) { // Compiler-generated variables outside any function
+                funcInfo f = new funcInfo("");
+                for (int num : f.vars) { // For each local variable
+                    funcTable.allocateVar(f, num, false);
+                }
+            }
+        }
+    }
+    
     public static String format(String s, int len) {
         if (s == null)
             s = "";
@@ -64,22 +77,22 @@ public class varTable {
     
     public static void setAReg(int varNum, int reg) {
         table.get(varNum).inRegister = true;
-        table.get(varNum).disp = reg;
+        table.get(varNum).offset = reg;
     }
     
     public static void setTReg(int varNum, int reg) {
         table.get(varNum).inRegister = true;
-        table.get(varNum).disp = reg+10;
+        table.get(varNum).offset = reg+10;
     }
     
     public static void setSReg(int varNum, int reg) {
         table.get(varNum).inRegister = true;
-        table.get(varNum).disp = reg+20;
+        table.get(varNum).offset = reg+20;
     }
     
     public static void setStack(int varNum, int offset) {
         table.get(varNum).inRegister = false;
-        table.get(varNum).disp = offset;
+        table.get(varNum).offset = offset;
     }
     
     public static String reg(int n) {
@@ -91,30 +104,28 @@ public class varTable {
         return "s"+(n-20); // s1-s11
     }
     
-    public static String loc(varInfo v, int len) {
+    public static String loc(varInfo v) {
         String s = "";
         if (v.inRegister) {
-            return reg(v.disp);
+            return reg(v.offset);
         }
         else {
             if (v.parentFunc == -1) 
-                s = v.name;
+                return v.name; // global var
             else
-                s = v.disp+"(fp)";
+                return v.offset+"(fp)"; // local var
         }
-        
-        return format(s, len);
     }
     
     public static void outputVarTable(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write("| "+format("num", 5)+format("name", 15)+format("parentFuncID", 15)+format("parentFunc", 15)+
-                    format("size", 6)+format("location", 9)+format("inRegister", 11)+format("param", 6)+" |\n");
+                    format("size", 6)+format("location", 9)+format("param", 6)+" |\n");
             for (int i = 0; i < table.size(); i++) {
                 varInfo v = table.get(i);
                 
                 writer.write("| "+format(""+i, 5)+format(v.name, 15)+format(""+v.parentFunc, 15)+format(funcTable.name(v.parentFunc), 15)+
-                    format(""+v.size, 6)+loc(v, 9)+format(""+v.inRegister, 11)+format(""+v.isParameter, 6)+" |\n");
+                    format(""+v.size, 6)+format(loc(v),9)+format(""+v.isParameter, 6)+" |\n");
             }
             writer.newLine();
         } catch (IOException e) {

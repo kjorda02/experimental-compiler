@@ -10,7 +10,7 @@ import experimental_compiler.Main;
  * @author kjorda
  */
 public class identifier_ref_node extends ref_node {
-    public Long value; // For constants, we'll just pretend it doesn't exist until we reduce to EXPR
+    public Integer value; // For constants, we'll just pretend it doesn't exist until we reduce to EXPR
     String identifier;
     
     public identifier_ref_node(terminal_node<String> id) {

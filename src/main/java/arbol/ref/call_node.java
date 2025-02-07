@@ -67,9 +67,11 @@ public class call_node extends ref_node {
         
         varNum = varTable.newvar(funcTable.currentFunc, type.bytes); // Holds the return value once we've returned
         
+        cod.genera(cod.op.INIT_PARAMS, 0, 0, funcID);
+        
         for (arglist_node n = args; n != null; n = n.next) { // For each argument
             n.expr.gest(); // Generate its code
-            cod.genera(cod.op.PARAM_S, 0, 0, n.expr.varNum); // Push the result to the stack
+            cod.genera(cod.op.PARAM, 0, 0, n.expr.getVarNum()); // Push the result to the stack
         }
         
         // Call instruction. Jumps to tag of the function. Copies return value from

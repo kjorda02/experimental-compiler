@@ -23,10 +23,10 @@ public abstract class desc { // (d)
     }
     
     public static class constant extends desc {
-        public long value; // (v)
+        public int value; // (v)
         public basicType type;
         
-        public constant(basicType b, long v) {
+        public constant(basicType b, int v) {
             type = b;
             value = v;
         }

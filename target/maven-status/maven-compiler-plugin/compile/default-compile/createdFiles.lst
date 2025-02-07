@@ -1,5 +1,6 @@
 datos/basicType.class
 arbol/val/binaryOp_node.class
+experimental_compiler/instructions/ins.class
 datos/symbolTable$entry.class
 arbol/node.class
 arbol/type/complexType.class
@@ -19,7 +20,6 @@ experimental_compiler/Main.class
 datos/cod.class
 arbol/ref/displ_node.class
 arbol/val/unaryOp_node.class
-experimental_compiler/instructions/instructions$1.class
 experimental_compiler/instructions/alu_instructions.class
 arbol/terminal_node.class
 arbol/fun/return_node.class
@@ -27,7 +27,6 @@ arbol/fun/fundecl_node.class
 arbol/type/complexType$array.class
 arbol/flow/stmt_node.class
 arbol/flow/while_node.class
-experimental_compiler/instructions/instructions.class
 arbol/fun/arglist_node.class
 arbol/ref/identifier_ref_node.class
 arbol/val/unaryOp_node$1.class
@@ -50,6 +49,7 @@ arbol/type/complexType$struct.class
 experimental_compiler/instructions/fun_instructions.class
 datos/desc$variable.class
 datos/OP.class
+experimental_compiler/instructions/ins$1.class
 arbol/decl_node.class
 datos/cod$1.class
 experimental_compiler/Parser.class

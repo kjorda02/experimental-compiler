@@ -40,7 +40,7 @@ public class binaryOp_node extends expr_node {
         error = n.isEmpty();
     }
     
-    private long evalConst() {
+    private int evalConst() {
         switch(op){
             case PLUS:
                 return leftChild.value + rightChild.value;
@@ -141,8 +141,8 @@ public class binaryOp_node extends expr_node {
             rightChild.gest();
         
         // EXPRESSION EVALUATION -----------------------------------------------
-        long op1 = (leftChild.value == null) ? leftChild.varNum : leftChild.value;
-        long op2 = (rightChild.value == null) ? rightChild.varNum : rightChild.value;
+        int op1 = (leftChild.value == null) ? leftChild.varNum : leftChild.value;
+        int op2 = (rightChild.value == null) ? rightChild.varNum : rightChild.value;
         
         int t = varTable.newvar(funcTable.currentFunc, type.bytes);
         switch(op){
@@ -190,7 +190,7 @@ public class binaryOp_node extends expr_node {
         varNum = t;
     }
     
-    private void gest_rel(cod.op op, long op1, long op2, int t) {
+    private void gest_rel(cod.op op, int op1, int op2, int t) {
         int tag1 = cod.newTag();
         int tag2 = cod.newTag();
         

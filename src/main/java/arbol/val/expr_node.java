@@ -6,6 +6,9 @@ import arbol.node;
 import arbol.ref.call_node;
 import arbol.ref.identifier_ref_node;
 import arbol.ref.ref_node;
+import datos.cod;
+import datos.funcTable;
+import datos.varTable;
 import java_cup.runtime.ComplexSymbolFactory.Location;
 
 /**
@@ -16,7 +19,7 @@ public class expr_node extends node { // Array indices and literals are only all
     public Integer varNum = null;    // (nv) Points to a variable in the variable table
     private node n; // expr_node, identifier_ref_node or assign_node
     public complexType type;
-    public Long value; // Value for constants
+    public Integer value; // Value for constants
     
     public expr_node(node node) {
         super(node.left, node.right);
@@ -38,12 +41,22 @@ public class expr_node extends node { // Array indices and literals are only all
             type =  exn.type;
             value = exn.value;
         }
-       
        error = false;
     }
     
     public expr_node(Location left, Location  right) { // For inheritance
         super(left, right);
+    }
+    
+    public int getVarNum() {
+        if (varNum == null) {
+            int v = varTable.newvar(funcTable.currentFunc, type.bytes);
+            cod.genera(cod.op.COPY, this.value, 0, v);
+            cod.setImmediate(true, false);
+            varNum = v;
+        }
+        
+        return varNum;
     }
     
     @Override

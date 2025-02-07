@@ -60,7 +60,7 @@ public class return_node extends node {
         }
         
         varInfo exprVar = varTable.get(expr.varNum);
-        if (exprVar.inRegister && exprVar.disp == 0) // Return expression is already in a0
+        if (exprVar.inRegister && exprVar.offset == 0) // Return expression is already in a0
             return;
         
         int returnNum = funcTable.getCurrent().returnVar;

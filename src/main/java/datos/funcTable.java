@@ -15,7 +15,7 @@ import java.util.Arrays;
  */
 public class funcTable {
     public static class funcInfo {
-        String name;
+        public String name;
         public boolean[] used_a_regs = new boolean[8];
         public boolean[] unsafe_a_regs = new boolean[8]; // Is updated by the callees when they allocate their variables
         public boolean[] used_t_regs = new boolean[7];
@@ -29,7 +29,7 @@ public class funcTable {
         ArrayList<Integer> vars = new ArrayList<>();
         public ArrayList<Integer> params = new ArrayList<>();
         public int returnVar = -1;
-        public int[] tmpRegs = new int[3]; // Registers for operating with values in memory
+        public int[] tmpRegs = new int[2]; // Registers for operating with values in memory
         
         public funcInfo(String n) {
             name = n;
@@ -63,6 +63,8 @@ public class funcTable {
         Arrays.fill(f.used_a_regs, false);
         Arrays.fill(f.used_t_regs, false);
         f.used_s_regs = 1; // 1 s-reg always used for frame pointer
+        f.stackSize = 8;
+        f.argsStackSize = 0;
         // Don't need to clear the unsafe registers. If they were previously unsafe they'll be unsafe now.
         
         for (int num : f.params) { // For each parameter
@@ -70,7 +72,13 @@ public class funcTable {
         }
         
         for (int num : f.vars) { // For each local variable
-            allocateVar(f, num, false);
+            if (varTable.get(num).size <= 4)
+                allocateVar(f, num, false);
+        }
+        
+        for (int num : f.vars) { // These go on the stack
+            if (varTable.get(num).size > 4)
+                allocateVar(f, num, false);
         }
         
         if (f.returnVar != -1) {
@@ -78,7 +86,7 @@ public class funcTable {
             f.used_a_regs[0] = true;
         }
         
-        for (int i = 0; i < 3; i++) { // Allocate 3 temporary registers
+        for (int i = 0; i < 2; i++) { // Allocate 2 temporary registers
             f.tmpRegs[i] = allocateTmpReg(f);
         }
         
@@ -159,7 +167,8 @@ public class funcTable {
                 }
             }
 
-            if (f.total_unsafe_regs + (12-f.used_s_regs) != 3) { // Always leave 3 registers for operations with stack variables
+            if (f.total_unsafe_regs + (12-f.used_s_regs) > 2) { // Always leave 3 registers for operations with stack variables
+                f.stackSize += 4;
                 if (varID != -1)
                     varTable.setSReg(varID, f.used_s_regs); // Allocate on s-register
                 
