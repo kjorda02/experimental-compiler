@@ -58,14 +58,15 @@ public class call_node extends ref_node {
             return;
         }
         
+        if (type != null) // Not void return type
+            varNum = varTable.newvar(funcTable.currentFunc, type.bytes); // Holds the return value once we've returned
+        
         error = false;
     }
     
     @Override
     public void gest() {
         funcTable.addCaller(funcID); // Adds currentFunc as a caller
-        
-        varNum = varTable.newvar(funcTable.currentFunc, type.bytes); // Holds the return value once we've returned
         
         cod.genera(cod.op.INIT_PARAMS, 0, 0, funcID);
         
@@ -77,6 +78,9 @@ public class call_node extends ref_node {
         // Call instruction. Jumps to tag of the function. Copies return value from
         // a0 to the location of varNum
         cod.genera(cod.op.CALL, 0, 0, funcID);
+        
+        if (type == null) // void
+            return;
         
         if (type.bytes <= 4) {
             cod.genera(cod.op.COPY, funcTable.getCurrent().returnVar, 0, varNum); // Copies from a0 to our local variable

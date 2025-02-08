@@ -4,6 +4,7 @@ import arbol.flow.stmts_node;
 import arbol.node;
 import arbol.type.complexType;
 import datos.cod;
+import datos.cod.op;
 import datos.desc;
 import datos.funcTable;
 import datos.funcTable.funcInfo;
@@ -18,6 +19,7 @@ public class fundecl_node extends node {
     complexType.funcsig signature;
     stmts_node stmts;
     int funcID;
+    boolean def = false;
     
     public fundecl_node(complexType.funcsig sig, boolean definition) {
         signature = sig;
@@ -40,6 +42,10 @@ public class fundecl_node extends node {
             }
         }
         
+        if (symbolTable.get(sig.name.value) != null) {
+            funcID = ((desc.function)symbolTable.get(sig.name.value)).funcNum;
+            return;
+        }
         funcID = funcTable.add(sig);
         desc.function d = new desc.function(funcID, signature);
         symbolTable.add(signature.name.value, d); // Need to add it before '{' rather than after '}', so that we can have recursion
@@ -57,12 +63,16 @@ public class fundecl_node extends node {
     }
     
     public void setStmts(stmts_node n) { // Called when we reduce "stmts }"
+        def = true;
         stmts = n;
         funcTable.currentFunc = -1;
     }
     
     @Override
     public void gest() {
+        if (!def)
+            return;
+        
         funcTable.currentFunc = funcID;
         cod.setTag(signature.name.value);
         cod.genera(cod.op.PMB, 0, 0, funcTable.currentFunc);
@@ -70,7 +80,9 @@ public class fundecl_node extends node {
         if (stmts != null)
             stmts.gest();
         
-        cod.genera(cod.op.RTN, 0, 0, funcTable.currentFunc);
+        if (cod.fetchLast().operation != op.RTN) {
+            cod.genera(cod.op.RTN, 0, 0, funcTable.currentFunc);
+        }
         funcTable.currentFunc = -1;
     }
 }

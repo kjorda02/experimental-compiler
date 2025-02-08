@@ -94,6 +94,7 @@ public class decl_node extends node {
         
         if (expr.value == null) { // Runtime expression
             expr.gest();
+            
             cod.genera(cod.op.COPY, expr.varNum, 0, vard.varNum);
         }
         else { // Compile-time expression

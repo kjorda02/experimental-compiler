@@ -20,11 +20,22 @@ public class ins {
     public static void generate(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             w = writer;
+            
+            w.write(".global _start\n" +
+                    ".text\n" +
+                    "\n" +
+                    "_start:\n" +
+                    "    call main\n" +
+                    "    # Exit syscall\n" +
+                    "    li a7, 93       # exit syscall number for RV32\n" +
+                    "    li a0, 0        # exit code 0\n" +
+                    "    ecall\n\n");
+            
             globals();
             
             codigo3dirs c = cod.fetch(0);
             for (int i = 1; c != null; i++) {
-                writer.write("; "+c.toString()+"\n");
+                writer.write("# "+c.toString()+"\n");
                 translate(c);
                 c = cod.fetch(i);
             }
@@ -95,7 +106,7 @@ public class ins {
             w.write("sw "+tmpRegs[0]+", 0("+tmpRegs[1]+")\n"); // Copy dst operand in tmp0 to adderss in tmp1
         }
         else { // Local variable
-            w.write("sw "+tmpRegs[0]+", "+varTable.reg(v.offset)+"(fp)\n");
+            w.write("sw "+tmpRegs[0]+", "+v.offset+"(fp)\n");
         }
     }
     
@@ -114,15 +125,53 @@ public class ins {
                 break;
             case IDX_VAL: // ----------------------------------------------
                 // dst = src1[src2]
-                w.write("add "+tmpRegs[0]+", "+src1(c.op[0])+", "+src2(c.op[1])+"\n");
-                w.write("sw "+dst(c.op[2])+", 0("+tmpRegs[0]+")\n");
+                if (c.src2imm())
+                    w.write("addi "+tmpRegs[0]+", "+src2(c.op[0])+", "+c.op[1]+"\n"); // add offset to base, store final address in tmp0
+                    
+                else {
+                    w.write("add "+tmpRegs[0]+", "+src2(c.op[0])+", "+src1(c.op[1])+"\n"); // add offset to base, store final address in tmp0
+                }
+                
+                w.write("lw "+dst(c.op[2])+", 0("+tmpRegs[0]+")\n");
                 saveDst(c.op[2]);
                 break;
             case IDX_ASS: // ----------------------------------------------
-                // dst[src2] = src1
-                w.write("add "+tmpRegs[0]+", "+src1(c.op[2])+", "+src2(c.op[1])+"\n");
-                w.write("lw "+dst(c.op[0])+", 0("+tmpRegs[0]+")\n");
+                // dst[src1] = src2
+                if (c.src1imm()) {
+                    w.write("addi "+tmpRegs[0]+", "+src2(c.op[2])+", "+c.op[0]+"\n"); // add offset to base, store final address in tmp0
+                }
+                else {
+                    w.write("add "+tmpRegs[0]+", "+src2(c.op[2])+", "+src1(c.op[0])+"\n"); // add offset to base, store final address in tmp0
+                }
+                
+                
+                if (c.src2imm()) {
+                    w.write("li "+tmpRegs[1]+", "+c.op[1]+"\n");
+                    w.write("sw "+tmpRegs[1]+", 0("+tmpRegs[0]+")\n");
+                }
+                else {
+                    w.write("sw "+src2(c.op[1])+", 0("+tmpRegs[0]+")\n");
+                }
+                
                 saveDst(c.op[0]);
+                break;
+            case ADD_DISPL:
+                // op0 = type.bytes, op1 = displ/displ.varNum, op2 = varNum
+                w.write("li "+tmpRegs[0]+", "+c.op[0]+"\n"); // Load size of type into tmp0
+                
+                if (c.src2imm()) {
+                    w.write("li "+tmpRegs[1]+", "+c.op[1]+"\n");
+                    w.write("mul "+tmpRegs[0]+", "+tmpRegs[0]+", "+tmpRegs[1]+"\n"); // Load displ*type.bytes into tmp0
+                }
+                else{
+                    w.write("mul "+tmpRegs[0]+", "+tmpRegs[0]+", "+src2(c.op[1])+"\n"); // Load displ*type.bytes into tmp0
+                }
+                w.write("add "+dst(c.op[2])+", "+src2(c.op[2])+", "+tmpRegs[0]+"\n"); // Add displ*type.bytes to varNum
+                saveDst(c.op[2]);
+                break;
+            case LOAD_OFFSET:
+                w.write("addi "+dst(c.op[2])+", "+"fp, "+varTable.getOffset(c.op[0])+"\n");
+                saveDst(c.op[2]);
                 break;
             default:
                 goto_instructions.translate(c, w);

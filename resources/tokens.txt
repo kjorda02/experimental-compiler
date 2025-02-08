@@ -1,0 +1,469 @@
+VOID                 (line 0, col 0) to (line 0, col 4)
+ID                   (line 0, col 5) to (line 0, col 13) Value: printNum
+LPAREN               (line 0, col 13) to (line 0, col 14)
+INT                  (line 0, col 14) to (line 0, col 17) Value: int
+ID                   (line 0, col 18) to (line 0, col 19) Value: n
+RPAREN               (line 0, col 19) to (line 0, col 20)
+SEMI                 (line 0, col 20) to (line 0, col 21)
+VOID                 (line 1, col 0) to (line 1, col 4)
+ID                   (line 1, col 5) to (line 1, col 16) Value: printMatrix
+LPAREN               (line 1, col 16) to (line 1, col 17)
+INT                  (line 1, col 17) to (line 1, col 20) Value: int
+ID                   (line 1, col 21) to (line 1, col 24) Value: max
+RPAREN               (line 1, col 24) to (line 1, col 25)
+SEMI                 (line 1, col 25) to (line 1, col 26)
+INT                  (line 2, col 0) to (line 2, col 3) Value: int
+ID                   (line 2, col 4) to (line 2, col 11) Value: readNum
+LPAREN               (line 2, col 11) to (line 2, col 12)
+RPAREN               (line 2, col 12) to (line 2, col 13)
+SEMI                 (line 2, col 13) to (line 2, col 14)
+INT                  (line 4, col 0) to (line 4, col 3) Value: int
+ID                   (line 4, col 4) to (line 4, col 8) Value: glob
+SEMI                 (line 4, col 8) to (line 4, col 9)
+INT                  (line 6, col 0) to (line 6, col 3) Value: int
+ID                   (line 6, col 4) to (line 6, col 8) Value: main
+LPAREN               (line 6, col 8) to (line 6, col 9)
+RPAREN               (line 6, col 9) to (line 6, col 10)
+LKEY                 (line 6, col 11) to (line 6, col 12)
+INT                  (line 7, col 4) to (line 7, col 7) Value: int
+ID                   (line 7, col 8) to (line 7, col 9) Value: a
+ASS                  (line 7, col 10) to (line 7, col 11)
+ID                   (line 7, col 12) to (line 7, col 19) Value: readNum
+LPAREN               (line 7, col 19) to (line 7, col 20)
+RPAREN               (line 7, col 20) to (line 7, col 21)
+SEMI                 (line 7, col 21) to (line 7, col 22)
+ID                   (line 9, col 4) to (line 9, col 15) Value: printMatrix
+LPAREN               (line 9, col 15) to (line 9, col 16)
+ID                   (line 9, col 16) to (line 9, col 17) Value: a
+RPAREN               (line 9, col 17) to (line 9, col 18)
+SEMI                 (line 9, col 18) to (line 9, col 19)
+PUTCHAR              (line 11, col 4) to (line 11, col 11)
+LPAREN               (line 11, col 11) to (line 11, col 12)
+CHARLIT              (line 11, col 12) to (line 11, col 16) Value: 10
+RPAREN               (line 11, col 16) to (line 11, col 17)
+SEMI                 (line 11, col 17) to (line 11, col 18)
+RKEY                 (line 12, col 0) to (line 12, col 1)
+VOID                 (line 16, col 0) to (line 16, col 4)
+ID                   (line 16, col 5) to (line 16, col 16) Value: printMatrix
+LPAREN               (line 16, col 16) to (line 16, col 17)
+INT                  (line 16, col 17) to (line 16, col 20) Value: int
+ID                   (line 16, col 21) to (line 16, col 24) Value: max
+RPAREN               (line 16, col 24) to (line 16, col 25)
+LKEY                 (line 16, col 26) to (line 16, col 27)
+LBRAC                (line 17, col 4) to (line 17, col 5)
+INTLIT               (line 17, col 5) to (line 17, col 7) Value: 20
+RBRAC                (line 17, col 7) to (line 17, col 8)
+LBRAC                (line 17, col 8) to (line 17, col 9)
+INTLIT               (line 17, col 9) to (line 17, col 11) Value: 20
+RBRAC                (line 17, col 11) to (line 17, col 12)
+INT                  (line 17, col 12) to (line 17, col 15) Value: int
+ID                   (line 17, col 16) to (line 17, col 22) Value: matrix
+SEMI                 (line 17, col 22) to (line 17, col 23)
+FOR                  (line 19, col 4) to (line 19, col 7)
+LPAREN               (line 19, col 8) to (line 19, col 9)
+INT                  (line 19, col 9) to (line 19, col 12) Value: int
+ID                   (line 19, col 13) to (line 19, col 14) Value: i
+ASS                  (line 19, col 15) to (line 19, col 16)
+INTLIT               (line 19, col 17) to (line 19, col 18) Value: 0
+SEMI                 (line 19, col 18) to (line 19, col 19)
+ID                   (line 19, col 20) to (line 19, col 21) Value: i
+LT                   (line 19, col 22) to (line 19, col 23)
+ID                   (line 19, col 24) to (line 19, col 27) Value: max
+SEMI                 (line 19, col 27) to (line 19, col 28)
+ID                   (line 19, col 29) to (line 19, col 30) Value: i
+ASS                  (line 19, col 31) to (line 19, col 32)
+ID                   (line 19, col 33) to (line 19, col 34) Value: i
+PLUS                 (line 19, col 34) to (line 19, col 35)
+INTLIT               (line 19, col 35) to (line 19, col 36) Value: 1
+RPAREN               (line 19, col 36) to (line 19, col 37)
+LKEY                 (line 19, col 38) to (line 19, col 39)
+FOR                  (line 20, col 8) to (line 20, col 11)
+LPAREN               (line 20, col 12) to (line 20, col 13)
+INT                  (line 20, col 13) to (line 20, col 16) Value: int
+ID                   (line 20, col 17) to (line 20, col 18) Value: j
+ASS                  (line 20, col 19) to (line 20, col 20)
+INTLIT               (line 20, col 21) to (line 20, col 22) Value: 0
+SEMI                 (line 20, col 22) to (line 20, col 23)
+ID                   (line 20, col 24) to (line 20, col 25) Value: j
+LT                   (line 20, col 26) to (line 20, col 27)
+ID                   (line 20, col 28) to (line 20, col 31) Value: max
+SEMI                 (line 20, col 31) to (line 20, col 32)
+ID                   (line 20, col 33) to (line 20, col 34) Value: j
+ASS                  (line 20, col 35) to (line 20, col 36)
+ID                   (line 20, col 37) to (line 20, col 38) Value: j
+PLUS                 (line 20, col 38) to (line 20, col 39)
+INTLIT               (line 20, col 39) to (line 20, col 40) Value: 1
+RPAREN               (line 20, col 40) to (line 20, col 41)
+LKEY                 (line 20, col 42) to (line 20, col 43)
+ID                   (line 21, col 12) to (line 21, col 18) Value: matrix
+LBRAC                (line 21, col 18) to (line 21, col 19)
+ID                   (line 21, col 19) to (line 21, col 20) Value: i
+RBRAC                (line 21, col 20) to (line 21, col 21)
+LBRAC                (line 21, col 21) to (line 21, col 22)
+ID                   (line 21, col 22) to (line 21, col 23) Value: j
+RBRAC                (line 21, col 23) to (line 21, col 24)
+ASS                  (line 21, col 25) to (line 21, col 26)
+ID                   (line 21, col 27) to (line 21, col 28) Value: i
+MULT                 (line 21, col 29) to (line 21, col 30)
+INTLIT               (line 21, col 31) to (line 21, col 32) Value: 3
+PLUS                 (line 21, col 33) to (line 21, col 34)
+ID                   (line 21, col 35) to (line 21, col 36) Value: j
+SEMI                 (line 21, col 36) to (line 21, col 37)
+RKEY                 (line 22, col 8) to (line 22, col 9)
+RKEY                 (line 23, col 4) to (line 23, col 5)
+FOR                  (line 25, col 4) to (line 25, col 7)
+LPAREN               (line 25, col 8) to (line 25, col 9)
+INT                  (line 25, col 9) to (line 25, col 12) Value: int
+ID                   (line 25, col 13) to (line 25, col 14) Value: i
+ASS                  (line 25, col 15) to (line 25, col 16)
+INTLIT               (line 25, col 17) to (line 25, col 18) Value: 0
+SEMI                 (line 25, col 18) to (line 25, col 19)
+ID                   (line 25, col 20) to (line 25, col 21) Value: i
+LT                   (line 25, col 22) to (line 25, col 23)
+ID                   (line 25, col 24) to (line 25, col 27) Value: max
+SEMI                 (line 25, col 27) to (line 25, col 28)
+ID                   (line 25, col 29) to (line 25, col 30) Value: i
+ASS                  (line 25, col 31) to (line 25, col 32)
+ID                   (line 25, col 33) to (line 25, col 34) Value: i
+PLUS                 (line 25, col 34) to (line 25, col 35)
+INTLIT               (line 25, col 35) to (line 25, col 36) Value: 1
+RPAREN               (line 25, col 36) to (line 25, col 37)
+LKEY                 (line 25, col 38) to (line 25, col 39)
+FOR                  (line 26, col 8) to (line 26, col 11)
+LPAREN               (line 26, col 12) to (line 26, col 13)
+INT                  (line 26, col 13) to (line 26, col 16) Value: int
+ID                   (line 26, col 17) to (line 26, col 18) Value: j
+ASS                  (line 26, col 19) to (line 26, col 20)
+INTLIT               (line 26, col 21) to (line 26, col 22) Value: 0
+SEMI                 (line 26, col 22) to (line 26, col 23)
+ID                   (line 26, col 24) to (line 26, col 25) Value: j
+LT                   (line 26, col 26) to (line 26, col 27)
+ID                   (line 26, col 28) to (line 26, col 31) Value: max
+SEMI                 (line 26, col 31) to (line 26, col 32)
+ID                   (line 26, col 33) to (line 26, col 34) Value: j
+ASS                  (line 26, col 35) to (line 26, col 36)
+ID                   (line 26, col 37) to (line 26, col 38) Value: j
+PLUS                 (line 26, col 38) to (line 26, col 39)
+INTLIT               (line 26, col 39) to (line 26, col 40) Value: 1
+RPAREN               (line 26, col 40) to (line 26, col 41)
+LKEY                 (line 26, col 42) to (line 26, col 43)
+ID                   (line 27, col 12) to (line 27, col 20) Value: printNum
+LPAREN               (line 27, col 20) to (line 27, col 21)
+ID                   (line 27, col 21) to (line 27, col 27) Value: matrix
+LBRAC                (line 27, col 27) to (line 27, col 28)
+ID                   (line 27, col 28) to (line 27, col 29) Value: i
+RBRAC                (line 27, col 29) to (line 27, col 30)
+LBRAC                (line 27, col 30) to (line 27, col 31)
+ID                   (line 27, col 31) to (line 27, col 32) Value: j
+RBRAC                (line 27, col 32) to (line 27, col 33)
+RPAREN               (line 27, col 33) to (line 27, col 34)
+SEMI                 (line 27, col 34) to (line 27, col 35)
+PUTCHAR              (line 28, col 12) to (line 28, col 19)
+LPAREN               (line 28, col 19) to (line 28, col 20)
+CHARLIT              (line 28, col 20) to (line 28, col 24) Value: 9
+RPAREN               (line 28, col 24) to (line 28, col 25)
+SEMI                 (line 28, col 25) to (line 28, col 26)
+RKEY                 (line 29, col 8) to (line 29, col 9)
+PUTCHAR              (line 30, col 8) to (line 30, col 15)
+LPAREN               (line 30, col 15) to (line 30, col 16)
+CHARLIT              (line 30, col 16) to (line 30, col 20) Value: 10
+RPAREN               (line 30, col 20) to (line 30, col 21)
+SEMI                 (line 30, col 21) to (line 30, col 22)
+RKEY                 (line 31, col 4) to (line 31, col 5)
+RKEY                 (line 32, col 0) to (line 32, col 1)
+VOID                 (line 34, col 0) to (line 34, col 4)
+ID                   (line 34, col 5) to (line 34, col 13) Value: printNum
+LPAREN               (line 34, col 13) to (line 34, col 14)
+INT                  (line 34, col 14) to (line 34, col 17) Value: int
+ID                   (line 34, col 18) to (line 34, col 19) Value: n
+RPAREN               (line 34, col 19) to (line 34, col 20)
+LKEY                 (line 34, col 21) to (line 34, col 22)
+IF                   (line 35, col 4) to (line 35, col 6)
+LPAREN               (line 35, col 7) to (line 35, col 8)
+ID                   (line 35, col 8) to (line 35, col 9) Value: n
+LT                   (line 35, col 10) to (line 35, col 11)
+INTLIT               (line 35, col 12) to (line 35, col 13) Value: 0
+RPAREN               (line 35, col 13) to (line 35, col 14)
+LKEY                 (line 35, col 15) to (line 35, col 16)
+PUTCHAR              (line 36, col 8) to (line 36, col 15)
+LPAREN               (line 36, col 15) to (line 36, col 16)
+CHARLIT              (line 36, col 16) to (line 36, col 19) Value: 45
+RPAREN               (line 36, col 19) to (line 36, col 20)
+SEMI                 (line 36, col 20) to (line 36, col 21)
+ID                   (line 37, col 8) to (line 37, col 9) Value: n
+ASS                  (line 37, col 10) to (line 37, col 11)
+INTLIT               (line 37, col 12) to (line 37, col 13) Value: 0
+NEG                  (line 37, col 14) to (line 37, col 15)
+ID                   (line 37, col 16) to (line 37, col 17) Value: n
+SEMI                 (line 37, col 17) to (line 37, col 18)
+RKEY                 (line 38, col 4) to (line 38, col 5)
+IF                   (line 40, col 4) to (line 40, col 6)
+LPAREN               (line 40, col 7) to (line 40, col 8)
+ID                   (line 40, col 8) to (line 40, col 9) Value: n
+EQ                   (line 40, col 10) to (line 40, col 12)
+INTLIT               (line 40, col 13) to (line 40, col 14) Value: 0
+RPAREN               (line 40, col 14) to (line 40, col 15)
+LKEY                 (line 40, col 16) to (line 40, col 17)
+PUTCHAR              (line 41, col 8) to (line 41, col 15)
+LPAREN               (line 41, col 15) to (line 41, col 16)
+CHARLIT              (line 41, col 16) to (line 41, col 19) Value: 48
+RPAREN               (line 41, col 19) to (line 41, col 20)
+SEMI                 (line 41, col 20) to (line 41, col 21)
+RETURN               (line 42, col 8) to (line 42, col 14)
+SEMI                 (line 42, col 14) to (line 42, col 15)
+RKEY                 (line 43, col 4) to (line 43, col 5)
+INT                  (line 46, col 4) to (line 46, col 7) Value: int
+ID                   (line 46, col 8) to (line 46, col 12) Value: temp
+ASS                  (line 46, col 13) to (line 46, col 14)
+ID                   (line 46, col 15) to (line 46, col 16) Value: n
+SEMI                 (line 46, col 16) to (line 46, col 17)
+INT                  (line 47, col 4) to (line 47, col 7) Value: int
+ID                   (line 47, col 8) to (line 47, col 17) Value: numDigits
+ASS                  (line 47, col 18) to (line 47, col 19)
+INTLIT               (line 47, col 20) to (line 47, col 21) Value: 0
+SEMI                 (line 47, col 21) to (line 47, col 22)
+WHILE                (line 48, col 4) to (line 48, col 9)
+LPAREN               (line 48, col 10) to (line 48, col 11)
+ID                   (line 48, col 11) to (line 48, col 15) Value: temp
+GT                   (line 48, col 16) to (line 48, col 17)
+INTLIT               (line 48, col 18) to (line 48, col 19) Value: 0
+RPAREN               (line 48, col 19) to (line 48, col 20)
+LKEY                 (line 48, col 21) to (line 48, col 22)
+ID                   (line 49, col 8) to (line 49, col 17) Value: numDigits
+ASS                  (line 49, col 18) to (line 49, col 19)
+ID                   (line 49, col 20) to (line 49, col 29) Value: numDigits
+PLUS                 (line 49, col 30) to (line 49, col 31)
+INTLIT               (line 49, col 32) to (line 49, col 33) Value: 1
+SEMI                 (line 49, col 33) to (line 49, col 34)
+ID                   (line 50, col 8) to (line 50, col 12) Value: temp
+ASS                  (line 50, col 13) to (line 50, col 14)
+ID                   (line 50, col 15) to (line 50, col 19) Value: temp
+DIV                  (line 50, col 20) to (line 50, col 21)
+INTLIT               (line 50, col 22) to (line 50, col 24) Value: 10
+SEMI                 (line 50, col 24) to (line 50, col 25)
+RKEY                 (line 51, col 4) to (line 51, col 5)
+LBRAC                (line 53, col 4) to (line 53, col 5)
+INTLIT               (line 53, col 5) to (line 53, col 7) Value: 10
+RBRAC                (line 53, col 7) to (line 53, col 8)
+INT                  (line 53, col 8) to (line 53, col 11) Value: int
+ID                   (line 53, col 12) to (line 53, col 18) Value: digits
+SEMI                 (line 53, col 18) to (line 53, col 19)
+INT                  (line 54, col 4) to (line 54, col 7) Value: int
+ID                   (line 54, col 8) to (line 54, col 9) Value: i
+ASS                  (line 54, col 10) to (line 54, col 11)
+INTLIT               (line 54, col 12) to (line 54, col 13) Value: 0
+SEMI                 (line 54, col 13) to (line 54, col 14)
+ID                   (line 57, col 4) to (line 57, col 8) Value: temp
+ASS                  (line 57, col 9) to (line 57, col 10)
+ID                   (line 57, col 11) to (line 57, col 12) Value: n
+SEMI                 (line 57, col 12) to (line 57, col 13)
+WHILE                (line 58, col 4) to (line 58, col 9)
+LPAREN               (line 58, col 10) to (line 58, col 11)
+ID                   (line 58, col 11) to (line 58, col 15) Value: temp
+GT                   (line 58, col 16) to (line 58, col 17)
+INTLIT               (line 58, col 18) to (line 58, col 19) Value: 0
+RPAREN               (line 58, col 19) to (line 58, col 20)
+LKEY                 (line 58, col 21) to (line 58, col 22)
+ID                   (line 59, col 8) to (line 59, col 14) Value: digits
+LBRAC                (line 59, col 14) to (line 59, col 15)
+ID                   (line 59, col 15) to (line 59, col 16) Value: i
+RBRAC                (line 59, col 16) to (line 59, col 17)
+ASS                  (line 59, col 18) to (line 59, col 19)
+ID                   (line 59, col 20) to (line 59, col 24) Value: temp
+NEG                  (line 59, col 25) to (line 59, col 26)
+LPAREN               (line 59, col 27) to (line 59, col 28)
+LPAREN               (line 59, col 28) to (line 59, col 29)
+ID                   (line 59, col 29) to (line 59, col 33) Value: temp
+DIV                  (line 59, col 34) to (line 59, col 35)
+INTLIT               (line 59, col 36) to (line 59, col 38) Value: 10
+RPAREN               (line 59, col 38) to (line 59, col 39)
+MULT                 (line 59, col 40) to (line 59, col 41)
+INTLIT               (line 59, col 42) to (line 59, col 44) Value: 10
+RPAREN               (line 59, col 44) to (line 59, col 45)
+SEMI                 (line 59, col 45) to (line 59, col 46)
+ID                   (line 60, col 8) to (line 60, col 12) Value: temp
+ASS                  (line 60, col 13) to (line 60, col 14)
+ID                   (line 60, col 15) to (line 60, col 19) Value: temp
+DIV                  (line 60, col 20) to (line 60, col 21)
+INTLIT               (line 60, col 22) to (line 60, col 24) Value: 10
+SEMI                 (line 60, col 24) to (line 60, col 25)
+ID                   (line 61, col 8) to (line 61, col 9) Value: i
+ASS                  (line 61, col 10) to (line 61, col 11)
+ID                   (line 61, col 12) to (line 61, col 13) Value: i
+PLUS                 (line 61, col 14) to (line 61, col 15)
+INTLIT               (line 61, col 16) to (line 61, col 17) Value: 1
+SEMI                 (line 61, col 17) to (line 61, col 18)
+RKEY                 (line 62, col 4) to (line 62, col 5)
+WHILE                (line 65, col 4) to (line 65, col 9)
+LPAREN               (line 65, col 10) to (line 65, col 11)
+ID                   (line 65, col 11) to (line 65, col 20) Value: numDigits
+GT                   (line 65, col 21) to (line 65, col 22)
+INTLIT               (line 65, col 23) to (line 65, col 24) Value: 0
+RPAREN               (line 65, col 24) to (line 65, col 25)
+LKEY                 (line 65, col 26) to (line 65, col 27)
+ID                   (line 66, col 8) to (line 66, col 17) Value: numDigits
+ASS                  (line 66, col 18) to (line 66, col 19)
+ID                   (line 66, col 20) to (line 66, col 29) Value: numDigits
+NEG                  (line 66, col 30) to (line 66, col 31)
+INTLIT               (line 66, col 32) to (line 66, col 33) Value: 1
+SEMI                 (line 66, col 33) to (line 66, col 34)
+PUTCHAR              (line 67, col 8) to (line 67, col 15)
+LPAREN               (line 67, col 15) to (line 67, col 16)
+ID                   (line 67, col 16) to (line 67, col 22) Value: digits
+LBRAC                (line 67, col 22) to (line 67, col 23)
+ID                   (line 67, col 23) to (line 67, col 32) Value: numDigits
+RBRAC                (line 67, col 32) to (line 67, col 33)
+PLUS                 (line 67, col 34) to (line 67, col 35)
+CHARLIT              (line 67, col 36) to (line 67, col 39) Value: 48
+RPAREN               (line 67, col 39) to (line 67, col 40)
+SEMI                 (line 67, col 40) to (line 67, col 41)
+RKEY                 (line 68, col 4) to (line 68, col 5)
+RKEY                 (line 69, col 0) to (line 69, col 1)
+INT                  (line 71, col 0) to (line 71, col 3) Value: int
+ID                   (line 71, col 4) to (line 71, col 11) Value: readNum
+LPAREN               (line 71, col 11) to (line 71, col 12)
+RPAREN               (line 71, col 12) to (line 71, col 13)
+LKEY                 (line 71, col 14) to (line 71, col 15)
+INT                  (line 73, col 4) to (line 73, col 7) Value: int
+ID                   (line 73, col 8) to (line 73, col 14) Value: result
+ASS                  (line 73, col 15) to (line 73, col 16)
+INTLIT               (line 73, col 17) to (line 73, col 18) Value: 0
+SEMI                 (line 73, col 18) to (line 73, col 19)
+INT                  (line 74, col 4) to (line 74, col 7) Value: int
+ID                   (line 74, col 8) to (line 74, col 9) Value: c
+ASS                  (line 74, col 10) to (line 74, col 11)
+INTLIT               (line 74, col 12) to (line 74, col 13) Value: 0
+SEMI                 (line 74, col 13) to (line 74, col 14)
+BOOL                 (line 75, col 4) to (line 75, col 8) Value: bool
+ID                   (line 75, col 9) to (line 75, col 19) Value: isNegative
+ASS                  (line 75, col 20) to (line 75, col 21)
+BOOLLIT              (line 75, col 22) to (line 75, col 27) Value: false
+SEMI                 (line 75, col 27) to (line 75, col 28)
+BOOL                 (line 77, col 4) to (line 77, col 8) Value: bool
+ID                   (line 77, col 9) to (line 77, col 26) Value: readingWhitespace
+ASS                  (line 77, col 27) to (line 77, col 28)
+BOOLLIT              (line 77, col 29) to (line 77, col 33) Value: true
+SEMI                 (line 77, col 33) to (line 77, col 34)
+WHILE                (line 79, col 4) to (line 79, col 9)
+LPAREN               (line 79, col 9) to (line 79, col 10)
+ID                   (line 79, col 10) to (line 79, col 27) Value: readingWhitespace
+RPAREN               (line 79, col 27) to (line 79, col 28)
+LKEY                 (line 79, col 29) to (line 79, col 30)
+ID                   (line 80, col 8) to (line 80, col 9) Value: c
+ASS                  (line 80, col 10) to (line 80, col 11)
+INPUT                (line 80, col 12) to (line 80, col 17)
+LPAREN               (line 80, col 17) to (line 80, col 18)
+RPAREN               (line 80, col 18) to (line 80, col 19)
+SEMI                 (line 80, col 19) to (line 80, col 20)
+IF                   (line 81, col 8) to (line 81, col 10)
+LPAREN               (line 81, col 10) to (line 81, col 11)
+ID                   (line 81, col 11) to (line 81, col 12) Value: c
+NEQ                  (line 81, col 13) to (line 81, col 15)
+CHARLIT              (line 81, col 16) to (line 81, col 19) Value: 32
+AND                  (line 81, col 20) to (line 81, col 22)
+ID                   (line 81, col 23) to (line 81, col 24) Value: c
+NEQ                  (line 81, col 25) to (line 81, col 27)
+CHARLIT              (line 81, col 28) to (line 81, col 32) Value: 9
+AND                  (line 81, col 33) to (line 81, col 35)
+ID                   (line 81, col 36) to (line 81, col 37) Value: c
+NEQ                  (line 81, col 38) to (line 81, col 40)
+CHARLIT              (line 81, col 41) to (line 81, col 45) Value: 10
+RPAREN               (line 81, col 45) to (line 81, col 46)
+LKEY                 (line 81, col 47) to (line 81, col 48)
+ID                   (line 82, col 12) to (line 82, col 29) Value: readingWhitespace
+ASS                  (line 82, col 30) to (line 82, col 31)
+BOOLLIT              (line 82, col 32) to (line 82, col 37) Value: false
+SEMI                 (line 82, col 37) to (line 82, col 38)
+RKEY                 (line 83, col 8) to (line 83, col 9)
+RKEY                 (line 84, col 4) to (line 84, col 5)
+IF                   (line 86, col 4) to (line 86, col 6)
+LPAREN               (line 86, col 6) to (line 86, col 7)
+ID                   (line 86, col 7) to (line 86, col 8) Value: c
+EQ                   (line 86, col 9) to (line 86, col 11)
+CHARLIT              (line 86, col 12) to (line 86, col 15) Value: 45
+RPAREN               (line 86, col 15) to (line 86, col 16)
+LKEY                 (line 86, col 17) to (line 86, col 18)
+ID                   (line 87, col 8) to (line 87, col 18) Value: isNegative
+ASS                  (line 87, col 19) to (line 87, col 20)
+BOOLLIT              (line 87, col 21) to (line 87, col 25) Value: true
+SEMI                 (line 87, col 25) to (line 87, col 26)
+ID                   (line 88, col 8) to (line 88, col 9) Value: c
+ASS                  (line 88, col 10) to (line 88, col 11)
+INPUT                (line 88, col 12) to (line 88, col 17)
+LPAREN               (line 88, col 17) to (line 88, col 18)
+RPAREN               (line 88, col 18) to (line 88, col 19)
+SEMI                 (line 88, col 19) to (line 88, col 20)
+RKEY                 (line 89, col 4) to (line 89, col 5)
+BOOL                 (line 92, col 4) to (line 92, col 8) Value: bool
+ID                   (line 92, col 9) to (line 92, col 22) Value: readingDigits
+ASS                  (line 92, col 23) to (line 92, col 24)
+BOOLLIT              (line 92, col 25) to (line 92, col 29) Value: true
+SEMI                 (line 92, col 29) to (line 92, col 30)
+WHILE                (line 93, col 4) to (line 93, col 9)
+LPAREN               (line 93, col 9) to (line 93, col 10)
+ID                   (line 93, col 10) to (line 93, col 23) Value: readingDigits
+RPAREN               (line 93, col 23) to (line 93, col 24)
+LKEY                 (line 93, col 25) to (line 93, col 26)
+IF                   (line 94, col 8) to (line 94, col 10)
+LPAREN               (line 94, col 10) to (line 94, col 11)
+ID                   (line 94, col 11) to (line 94, col 12) Value: c
+GEQ                  (line 94, col 13) to (line 94, col 15)
+CHARLIT              (line 94, col 16) to (line 94, col 19) Value: 48
+AND                  (line 94, col 20) to (line 94, col 22)
+ID                   (line 94, col 23) to (line 94, col 24) Value: c
+LEQ                  (line 94, col 25) to (line 94, col 27)
+CHARLIT              (line 94, col 28) to (line 94, col 31) Value: 57
+RPAREN               (line 94, col 31) to (line 94, col 32)
+LKEY                 (line 94, col 33) to (line 94, col 34)
+ID                   (line 95, col 12) to (line 95, col 18) Value: result
+ASS                  (line 95, col 19) to (line 95, col 20)
+ID                   (line 95, col 21) to (line 95, col 27) Value: result
+MULT                 (line 95, col 28) to (line 95, col 29)
+INTLIT               (line 95, col 30) to (line 95, col 32) Value: 10
+PLUS                 (line 95, col 33) to (line 95, col 34)
+LPAREN               (line 95, col 35) to (line 95, col 36)
+ID                   (line 95, col 36) to (line 95, col 37) Value: c
+NEG                  (line 95, col 38) to (line 95, col 39)
+CHARLIT              (line 95, col 40) to (line 95, col 43) Value: 48
+RPAREN               (line 95, col 43) to (line 95, col 44)
+SEMI                 (line 95, col 44) to (line 95, col 45)
+ID                   (line 96, col 12) to (line 96, col 13) Value: c
+ASS                  (line 96, col 14) to (line 96, col 15)
+INPUT                (line 96, col 16) to (line 96, col 21)
+LPAREN               (line 96, col 21) to (line 96, col 22)
+RPAREN               (line 96, col 22) to (line 96, col 23)
+SEMI                 (line 96, col 23) to (line 96, col 24)
+RKEY                 (line 97, col 8) to (line 97, col 9)
+IF                   (line 98, col 8) to (line 98, col 10)
+LPAREN               (line 98, col 11) to (line 98, col 12)
+ID                   (line 98, col 12) to (line 98, col 13) Value: c
+LT                   (line 98, col 14) to (line 98, col 15)
+CHARLIT              (line 98, col 16) to (line 98, col 19) Value: 48
+OR                   (line 98, col 20) to (line 98, col 22)
+ID                   (line 98, col 23) to (line 98, col 24) Value: c
+GT                   (line 98, col 25) to (line 98, col 26)
+CHARLIT              (line 98, col 27) to (line 98, col 30) Value: 57
+RPAREN               (line 98, col 30) to (line 98, col 31)
+LKEY                 (line 98, col 32) to (line 98, col 33)
+ID                   (line 99, col 12) to (line 99, col 25) Value: readingDigits
+ASS                  (line 99, col 26) to (line 99, col 27)
+BOOLLIT              (line 99, col 28) to (line 99, col 33) Value: false
+SEMI                 (line 99, col 33) to (line 99, col 34)
+RKEY                 (line 100, col 8) to (line 100, col 9)
+RKEY                 (line 101, col 4) to (line 101, col 5)
+IF                   (line 104, col 4) to (line 104, col 6)
+LPAREN               (line 104, col 6) to (line 104, col 7)
+ID                   (line 104, col 7) to (line 104, col 17) Value: isNegative
+RPAREN               (line 104, col 17) to (line 104, col 18)
+LKEY                 (line 104, col 19) to (line 104, col 20)
+ID                   (line 105, col 8) to (line 105, col 14) Value: result
+ASS                  (line 105, col 15) to (line 105, col 16)
+INTLIT               (line 105, col 17) to (line 105, col 18) Value: 0
+NEG                  (line 105, col 19) to (line 105, col 20)
+ID                   (line 105, col 21) to (line 105, col 27) Value: result
+SEMI                 (line 105, col 27) to (line 105, col 28)
+RKEY                 (line 106, col 4) to (line 106, col 5)
+RETURN               (line 108, col 4) to (line 108, col 10)
+ID                   (line 108, col 11) to (line 108, col 17) Value: result
+SEMI                 (line 108, col 17) to (line 108, col 18)
+RKEY                 (line 109, col 0) to (line 109, col 1)

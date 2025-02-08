@@ -10,6 +10,7 @@ public enum OP {
     NEG,
     TIMES,
     DIV,
+    MOD,
     NOT,
     AND,
     OR,

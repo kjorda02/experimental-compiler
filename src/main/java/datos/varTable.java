@@ -1,6 +1,5 @@
 package datos;
 
-import static datos.funcTable.allocateVar;
 import datos.funcTable.funcInfo;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
@@ -35,6 +34,10 @@ public class varTable {
     
     public static varInfo get(int i) {
         return table.get(i);
+    }
+    
+    public static int getOffset(int i) {
+        return table.get(i).offset;
     }
     
     public static int newvar(int parent, int size, boolean isParam, String name) { // Source code variable

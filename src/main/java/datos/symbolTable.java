@@ -1,6 +1,10 @@
 package datos;
 
+import java.io.BufferedWriter;
+import java.io.FileWriter;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
 
 /**
@@ -97,6 +101,81 @@ public class symbolTable { // (ts)
         }
         
         currScope--; // Go to previous scope
+    }
+    
+    public static void outputSymbolTable(String fileName) {
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
+            writer.write("| " + format("identifier", 15) + format("scope", 6) + format("type", 40) + format("details", 30) + " |\n");
+
+            // Sort identifiers for consistent output
+            ArrayList<String> sortedIds = new ArrayList<>(table.keySet());
+            Collections.sort(sortedIds);
+
+            for (String id : sortedIds) {
+                entry e = table.get(id);
+                String typeStr = "";
+                String details = "";
+
+                // Determine type and details based on descriptor type
+                if (e.val instanceof desc.variable) {
+                    desc.variable var = (desc.variable) e.val;
+                    typeStr = var.type.toString();
+                    details = "var #" + var.varNum;
+                }
+                else if (e.val instanceof desc.constant) {
+                    desc.constant cons = (desc.constant) e.val;
+                    typeStr = cons.type.toString();
+                    details = "const value=" + cons.value;
+                }
+                else if (e.val instanceof desc.type) {
+                    desc.type type = (desc.type) e.val;
+                    typeStr = "type";
+                    details = type.type.toString();
+                }
+                else if (e.val instanceof desc.function) {
+                    desc.function func = (desc.function) e.val;
+                    StringBuilder sigStr = new StringBuilder();
+                    if (func.signature.returnType != null) {
+                        sigStr.append(func.signature.returnType.toString());
+                    } else {
+                        sigStr.append("void");
+                    }
+                    sigStr.append(" ");
+                    sigStr.append(func.signature.name.value);
+                    sigStr.append("(");
+                    for (int i = 0; i < func.signature.paramTypes.size(); i++) {
+                        if (i > 0) sigStr.append(", ");
+                        if (func.signature.paramModes.get(i)) {
+                            sigStr.append("out ");
+                        }
+                        sigStr.append(func.signature.paramTypes.get(i).toString());
+                    }
+                    sigStr.append(")");
+                    typeStr = sigStr.toString();
+                    details = "func #" + func.funcNum + (func.defined ? " (defined)" : " (declared)");
+                }
+
+                writer.write("| " + format(id, 15) + 
+                                  format(String.valueOf(e.scopeDecl), 6) + 
+                                  format(typeStr, 40) + 
+                                  format(details, 30) + " |\n");
+            }
+            writer.newLine();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    // Helper method for formatting strings with fixed width
+    private static String format(String s, int len) {
+        if (s == null) {
+            s = "";
+        }
+        StringBuilder sb = new StringBuilder(s);
+        while (sb.length() < len) {
+            sb.append(" ");
+        }
+        return sb.toString();
     }
 }
 

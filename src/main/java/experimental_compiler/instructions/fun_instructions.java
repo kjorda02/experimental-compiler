@@ -32,8 +32,8 @@ public class fun_instructions {
                 f = funcTable.get(ins.currentFunc);
                 ins.setTmpRegs(f.tmpRegs);
                 w.write("addi sp, sp, -"+f.stackSize+"\n"); // Make space for the stack frame
-                w.write("sw ra, "+(f.stackSize-4)+"(sp) ; -4(fp)\n"); // Save return address
-                w.write("sw fp, "+(f.stackSize-8)+"(sp) ; -8(fp)\n"); // Save previous frame pointer
+                w.write("sw ra, "+(f.stackSize-4)+"(sp) # -4(fp)\n"); // Save return address
+                w.write("sw fp, "+(f.stackSize-8)+"(sp) # -8(fp)\n"); // Save previous frame pointer
                 w.write("addi fp, sp, "+f.stackSize+"\n"); // Then set its new value
                 
                 // Save s1-s11 registers
@@ -44,7 +44,8 @@ public class fun_instructions {
                 break;
             case CALL:
                 arg = 0;
-                w.write("call "+funcTable.get(c.op[2]).name);
+                w.write("call "+funcTable.get(c.op[2]).name+"\n");
+                w.write("addi sp, sp, "+funcTable.get(c.op[2]).argsStackSize+"\n");
                 break;
             case RTN:
                 // Restore s1-s11 registers

@@ -138,7 +138,7 @@ public class alu_instructions {
                 break;
                 
             default:
-                System.out.println("ERROR: INSTRUCCION "+o.toString()+" NO IMPLEMENTADA");
+                io_instructions.translate(c, w);
         }
     }
     

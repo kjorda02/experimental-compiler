@@ -26,6 +26,7 @@ public class Main {
             symbolTable.clear();
             // Create a lexer that reads from standard input
             Lexer lexer = new Lexer(new FileReader(PATH));
+            lexer.initializeTokenLog("resources/tokens.txt");
             
             // Create a parser that uses the lexer
             Parser p = new Parser(lexer);
@@ -40,11 +41,13 @@ public class Main {
             funcTable.allocateAllVars();
             varTable.allocateVarsGlobal();
             System.out.println(cod.toStr());
-            varTable.outputVarTable("variable_table.txt");
-            funcTable.outputFuncTable("function_table.txt");
-            ins.generate("output.s");
+            varTable.outputVarTable("resources/variable_table.txt");
+            funcTable.outputFuncTable("resources/function_table.txt");
+            symbolTable.outputSymbolTable("resources/symbolTable.txt");
+            cod.generate("resources/intermedio.txt");
+            ins.generate("resources/output.s");
         } catch (Exception e) {
-            e.printStackTrace();
+            System.out.println("");
         }
     }
   
@@ -58,10 +61,19 @@ public class Main {
             r = token.getRight();
         }
         else if (info instanceof Symbol) {
+            StringBuilder errorMsg = new StringBuilder();
             if (((Symbol)info).sym == 0)
-                System.out.println("ERROR: Unexpected end of file.");
+                errorMsg.append("ERROR: Unexpected end of file.\n");
             else if(((Symbol)info).sym == 1)
-                System.out.println("ERROR: Unexpected error.");
+                errorMsg.append("ERROR: Unexpected error.\n");
+            
+            // Print to console and append to error log
+            System.err.print(errorMsg);
+            try (BufferedWriter writer = new BufferedWriter(new FileWriter("resources/errores.txt"))) {
+                writer.write(errorMsg.toString());
+            }catch (IOException e) {
+                e.printStackTrace();
+            }
             return;
         }
         else if (info instanceof node) {
@@ -113,5 +125,10 @@ public class Main {
         }
  
         System.err.println(msg);
+        try (BufferedWriter writer = new BufferedWriter(new FileWriter("resources/errores.txt"))) {
+            writer.write(msg.toString());
+        }catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

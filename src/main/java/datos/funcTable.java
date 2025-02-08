@@ -3,6 +3,7 @@ package datos;
 import arbol.type.complexType;
 import static datos.varTable.format;
 import datos.varTable.varInfo;
+import static datos.varTable.vars;
 import java.io.BufferedWriter;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -40,6 +41,9 @@ public class funcTable {
     static ArrayList<funcInfo> table = new ArrayList<>();
     
     public static void addVar(int funcID, int varID) {
+        if (varID==-1) {
+                (new Exception()).printStackTrace();
+            }
         table.get(funcID).vars.add(varID);
     }
     
@@ -101,7 +105,7 @@ public class funcTable {
             boolean changes = false;
             
             for (int i = 0; i < f.used_a_regs.length; i++) {
-                if (!caller.unsafe_a_regs[i] && f.used_a_regs[i]) {
+                if (!caller.unsafe_a_regs[i] && (f.used_a_regs[i] || f.unsafe_a_regs[i])) {
                     caller.unsafe_a_regs[i] = true;
                     caller.total_unsafe_regs++;
                     changes = true;
@@ -109,7 +113,7 @@ public class funcTable {
             }
             
             for (int i = 0; i < f.used_t_regs.length; i++) {
-                if (!caller.unsafe_t_regs[i] && f.used_t_regs[i]) {
+                if (!caller.unsafe_t_regs[i] && (f.used_t_regs[i] || f.unsafe_a_regs[i])) {
                     caller.unsafe_t_regs[i] = true;
                     caller.total_unsafe_regs++;
                     changes = true;
@@ -167,7 +171,7 @@ public class funcTable {
                 }
             }
 
-            if (f.total_unsafe_regs + (12-f.used_s_regs) > 2) { // Always leave 3 registers for operations with stack variables
+            if (f.total_unsafe_regs + (12-f.used_s_regs) > 2 && f.used_s_regs < 12) { // Always leave 3 registers for operations with stack variables
                 f.stackSize += 4;
                 if (varID != -1)
                     varTable.setSReg(varID, f.used_s_regs); // Allocate on s-register
@@ -178,6 +182,9 @@ public class funcTable {
         
         // Last resort option: Store the variable on the stack 
         // (will need to be copied to/from one of the 3 registers reserved for this purpose)
+        if (varID==-1) {
+            (new Exception()).printStackTrace();
+        }
         allocateStack(f, varID, isParam);
         return 0;
     }
@@ -210,7 +217,7 @@ public class funcTable {
             }
         }
         
-        return allocateVar(f, -1, false);
+        return 20+f.used_s_regs++;
     }
     
     public static funcInfo get(int id) {
@@ -264,7 +271,7 @@ public class funcTable {
     public static void outputFuncTable(String fileName) {
         try (BufferedWriter writer = new BufferedWriter(new FileWriter(fileName))) {
             writer.write("| "+format("num", 5)+format("name", 15)+format("stackSize", 10)+format("argsSize", 9)+
-                    format("a-regs", 24)+format("t-regs", 21)+format("s-regs", 36)+format("temp regs", 9)+" |\n");
+                    format("a-regs", 26)+format("t-regs", 23)+format("s-regs", 40)+format("temp regs", 9)+" |\n");
             for (int i = 0; i < table.size(); i++) {
                 funcTable.funcInfo f = table.get(i);
                 
@@ -275,20 +282,20 @@ public class funcTable {
                     if (f.used_a_regs[j])
                         s += "a"+j+" ";
                 }
-                writer.write(format(s, 24));
+                writer.write(format(s, 26));
                 
                 s = "";
                 for (int j = 0; j < f.used_t_regs.length; j++) {
                     if (f.used_t_regs[j])
                         s += "t"+j+" ";
                 }
-                writer.write(format(s, 21));
+                writer.write(format(s, 23));
                 
                 s = "";
                 for (int j = 0; j < f.used_s_regs; j++) {
                     s += "s"+j+" ";
                 }
-                writer.write(format(s, 36));
+                writer.write(format(s, 40));
                 
                 s = "";
                 for (int j = 0; j < f.tmpRegs.length; j++) {

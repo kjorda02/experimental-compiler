@@ -2,12 +2,10 @@ package arbol.fun;
 
 import arbol.node;
 import arbol.terminal_node;
-import arbol.type.complexType;
 import arbol.val.expr_node;
 import datos.cod;
 import datos.desc;
 import datos.funcTable;
-import datos.funcTable.funcInfo;
 import datos.symbolTable;
 import datos.varTable;
 import datos.varTable.varInfo;
@@ -59,13 +57,13 @@ public class return_node extends node {
             return;
         }
         
-        varInfo exprVar = varTable.get(expr.varNum);
+        varInfo exprVar = varTable.get(expr.getVarNum());
         if (exprVar.inRegister && exprVar.offset == 0) // Return expression is already in a0
             return;
         
         int returnNum = funcTable.getCurrent().returnVar;
         
-        cod.genera(cod.op.COPY, expr.varNum, 0, returnNum);
+        cod.genera(cod.op.COPY, expr.getVarNum(), 0, returnNum);
         cod.genera(cod.op.RTN, 0, 0, funcTable.currentFunc);
     }
 }

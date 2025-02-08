@@ -1,0 +1,7 @@
+| identifier     scope type                                    details                        |
+| glob           0     int                                     var #3                         |
+| main           0     int main()                              func #3 (declared)             |
+| printMatrix    0     void printMatrix(int)                   func #1 (declared)             |
+| printNum       0     void printNum(int)                      func #0 (declared)             |
+| readNum        0     int readNum()                           func #2 (declared)             |
+

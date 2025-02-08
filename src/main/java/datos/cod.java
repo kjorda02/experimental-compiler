@@ -1,6 +1,8 @@
 package datos;
 
 import experimental_compiler.instructions.ins;
+import java.io.BufferedWriter;
+import java.io.FileWriter;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -23,6 +25,7 @@ public class cod {
         NOT("not "),
         IDX_VAL(""),
         IDX_ASS(""),
+        ADD_DISPL(""),
         GOTO(""),
         IFLT("<"),
         IFLE("<="),
@@ -35,7 +38,12 @@ public class cod {
         RTN("rtn "),
         PARAM(""),
         INIT_PARAMS(""),
-        SKIP("");
+        SKIP(""),
+        PRINT_CHAR(""),
+        PRINT_BUF(""),
+        INPUT_CHAR(""),
+        INPUT_BUF(""),
+        LOAD_OFFSET("");
         
         String str;
         
@@ -116,7 +124,7 @@ public class cod {
                     s += dest()+" = "+op1()+"["+op2()+"]";
                     break;
                 case IDX_ASS: // dst[op2] = op1
-                    s += dest()+"["+op2()+"] = "+op1();
+                    s += dest()+"["+op1()+"] = "+op2();
                     break;
                 case GOTO: // goto dst
                     s += "goto "+dest(); // get tag of the destination operand
@@ -142,6 +150,22 @@ public class cod {
                     break;
                 case INIT_PARAMS:
                     s += "init_params";
+                    break;
+                case PRINT_CHAR:
+                    s += "print "+op1();
+                    break;
+                case PRINT_BUF:
+                    s += "print "+op1()+" (*"+op2()+")";
+                    break;
+                case INPUT_CHAR:
+                    s += dest()+"= input ";
+                    break;
+                case ADD_DISPL:
+                    s += dest()+" += "+op1()+"*"+op2();
+                    break;
+                case LOAD_OFFSET:
+                    s += dest()+" = "+"&"+op1();
+                    break;
             }
             return s;
         }
@@ -175,6 +199,11 @@ public class cod {
         return null;
     }
     
+    
+    public static codigo3dirs fetchLast() {
+        return codigo.get(codigo.size()-1);
+    }
+    
     public static void jmpTag(int num) {
         codigo.get(currentAddr-1).jmpTag = "e"+num;
     }
@@ -187,6 +216,23 @@ public class cod {
     public static void setTag(String name) {
         codigo.add(new codigo3dirs(op.SKIP, 0, 0, 0));
         codigo.get(currentAddr++).jmpTag = name;
+    }
+    
+    public static void generate(String s) {
+        try (BufferedWriter w = new BufferedWriter(new FileWriter(s))) {
+            for (int i = 0; i < currentAddr; i++) {
+                w.write(i);
+                w.write(" \t");
+                if (codigo.get(i).operation != op.SKIP)
+                    w.write("\t");
+                
+                w.write(codigo.get(i).toString());
+                w.write("\n");
+            }
+        }
+        catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     
     public static String toStr() {

@@ -50,6 +50,8 @@ public class binaryOp_node extends expr_node {
                 return leftChild.value * rightChild.value;
             case DIV:
                 return leftChild.value / rightChild.value;
+            case MOD:
+                return leftChild.value % rightChild.value;
             case AND:
                 return leftChild.value & rightChild.value;
             case OR:
@@ -90,6 +92,7 @@ public class binaryOp_node extends expr_node {
             case NEG:
             case TIMES:
             case DIV:
+            case MOD:
                 type = new complexType.primitive(null, basicType.INT);
             case LT:
             case GT:
@@ -178,6 +181,9 @@ public class binaryOp_node extends expr_node {
                     case DIV:
                         cod.genera(cod.op.DIV, op1, op2, t);
                         break;
+                    case MOD:
+                        cod.genera(cod.op.MOD, op1, op2, t);
+                        break;
                     case AND:
                         cod.genera(cod.op.AND, op1, op2, t);
                         break;
@@ -193,17 +199,17 @@ public class binaryOp_node extends expr_node {
     private void gest_rel(cod.op op, int op1, int op2, int t) {
         int tag1 = cod.newTag();
         int tag2 = cod.newTag();
-        
+
         cod.genera(op, op1, op2, 0); // if leftchild ⊕ rightchild goto tag1
         cod.setImmediate(leftChild.value != null, rightChild.value != null);
         cod.jmpTag(tag1);
-        
+
         cod.genera(cod.op.COPY, 0, 0, t); // t = 0
         cod.setImmediate(true, false);
-        
+
         cod.genera(cod.op.GOTO, 0, 0, 0); // GOTO tag2
         cod.jmpTag(tag2);
-        
+
         cod.setTag(tag1); // tag1 : skip
         cod.genera(cod.op.COPY, -1, 0, t); // t = -1
         cod.setImmediate(true, false);

@@ -1,10 +1,110 @@
-int fib(int n) {
-    if (n <= 1) {
-        return n;
-    }
-    return fib(n - 1) + fib(n - 2);
-}
+void printNum(int n);
+void printMatrix(int max);
+int readNum();
+
+int glob;
 
 int main() {
-    fib(42);
+    int a = readNum();
+    
+    printMatrix(a);
+    //printNum(fib(a));
+    putChar('\n');
+}
+
+// Funcion que demuestra la funcionalidad de los arrays de multiples dimensiones
+// Guarda numeros a una matriz y posteriormente los imprime
+void printMatrix(int max) {
+    [20][20]int matrix;
+    
+    for (int i = 0; i < max; i = i+1) {
+        for (int j = 0; j < max; j = j+1) {
+            matrix[i][j] = i * 3 + j;
+        }
+    }
+    
+    for (int i = 0; i < max; i = i+1) {
+        for (int j = 0; j < max; j = j+1) {
+            printNum(matrix[i][j]);
+            putChar('\t');
+        }
+        putChar('\n');
+    }
+}
+
+void printNum(int n) {
+    if (n < 0) {
+        putChar('-');
+        n = 0 - n; // Convertir valores negativos
+    }
+    
+    if (n == 0) { // 0 es un caso especial
+        putChar('0');
+        return;
+    }
+
+    // Calculamos cuantos digitos son necesarios
+    int temp = n;
+    int numDigits = 0;
+    while (temp > 0) {
+        numDigits = numDigits + 1;
+        temp = temp / 10;
+    }
+
+    [10]int digits;  // 10 digitos maximo para int de 32-bits
+    int i = 0;
+    
+    // Sacamos los digitos en orden inversa
+    temp = n;
+    while (temp > 0) {
+        digits[i] = temp - ((temp / 10) * 10);  // Get remainder
+        temp = temp / 10;
+        i = i + 1;
+    }
+
+    // Los recuperamos del array e imprimimos en el orden correcta
+    while (numDigits > 0) {
+        numDigits = numDigits - 1;
+        putChar(digits[numDigits] + '0'); // Convertimos a ascii
+    }
+}
+
+int readNum() {
+    // Variables para guardar el numero y caracter actual
+    int result = 0;
+    int c = 0;
+    bool isNegative = false;
+    
+    bool readingWhitespace = true;
+    
+    while(readingWhitespace) { // Nos saltamos los espacios en blanco precedentes si hay
+        c = input();
+        if(c != ' ' && c != '\t' && c != '\n') {
+            readingWhitespace = false;
+        }
+    }
+    
+    if(c == '-') { // Comprobamos si es negativo
+        isNegative = true;
+        c = input();
+    }
+    
+    // Vamos creando el numero hasta que nos llega un caracter que no es un digito
+    bool readingDigits = true;
+    while(readingDigits) {
+        if(c >= '0' && c <= '9') {
+            result = result * 10 + (c - '0'); // Convertimos a numero y añadimos el resultado
+            c = input();
+        } 
+        if (c < '0' || c > '9') {
+            readingDigits = false;
+        }
+    }
+    
+    // Si era negativo lo negamos
+    if(isNegative) {
+        result = 0 - result;
+    }
+    
+    return result;
 }

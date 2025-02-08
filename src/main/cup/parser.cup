@@ -31,20 +31,24 @@ parser code {:
 
 /* ===== Terminals (tokens from lexer) ===== */
 terminal LKEY, RKEY;
-terminal terminal_node RETURN, VOID, OUT, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK;
-terminal terminal_node PLUS, NEG, MULT, DIV, LPAREN, RPAREN, SEMI, ASS, EXIT;
+terminal terminal_node RETURN, VOID, OUT, STRUCT, CONST, TYPE, IF, ELSE, WHILE, FOR, SWITCH, CASE, BREAK, PRINT, PUTCHAR, INPUT;
+terminal terminal_node PLUS, NEG, MULT, DIV, MOD, LPAREN, RPAREN, SEMI, ASS, EXIT;
 terminal AND, OR, NOT;
 terminal LT, GT, LEQ, GEQ, EQ, NEQ;
 terminal LBRAC, RBRAC;
 terminal COMMA, DOT;
-terminal terminal_node<basicType> INT, BOOL, STRING;
+terminal terminal_node<basicType> INT, CHAR, BOOL, STRING;
 terminal terminal_node<Integer> INTLIT;
+terminal terminal_node<Integer> CHARLIT;
 terminal terminal_node<Boolean> BOOLLIT;
 terminal terminal_node<String> ID;
 
 /* ========= Non-terminals ========= */
 non terminal prog;
 non terminal while_node while;
+non terminal for_node forstmt;
+non terminal for;
+non terminal node forInit;
 non terminal ifstmt_node ifstmt;
 non terminal stmt_node blockstmt;
 non terminal stmts_node stmts;
@@ -88,6 +92,7 @@ precedence left LT, GT, LEQ, GEQ;
 precedence left PLUS, NEG;
 precedence left MULT;
 precedence left DIV;
+precedence left MOD;
 
 start with prog;
 
@@ -109,6 +114,8 @@ struct  ::= STRUCT lkey fields:f rkey
         ;
 
 type    ::= INT:t
+            {: RESULT = new complexType.primitive(null, t.value); :}
+        | CHAR:t
             {: RESULT = new complexType.primitive(null, t.value); :}
         | BOOL:t
             {: RESULT = new complexType.primitive(null, t.value); :}
@@ -157,6 +164,8 @@ ref ::= ID:i
 
 literal ::= INTLIT:i
             {: RESULT = new literal_expr_node(i); :}
+        | CHARLIT:c
+            {: RESULT = new literal_expr_node(c); :}
         | BOOLLIT:b
             {: RESULT = new literal_expr_node(b); :}
         ;
@@ -167,6 +176,8 @@ atom_expr   ::= literal:e
             {: RESULT = e; :}
         | ref:r
             {: RESULT = new expr_node(r); :}
+        | INPUT:i LPAREN RPAREN:r
+            {: RESULT = new expr_node(new input_node(i.left, r.right)); :}
 
         | LPAREN error RPAREN
        ;
@@ -181,6 +192,9 @@ unary_expr  ::= atom_expr:e
 
 binary_expr ::= unary_expr:e
             {: RESULT = new binaryOp_node(e); :}
+
+        | binary_expr:e1 MOD binary_expr:e2
+            {: RESULT = new binaryOp_node(OP.MOD, e1, e2); :}
 
         | binary_expr:e1 DIV binary_expr:e2
             {: RESULT = new binaryOp_node(OP.DIV, e1, e2); :}
@@ -257,15 +271,47 @@ stmt    ::= decl:d
             {: RESULT = new stmt_node(e); :}
         | return:r
             {: RESULT = new stmt_node(r); :}
+        | PUTCHAR LPAREN expr:e RPAREN
+            {: RESULT = new stmt_node(new print_node(e)); :}
         
         | error
             {: RESULT = new stmt_node(new node()); :}
+        ;
+
+forInit ::= decl:d
+            {: RESULT = d; :}
+        | expr:e
+            {: RESULT = e; :}
+        ;
+
+for ::= FOR
+            {: symbolTable.enterBlock(); :}
+        ;
+
+forstmt ::= for LPAREN forInit:init SEMI expr:cond SEMI expr:incr RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(init, cond, incr, s); symbolTable.exitBlock(); :}
+        | for LPAREN SEMI expr:cond SEMI expr:incr RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(null, cond, incr, s); symbolTable.exitBlock(); :}
+        | for LPAREN forInit:init SEMI SEMI expr:incr RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(init, null, incr, s); symbolTable.exitBlock(); :}
+        | for LPAREN forInit:init SEMI expr:cond SEMI RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(init, cond, null, s); symbolTable.exitBlock(); :}
+        | for LPAREN SEMI SEMI expr:incr RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(null, null, incr, s); symbolTable.exitBlock(); :}
+        | for LPAREN forInit:init SEMI SEMI RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(init, null, null, s); symbolTable.exitBlock(); :}
+        | for LPAREN SEMI expr:cond SEMI RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(null, cond, null, s); symbolTable.exitBlock(); :}
+        | for LPAREN SEMI SEMI RPAREN LKEY stmts:s RKEY
+            {: RESULT = new for_node(null, null, null, s); symbolTable.exitBlock(); :}
         ;
 
 blockstmt ::= ifstmt:i
             {: RESULT = new stmt_node(i); :}
         | while:w
             {: RESULT = new stmt_node(w); :}
+        | forstmt:f
+            {: RESULT = new stmt_node(f); :}
         ;
 
 stmts    ::= stmt:s SEMI

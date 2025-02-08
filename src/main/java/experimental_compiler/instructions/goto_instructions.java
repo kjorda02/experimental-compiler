@@ -26,9 +26,11 @@ public class goto_instructions {
                     }
                     // Otherwise generate no code (never jump)
                 } else if (c.src1imm()) {
-                    w.write("bgt "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("bgt "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("blt "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("blt "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("blt "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
@@ -41,9 +43,11 @@ public class goto_instructions {
                         w.write("j "+c.jmpTag+"\n");
                     }
                 } else if (c.src1imm()) {
-                    w.write("bge "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("bge "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("ble "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("ble "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("ble "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
@@ -56,9 +60,11 @@ public class goto_instructions {
                         w.write("j "+c.jmpTag+"\n");
                     }
                 } else if (c.src1imm()) {
-                    w.write("beq "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("beq "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("beq "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("beq "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("beq "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
@@ -71,9 +77,11 @@ public class goto_instructions {
                         w.write("j "+c.jmpTag+"\n");
                     }
                 } else if (c.src1imm()) {
-                    w.write("bne "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("bne "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("bne "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("bne "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("bne "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
@@ -86,9 +94,11 @@ public class goto_instructions {
                         w.write("j "+c.jmpTag+"\n");
                     }
                 } else if (c.src1imm()) {
-                    w.write("ble "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("ble "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("bge "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("bge "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("bge "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
@@ -101,9 +111,11 @@ public class goto_instructions {
                         w.write("j "+c.jmpTag+"\n");
                     }
                 } else if (c.src1imm()) {
-                    w.write("blt "+src2(c.op[1])+", "+c.op[0]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[0]+"\n");
+                    w.write("blt "+src2(c.op[1])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else if (c.src2imm()) {
-                    w.write("bgt "+src1(c.op[0])+", "+c.op[1]+", "+c.jmpTag+"\n");
+                    w.write("li "+ins.tmpRegs[0]+", "+c.op[1]+"\n");
+                    w.write("bgt "+src2(c.op[0])+", "+ins.tmpRegs[0]+", "+c.jmpTag+"\n");
                 } else {
                     w.write("bgt "+src1(c.op[0])+", "+src2(c.op[1])+", "+c.jmpTag+"\n");
                 }
